@@ -1,69 +1,27 @@
-# Create Auction House ☼☽
+# Restore
 
-  ![Auction House Montage](https://zora.fleek.co/ipfs/bafybeif2khqr7vgziycirzgl6rd7sdb74pcp2nkhzcxwejh4iu2lky7rs4)
+Made with love at [pr1s0n.art](https://pr1s0n.art).
 
-A repo to bootstrap your own permissionless auction house with the Zora protocol. This template will get you started with the display of any Erc721 token collection using Zora's rendering components and data hooks along with the inclusion of web3 components so users can connect their wallets and manage NFT's that they own within a specified collection.
+Having separate records for our finances and our stories has, for many millenia, meant that we cannot enact justice in both the sociopolitical and economic realms simultaneously. Web3 enables us to do this. The mechanism is simple:
 
-[More about the Zora Auction House on Mirror](https://zora.mirror.xyz/UwQwplCMEe1T5eUkp0CpTDJjZXvAK3eeakskTaQe3pE)
+1. We sell art made by justice-involved people as NFTs.
+2. We use the funds raised to pay their Legal Financial Obligations (LFOs).
+3. The exact split of funds is encoded in the contract. It is transparent and verifiable.
+4. The crypto is exchanged and payments in USD are done through a 501(c)3, registered in Florida.
+5. We attach the receipts for the exchange and payments back to the original artwork using the [safeTransferFrom](https://medium.com/kanon-log/unleashing-god-mode-for-all-nfts-f432955b4c42) function.
+6. All of the work done, and infrastructure required, will be an open source public good.
 
-## Features
-1. uses [`@zoralabs/nft-components`](https://github.com/ourzora/nft-components) to render NFTs and auction info.
-2. includes [`@zoralabs/nft-hooks`](https://github.com/ourzora/nft-hooks) for more custom applications.
-3. uses [`@zoralabs/manage-auction-hooks`](https://github.com/ourzora/manage-auction-hooks) for auction interactions.
-4. uses [`@zoralabs/simple-wallet-provider`](https://github.com/ourzora/simple-wallet-provider) for an easy wallet login flow.
-5. uses `@emotion`: [emotion.sh](https://emotion.sh) for styling.
-6. uses `typescript`
-7. based on [next.js](https://nextjs.org/)
-
-## Getting Started
-Simply use this repo as a next.js template replacing [project-name] with the title of your auction house.
-
-```bash
-yarn create next-app [project-name] -e https://github.com/ourzora/create-auction-house
-# or
-npx create-next-app [project-name] -e https://github.com/ourzora/create-auction-house
-```
-
-The application accepts the below environment variables, you WILL need to specify the network ID along with either a Curator ID or a Contract Address:
-
-We have included a script to help you with the initial configuration, simply run the below command:
-
-```bash
-yarn setup
-```
-
-### ENV VARS:
-
-```bash
-
-NEXT_PUBLIC_APP_TITLE=[default app title]
-NEXT_PUBLIC_DEFAULT_DESCRIPTION=[default meta description]
-
-# Erc721 Contracts you would like to work with, you may use multiple seperated buy commas.
-NEXT_PUBLIC_MAINNET_CONTRACTS=0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7
-NEXT_PUBLIC_TESTNET_CONTRACTS=0x7C2668BD0D3c050703CEcC956C11Bd520c26f7d4
-
-# NETWORK ID: 1 for Ethereum Mainnet / 4 for Rinkeby Testnet
-NEXT_PUBLIC_NETWORK_ID=4
-
-# OPTIONAL, use instead of NFT Contract to show NFTs associated with a user's address.
-NEXT_PUBLIC_CURATORS_ID=[The address of a curator or creator]
-
-# OPTIONAL - Best to set in deployment
-NEXT_PUBLIC_BASE_URL=[production-url]
-
-## configured RPC_URL (mainnet/rinkeby depending on NETWORK_ID) for walletconnect 
-## ~ Keep this private in a .env.local file. And configure directly in vercel for production.
-NEXT_PUBLIC_RPC_URL=[address to web3 rpc url provider]
-
-```
-
-If you include a rpcUrl on the manage auction hooks provider it enables walletconnect,
-without that rpcUrl walletconnect will not work work. We have set included and .env variable for this: ```NEXT_PUBLIC_RPC_URL```. [Further reading on RPC providers](https://web3py.readthedocs.io/en/stable/providers.html) / [Alchemy Ethereum API Docs](https://docs.alchemy.com/alchemy/documentation/apis/ethereum).
+This enables us to illuminate restorative stories, both social and financial. Holding the artwork is simultaneously a statement of principles, aesthetics and economic action. Restorative justice is not limited to those who have "served time": it is collective. Such financial narrative tools allow us to begin healing the separation we project between the incarcerated and ourselves, allowing us to recognise that - unless we are all involved with justice - it will never be fully realised
 
 ## Develop
 
-First, run the development server:
+First, test the contracts:
+
+```bash
+yarn test
+```
+
+Then, run the development server:
 
 ```bash
 yarn dev
@@ -71,7 +29,26 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## ToDo
+
+1. Figure out where the put the auction logic.
+2. Write the actual logic for `transferToBuyer` and `_freeze` in ERC721Justice.
+3. Think about using typescript.
+4. Figure out the infra requirements for attaching receipts in `safeTransferFrom`.
+5. Clean up our use of .env files.
+6. Make a beautiful frontend with the Zora foundation (another reason for using typescript).
+
+## Features
+
+This repo began life as a clone of the [Zora Custom Auction House](https://docs.zora.co/docs/guides/create-auction-house). Great love and thanks to them. 
+
+1. uses [`@zoralabs/nft-components`](https://github.com/ourzora/nft-components) to render NFTs and auction info.
+2. includes [`@zoralabs/nft-hooks`](https://github.com/ourzora/nft-hooks) for more custom applications.
+3. uses [`@zoralabs/manage-auction-hooks`](https://github.com/ourzora/manage-auction-hooks) for auction interactions.
+4. uses [`@zoralabs/simple-wallet-provider`](https://github.com/ourzora/simple-wallet-provider) for an easy wallet login flow.
+5. uses `@emotion`: [emotion.sh](https://emotion.sh) for styling.
+6. uses `typescript`
+7. based on [next.js](https://nextjs.org/)
 
 ## Deploy on Vercel
 
