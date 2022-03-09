@@ -13,6 +13,51 @@ Having separate records for our finances and our stories has, for many millenia,
 
 This enables us to illuminate restorative stories, both social and financial. Holding the artwork is simultaneously a statement of principles, aesthetics and economic action. Restorative justice is not limited to those who have "served time": it is collective. Such financial narrative tools allow us to begin healing the separation we project between the incarcerated and ourselves, allowing us to recognise that - unless we are all involved with justice - it will never be fully realised
 
+## Architecture
+
+```
+          ,-.                  ,-.
+          `-'                  `-'
+          /|\                  /|\
+           |                    |                         ,---------.              ,---------.
+          / \                  / \                        | Restore |              | Justice |
+         Buyer               pr1s0n art                   `----+----'              `----+----'
+           |                    |        mints new NFT        |                         |     
+           |                    |---------------------------->|                         |     
+           |                    |<----------------------------|                         |     
+           |                    |                             |                         |     
+           |                    |        sets up auction      |                         |     
+           |                    |------------------------------------------------------>|     
+           |                    |                             |                         |     
+           |    makes bid       |                             |                         |     
+           |--------------------------------------------------------------------------->|     
+           |                    |                             |                         |     
+           |                    |                             | winning bid freezes NFT |     
+           |                    |                             |<------------------------|     
+           |                    |___________________          |   funds to PA payment   |     
+        ________                |      |<-----------|---------|-------------------------|     
+       |   |    |  exchange + pay LFOs |            |         |      10% to PA Fund     |     
+       |   |    |<---------------------|            |<--------|-------------------------|     
+       |   |    |               |      |            |         |                         |     
+    Artist |  State             |  pr1s0n art       |         |                         |     
+           |                    |   payment         |         |                         |     
+     ,-.   |                    |     ,-.           |         |                         |     
+     `-'   |                    |     `-'  reattach |         |                         |     
+     /|\   |                    |-----/|\-----------|-------->|                         |     
+      |    |                           |   receipt  |         |                         |     
+     / \   |                          / \           |         |                         |     
+           |                                        |         |                         |     
+           |           safeTransfer to buyer        |         |                         |     
+           |<-------------------------------------------------|                         |     
+           |                                       ,-.        |                         |     
+           |                                       `-'        |                         |     
+           |                                       /|\        |                         |     
+           |                                        |         |                         |     
+           |                                       / \        |                         |     
+           |                                    pr1s0n art    |                         |     
+           |                                       fund       |                         |         
+```
+
 ## Develop
 
 First, test the contracts:

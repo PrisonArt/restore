@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.6;
 
-import { Pausable } from '@openzeppelin/contracts/security/Pausable.sol';
 import { ReentrancyGuard } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -15,6 +14,7 @@ import { IWETH } from './interfaces/IWETH.sol';
  * Justice - a contract that creates unique NFTs to be auctioned off, using the Restore the ERC721 Contract.
  *
  * Adapted from the wonderful people at Nounders DAO.
+ * https://github.com/nounsDAO/nouns-monorepo/blob/2cbe6c7bdfee258e646e8d9e84302375320abc72/packages/nouns-contracts/contracts/NounsAuctionHouse.sol
  *
  * Once auctioned, this contract does not immediatedly transfer the art, but 'freezes' it, while ensuring that the owner of the system,
  * which is multisig owned by Pr1s0n Art Inc - a 501(c)3 registered in Florida - can only ever transfer them to the winning bidder.
@@ -27,7 +27,7 @@ import { IWETH } from './interfaces/IWETH.sol';
  */
                                                                                                                                                                            
 
-abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
+abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
     // The Restore ERC721 token contract
     IRestore public restore;
 
@@ -49,24 +49,29 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
     // The active auction
     IJustice.Auction public auction;
 
+    // The contract that handles sale splits
+    address payment;
+
+    // The address of the pr1s0nart onchain fund for operations
+    address fund;
+
     /**
-     * @notice Initialize the auction house and base contracts,
-     * populate configuration values, and pause the contract.
-     * @dev This function can only be called once.
+     * @notice Set up the Justice Auction House and prepopulate initial values
      */
-    function initialize(
+    constructor(
         IRestore _restore,
         address _weth,
+        address _payment,
+        address _fund,
         uint256 _timeBuffer,
         uint256 _reservePrice,
         uint8 _minBidIncrementPercentage,
         uint256 _duration
-    ) external {
-
-        _pause();
-
+    ) {
         restore = _restore;
         weth = _weth;
+        payment = _payment;
+        fund = _fund;
         timeBuffer = _timeBuffer;
         reservePrice = _reservePrice;
         minBidIncrementPercentage = _minBidIncrementPercentage;
@@ -74,18 +79,12 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
     }
 
     /**
-     * @notice Settle the current auction, and freeze the NFT, enuring only the buyer will receive it.
-     * TODO: should this be onlyOwner protected?
-     */
-    function settleCurrentAuction() external nonReentrant whenNotPaused {
-        _settleAuction();
-    }
-
-    /**
      * @notice Settle the current auction.
      * @dev This function can only be called when the contract is paused.
+     * TODO: from where will we call this in the normal course of events?
+     * https://github.com/nounsDAO/nouns-monorepo/blob/2cbe6c7bdfee258e646e8d9e84302375320abc72/packages/nouns-webapp/src/components/Bid/index.tsx#L74
      */
-    function settleAuction() external override whenPaused nonReentrant {
+    function settleAuction() external override nonReentrant {
         _settleAuction();
     }
 
@@ -108,7 +107,8 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
 
         // Refund the last bidder, if applicable
         if (lastBidder != address(0)) {
-            _safeTransferETHWithFallback(lastBidder, _auction.amount);
+            uint8[3] memory noSplit = [0, 0, 100];
+            _safeTransferETHWithFallback(lastBidder, noSplit, _auction.amount);
         }
 
         auction.amount = msg.value;
@@ -128,21 +128,23 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
     }
 
     /**
-     * @notice Pause the Justice auction house.
-     * @dev This function can only be called by the owner when the
-     * contract is unpaused. While no new auctions can be started when paused,
-     * anyone can settle an ongoing auction.
+     * @notice Set the pr1s0nart payment address (handles exchange to USD + LFO payments).
+     * @dev Only callable by the owner.
      */
-    function pause() external override onlyOwner {
-        _pause();
+    function setPaymentAddress(address _newPayment) external override onlyOwner {
+        payment = _newPayment;
+
+        emit PaymentAddressUpdated(_newPayment);
     }
 
     /**
-     * @notice Unpause the Justice auction house.
-     * @dev This function can only be called by the owner when the contract is paused.
+     * @notice Set the pr1s0nartFund address (handles onchain fund for operations)
+     * @dev Only callable by the owner.
      */
-    function unpause() external override onlyOwner {
-        _unpause();
+    function setFundAddress(address _newFund) external override onlyOwner {
+        fund = _newFund;
+
+        emit FundAddressUpdated(_newFund);
     }
 
     /**
@@ -179,18 +181,21 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
      * @notice Create an auction.
      * @dev Store the auction details in the `auction` state variable and emit an AuctionCreated event.
      * If the mint reverts, dragons are unleashed. To remedy this, catch the revert and pause this contract.
-     * @param creator the address of creator of the piece, if they have one. Otherwise pr1s0n.art.
-     * @param uri the permanent uri which stores all the artistic info, less the receipt. 
-     * TODO should we change this to public given the onlyOwner protection on mintForAuction? If so, should we
-            just revert() on an error, rather than pause the whole thing? Do we really need pauses at all?
+     * @param creator the address of the creator so we can pass it to the payment splitter once the auction is settled.
+     * @param tokenId the index of the art piece to be auctioned off
+     * @param split a fixed-sized array of max 3 members which determines how sale proceeds are split between pr1s0nartPayment
+     *              (the address that exchanges into USD and pays LFOs), pr1s0nartFund (our onchain fund to cover operations),
+     *              and the creator address if they have one and can receive crypto in addition to the LFO payments we cover.
+     *              This is likely only the case if they are no longer incarcerated and have an ETH address.
      */
-    function createAuction(address creator, string memory uri) public onlyOwner whenNotPaused {
-        try restore.mintForAuction(creator, uri) returns (uint256 tokenId) {
+    function createAuction(address creator, uint256 tokenId, uint8[3] memory split) public onlyOwner {
             uint256 startTime = block.timestamp;
             uint256 endTime = startTime + duration;
 
             auction = Auction({
+                creator: creator,
                 tokenId: tokenId,
+                saleSplit: split,
                 amount: 0,
                 startTime: startTime,
                 endTime: endTime,
@@ -199,16 +204,11 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
             });
 
             emit AuctionCreated(tokenId, startTime, endTime);
-        } catch Error(string memory) {
-            _pause();
-        }
     }
 
     /**
      * @notice Settle an auction, freezing the tokenId to the buyer's address and sending the funds to pr1s0n.art for processing.
      * @dev If there are no bids, the art is transferred back to pr1s0n.art to be returned or burnt.
-     * TODO: We should send the funds to a splitter contract, not directly to pr1s0n.art to handle the case where artists do want
-     *       their share in crypto.
      */
     function _settleAuction() internal {
         IJustice.Auction memory _auction = auction;
@@ -226,29 +226,42 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable, Pausable {
         }
 
         if (_auction.amount > 0) {
-            _safeTransferETHWithFallback(owner(), _auction.amount);
+            _safeTransferETHWithFallback(_auction.creator, _auction.saleSplit, _auction.amount);
         }
 
         emit AuctionSettled(_auction.tokenId, _auction.bidder, _auction.amount);
     }
 
     /**
-     * @notice Transfer ETH. If the ETH transfer fails, wrap the ETH and try send it as WETH.
+     * @notice Transfer ETH. If the ETH transfer fails, wrap the ETH and try send it as WETH to pr1s0nart to account for.
+     * TODO: implement proper splits for WETH fallback if possible.
      */
-    function _safeTransferETHWithFallback(address to, uint256 amount) internal {
-        if (!_safeTransferETH(to, amount)) {
+    function _safeTransferETHWithFallback(address creator, uint8[3] memory split, uint256 amount) internal {
+        if (!_safeTransferETH(creator, split, amount)) {
             IWETH(weth).deposit{ value: amount }();
-            IERC20(weth).transfer(to, amount);
+            IERC20(weth).transfer(payment, amount);
         }
     }
 
     /**
      * @notice Transfer ETH and return the success status.
-     * @dev This function only forwards 30,000 gas to the callee.
+     * TODO: check that these sends don't run out of gas.
+     *       We will need to seed this contract with ETH.
      */
-    function _safeTransferETH(address to, uint256 value) internal returns (bool) {
-        (bool success, ) = to.call{ value: value, gas: 30_000 }(new bytes(0));
-        return success;
+    function _safeTransferETH(address creator, uint8[3] memory split, uint256 amount) internal returns (bool) {
+        // Pay the split denominated in split[0] to the pr1s0nart payment address for LFOs
+        uint256 LFOShare = amount * (split[0] / 100 );
+        (bool sentLFO, ) = payment.call{value: LFOShare, gas: 30_000 }(new bytes(0));
+        require(sentLFO, "Justice: Failed to send Ether to payment address");
+        // Pay the split denominated in split[1] to the pr1s0nart fund address for operations
+        uint256 PAShare = amount * (split[1] / 100 );
+        (bool sentPA, ) = fund.call{value: PAShare, gas: 30_000}(new bytes(0));
+        require(sentPA, "Justice: Failed to send Ether to fund address");
+        // Pay the split denominated in split[2] to the specified creator address
+        uint256 creatorShare = amount * (split[2] / 100 );
+        (bool sentCreator, ) = creator.call{value: creatorShare, gas: 30_000 }(new bytes(0));
+        require(sentCreator, "Justice: Failed to send Ether to contract address");
+        return true;
     }
 
 }

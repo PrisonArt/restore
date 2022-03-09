@@ -31,15 +31,12 @@ import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 //          \|___|                   \/____/                  \/____/                                                                \|___|                   \/____/         
 
 
-contract Restore is ERC721Tradable, Ownable, IRestore {
+abstract contract Restore is ERC721Tradable, Ownable, IRestore {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
     // Keep track of currently frozen token
-    uint256 frozenTokenId;
-
-    // Mapping from frozen token ID to buyer address
-    mapping(uint256 => address) public buyer;
+    mapping(uint256 => address) public buyers;
 
     constructor(
         address _proxyRegistryAddress
@@ -50,6 +47,17 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     */
     function contractURI() public pure returns (string memory) {
         return "https://arweave.net/";
+    }
+
+    /** @notice Set the royalties for the whole contract. Our intention is to set it 10% in perpetuity.
+     *  @param recipient the royalties recipient - will always be pr1s0nart, for regulatory reasons.
+     *  @param value royalties value (between 0 and 10000)
+    */
+    function setRoyalties(address recipient, uint256 value) 
+        public 
+        onlyOwner
+    {
+        _setRoyalties(recipient, value);
     }
 
     /**
@@ -77,28 +85,27 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @param data URI to receipt metadata that will be added to the NFT
      * TODO: is it an issue that we store the receipt uri in bytes and the metadata uri above as a string?
      */
-    function transferToBuyer(bytes memory data)
+    function transferToBuyer(uint256 frozenTokenId, bytes memory data)
         public
         onlyOwner
     {
-        _safeTransfer(owner(), buyer[frozenTokenId], frozenTokenId, data);
+        _safeTransfer(owner(), buyers[frozenTokenId], frozenTokenId, data);
         emit ArtTransferred(frozenTokenId, data);
         delete frozenTokenId;
     }
 
     /**
      * @notice called by the Justice auction contract when the bidding is over and we have a winner
-     * @param _buyer address of winning bid
-     * @param _tokenId index of the NFT bought in the auction
+     * @param buyer address of winning bid
+     * @param tokenId index of the NFT bought in the auction
      * TODO: can we provably disable transfers here and only re-enable them when we transferToBuyer?
      */
-    function freeze(address _buyer, uint256 _tokenId) 
+    function freeze(address buyer, uint256 tokenId) 
         public
         onlyOwner 
     {
-        frozenTokenId = _tokenId;
-        buyer[frozenTokenId] = _buyer;
-        emit ArtFrozen(buyer[frozenTokenId], frozenTokenId);
+        buyers[tokenId] = buyer;
+        emit ArtFrozen(buyers[tokenId], tokenId);
     }
 
 

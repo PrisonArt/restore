@@ -4,8 +4,13 @@ pragma solidity ^0.8.6;
 interface IJustice {
 
     struct Auction {
+        // address of creator. If they have none, we use pr1s0nartPayment 
+        address creator;
         // ID for the Art (ERC721 token ID)
         uint256 tokenId;
+        // Fixed-size array of max 3 members for specifiying splits from sales
+        // 1 = pr1s0nartPayment, 2 = pr1s0nartFund, 3 = creatorAddress
+        uint8[3] saleSplit;
         // The current highest bid amount
         uint256 amount;
         // The time that the auction started
@@ -26,6 +31,10 @@ interface IJustice {
 
     event AuctionSettled(uint256 indexed tokenId, address winner, uint256 amount);
 
+    event PaymentAddressUpdated(address newPayment);
+
+    event FundAddressUpdated(address newFund);
+
     event AuctionTimeBufferUpdated(uint256 timeBuffer);
 
     event AuctionReservePriceUpdated(uint256 reservePrice);
@@ -38,9 +47,9 @@ interface IJustice {
 
     function createBid(uint256 tokenId) external payable;
 
-    function pause() external;
+    function setPaymentAddress(address newPayment) external;
 
-    function unpause() external;
+    function setFundAddress(address newFund) external;
 
     function setTimeBuffer(uint256 timeBuffer) external;
 
