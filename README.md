@@ -63,13 +63,15 @@ This enables us to illuminate restorative stories, both social and financial. Ho
 First, test the contracts:
 
 ```bash
-yarn test
+pnpm install
+pnpm hardhat:compile
+pnpm hardhat:test
 ```
 
 Then, run the development server:
 
 ```bash
-yarn dev
+pnpm dapp:dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
