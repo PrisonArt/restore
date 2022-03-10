@@ -60,15 +60,20 @@ This enables us to illuminate restorative stories, both social and financial. Ho
 
 ## Develop
 
-First, test the contracts:
+1. Install the dependencies using [pnpm](https://pnpm.io/installation):
 
 ```bash
 pnpm install
+```
+
+2. Copy the `.env.example` file in `packages/hardhat-ts` and call it `.env`, and place in there your Infura, Etherscan and Ethereum keys. Then run:
+
+```bash
 pnpm hardhat:compile
 pnpm hardhat:test
 ```
 
-Then, run the development server:
+3. Copy the `.env.example` file in `packages/dapp` and call in `.env.local`. You need not change anything there. Then run the development server:
 
 ```bash
 pnpm dapp:dev
@@ -78,12 +83,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## ToDo
 
-1. Figure out where the put the auction logic.
-2. Write the actual logic for `transferToBuyer` and `_freeze` in ERC721Justice.
-3. Think about using typescript.
-4. Figure out the infra requirements for attaching receipts in `safeTransferFrom`.
-5. Clean up our use of .env files.
-6. Make a beautiful frontend with the Zora foundation (another reason for using typescript).
+1. Figure out the infra requirements for attaching receipts in `safeTransfer`.
+2. Make a beautiful frontend with the Zora foundation (another reason for using typescript).
 
 ## Features
 

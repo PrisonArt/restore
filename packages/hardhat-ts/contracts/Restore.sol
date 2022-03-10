@@ -35,7 +35,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    // Keep track of currently frozen token
+    // Keep track of currently frozen tokens
     mapping(uint256 => address) public buyers;
 
     constructor(
@@ -49,7 +49,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         return "https://arweave.net/";
     }
 
-    /** @notice Set the royalties for the whole contract. Our intention is to set it 10% in perpetuity.
+    /** @notice Set the royalties for the whole contract. Our intention is to set it to 10% in perpetuity.
      *  @param recipient the royalties recipient - will always be pr1s0nart, for regulatory reasons.
      *  @param value royalties value (between 0 and 10000)
     */
@@ -82,7 +82,9 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     }
 
     /**
-     * @notice sends 'frozen' NFT to the winning bidder by attaching the receipt
+     * @notice sends 'frozen' NFT to the winning bidder by attaching the receipt. Protected only to ensure no random
+     *         data is uploaded on the transfer.
+     * @param frozenTokenId the id of the frozen token to be sent to the buyer, with which they can do as they please.
      * @param data URI to receipt metadata that will be added to the NFT
      * TODO: is it an issue that we store the receipt uri in bytes and the metadata uri above as a string?
      */
@@ -93,7 +95,6 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     {
         _safeTransfer(owner(), buyers[frozenTokenId], frozenTokenId, data);
         emit ArtTransferred(frozenTokenId, data);
-        delete frozenTokenId;
     }
 
     /**
