@@ -49,6 +49,9 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
     // The active auction
     IJustice.Auction public auction;
 
+    // The currently frozen token
+    IRestore.FrozenToken public frozenToken;
+
     // The contract that handles sale splits
     address payment;
 
@@ -220,9 +223,9 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
         auction.settled = true;
 
         if (_auction.bidder == address(0)) {
-            restore.transferToBuyer(_auction.tokenId, bytes('no buyer'));
+            restore.returnToPA(_auction.tokenId, bytes('no buyer'));
         } else {
-            restore.freeze(_auction.bidder, _auction.tokenId);
+            _freeze(_auction.bidder, _auction.tokenId);
         }
 
         if (_auction.amount > 0) {
@@ -230,6 +233,17 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
         }
 
         emit AuctionSettled(_auction.tokenId, _auction.bidder, _auction.amount);
+    }
+
+    /**
+    * @notice called when an auction is settled, sets the frozenToken struct.
+    * @param buyer address of winning bid
+    * @param tokenId index of the NFT bought in the auction
+    */
+    function _freeze(address buyer, uint256 tokenId) internal {
+        frozenToken.tokenId = tokenId;
+        frozenToken.buyer = buyer;
+        emit ArtFrozen(buyer, tokenId);
     }
 
     /**

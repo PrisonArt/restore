@@ -78,7 +78,7 @@ abstract contract ERC721Tradable is
     function isApprovedForAll(address owner, address operator)
         public
         view
-        override(ERC721)
+        override
         returns (bool)
     {
         // Whitelist OpenSea proxy contract for easy trading.

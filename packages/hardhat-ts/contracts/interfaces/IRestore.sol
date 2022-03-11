@@ -3,15 +3,19 @@ pragma solidity ^0.8.11;
 
 interface IRestore {
 
+    // Keep track of currently frozen token and who bought it.
+    struct FrozenToken {
+        uint256 tokenId;
+        address buyer;
+    }
+
     event ReadyForAuction(uint256 tokenId, string uri);
 
-    event ArtFrozen(address buyer, uint256 indexed tokenId);
-
-    event ArtTransferred(uint256 indexed tokenID, bytes data);
+    event ArtTransferred(address buyer, uint256 indexed tokenID, bytes data);
 
     function transferToBuyer(uint256 frozenTokenId, bytes memory data) external;
 
     function mintForAuction(address creator, string memory uri) external returns (uint256 tokenId);
 
-    function freeze(address _buyer, uint256 _tokenId) external;
+    function returnToPA(uint256 frozenTokenId, bytes memory data) external;
 }

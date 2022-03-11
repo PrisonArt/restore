@@ -23,6 +23,8 @@ interface IJustice {
         bool settled;
     }
 
+    event ArtFrozen(address buyer, uint256 indexed tokenId);
+
     event AuctionCreated(uint256 indexed tokenId, uint256 startTime, uint256 endTime);
 
     event AuctionBid(uint256 indexed tokenId, address sender, uint256 value, bool extended);

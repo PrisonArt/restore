@@ -31,12 +31,12 @@ import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 //          \|___|                   \/____/                  \/____/                                                                \|___|                   \/____/         
 
 
-contract Restore is ERC721Tradable, Ownable, IRestore {
+abstract contract Restore is ERC721Tradable, Ownable, IRestore {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    // Keep track of currently frozen tokens
-    mapping(uint256 => address) public buyers;
+    // The current frozen token
+    IRestore.FrozenToken public frozenToken;
 
     constructor(
         address _proxyRegistryAddress
@@ -62,6 +62,8 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
 
     /**
      * @dev Safely mints a token to an address with a tokenURI.
+     * @notice this mints the NFT to this contract so that we can ensure only the buyer can receive the first transfer and
+     *         prove contractually that no-one else can.
      * @param creator this will likely be pr1s0n.art, but may be others in the future. Included here for proper attribution.
      * @param uri full URI to token metadata
      */
@@ -72,7 +74,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         returns (uint256 tokenId)
     {
         uint256 newTokenId = _tokenIdCounter.current();
-        _safeMint(creator, owner(), newTokenId);
+        _safeMint(creator, address(this), newTokenId);
         _setTokenURI(newTokenId, uri);
         _tokenIdCounter.increment();
 
@@ -84,33 +86,27 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     /**
      * @notice sends 'frozen' NFT to the winning bidder by attaching the receipt. Protected only to ensure no random
      *         data is uploaded on the transfer.
-     * @param frozenTokenId the id of the frozen token to be sent to the buyer, with which they can do as they please.
      * @param data URI to receipt metadata that will be added to the NFT
      * TODO: is it an issue that we store the receipt uri in bytes and the metadata uri above as a string?
      */
-    function transferToBuyer(uint256 frozenTokenId, bytes memory data)
+    function transferToBuyer(bytes memory data)
         public
-        override
         onlyOwner
     {
-        _safeTransfer(owner(), buyers[frozenTokenId], frozenTokenId, data);
-        emit ArtTransferred(frozenTokenId, data);
+        _safeTransfer(address(this), frozenToken.buyer, frozenToken.tokenId, data);
+        emit ArtTransferred(frozenToken.buyer, frozenToken.tokenId, data);
     }
 
     /**
-     * @notice called by the Justice auction contract when the bidding is over and we have a winner
-     * @param buyer address of winning bid
+     * @notice called when there is no buyer for an auction
      * @param tokenId index of the NFT bought in the auction
-     * TODO: can we provably disable transfers here and only re-enable them when we transferToBuyer?
+     * @param data data which reads 'no buyer' to add to token's transactional history for completeness.
      */
-    function freeze(address buyer, uint256 tokenId) 
+    function returnToPA(uint256 tokenId, bytes memory data) 
         public
-        override
-        onlyOwner 
     {
-        buyers[tokenId] = buyer;
-        emit ArtFrozen(buyers[tokenId], tokenId);
+        require(tx.origin == owner(), "Restore: unbought auction must be settled by owner");
+        _safeTransfer(address(this), owner(), tokenId, data);
     }
-
 
 }
