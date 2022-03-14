@@ -238,7 +238,6 @@ describe('Justice', () => {
     const tx = await justice.connect(deployer).settleAuction();
 
     const receipt = await tx.wait();
-    const { timestamp } = await ethers.provider.getBlock(receipt.blockHash);
 
     const settledEvent = receipt.events?.find(e => e.event === 'AuctionSettled');
 
@@ -259,7 +258,7 @@ describe('Justice', () => {
     await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
     await expect(
       justice.connect(bidderA).settleAuction()
-    ).to.be.revertedWith("Restore: auctioned piece must be frozen by owner");
+    ).to.be.revertedWith("Restore: auctioned piece must be frozen by owner via Justice");
   })
 
   it('should return the art to pr1s0nart on auction settlement if no bids are received', async () => {
@@ -272,13 +271,19 @@ describe('Justice', () => {
 
     await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
 
-    const tx = justice.connect(deployer).settleAuction();
+    const tx = await justice.connect(deployer).settleAuction();
 
-    // Note: it's not great that we have the 0 address here, but we can always find art that was transferred back to
-    // PA by looking at the `amount` field and filtering by `0`.
-    await expect(tx)
-      .to.emit(justice, 'AuctionSettled')
-      .withArgs(tokenId, '0x0000000000000000000000000000000000000000', 0);
+    const receipt = await tx.wait();
+
+    const settledEvent = receipt.events?.find(e => e.event === 'AuctionSettled');
+
+    expect(settledEvent?.args?.tokenId).to.equal(tokenId);
+    expect(settledEvent?.args?.winner).to.equal(ZERO_ADDRESS);
+    expect(settledEvent?.args?.amount).to.equal(0);
+
+    expect(await restore.balanceOf(deployer.address)).to.equal(1);
+    expect(await restore.ownerOf(tokenId)).to.equal(deployer.address);
+    expect(await restore.tokenURI(tokenId)).to.equal(tokenURI); 
   });
 
   it('e2e: should transfer the art to the buyer after auction setllement, when pr1s0nart attaches receipt of payment', async() => {

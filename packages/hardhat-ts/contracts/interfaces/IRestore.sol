@@ -9,7 +9,7 @@ interface IRestore is IERC721 {
 
     event ArtFrozen(address buyer, uint256 indexed tokenId);
 
-    event ArtTransferred(address buyer, uint256 indexed tokenID, bytes data);
+    event ArtTransferred(address buyer, uint256 indexed tokenId, bytes data);
 
     function mintForAuction(address creator, string memory uri) external returns (uint256 tokenId);
 

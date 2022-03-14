@@ -52,6 +52,19 @@ describe("Restore", function () {
         restore.connect(alice).mintForAuction(alice.address, tokenURI)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
+
+    it("no-one, including the owner, can freeze a token, except through another contract", async() => {
+      const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = "https://eth.iwahi.com/1df0";
+
+      await expect(restore.connect(deployer).mintForAuction(deployer.address, tokenURI))
+        .to.emit(restore, "ReadyForAuction")
+        .withArgs(tokenId, tokenURI);
+
+      await expect(
+        restore.connect(deployer).freeze(deployer.address, tokenId)
+      ).to.be.revertedWith("Restore: auctioned piece must be frozen by owner via Justice")
+    })
   });
 
   describe("royalties", async() => {

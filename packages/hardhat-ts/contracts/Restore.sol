@@ -108,8 +108,9 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         public
         override
     {
-        require(tx.origin == owner(), "Restore: unbought auction must be settled by owner");
+        require(tx.origin == owner() && msg.sender.code.length > 0, "Restore: unbought auction must be settled by owner via Justice");
         _safeTransfer(address(this), owner(), tokenId, data);
+        emit ArtTransferred(owner(), tokenId, data);
     }
 
     /**
@@ -121,7 +122,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         public
         override
     {
-        require(tx.origin == owner(), "Restore: auctioned piece must be frozen by owner");
+        require(tx.origin == owner() && msg.sender.code.length > 0, "Restore: auctioned piece must be frozen by owner via Justice");
         buyers[tokenId] = buyer;
         emit ArtFrozen(buyer, tokenId);
     }
