@@ -240,7 +240,9 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
     function _safeTransferETHWithFallback(address creator, uint8[3] memory split, uint256 amount) internal {
         if (!_safeTransferETH(creator, split, amount)) {
             IWETH(weth).deposit{ value: amount }();
-            IERC20(weth).transfer(payment, amount);
+            IERC20(weth).transfer(payment, amount * (split[0] / 100));
+            IERC20(weth).transfer(fund, amount * (split[1] / 100));
+            IERC20(weth).transfer(creator, amount * (split[2] / 100));
         }
     }
 
@@ -253,16 +255,17 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         // Pay the split denominated in split[0] to the pr1s0nart payment address for LFOs
         uint256 LFOShare = amount * (split[0] / 100 );
         (bool sentLFO, ) = payment.call{value: LFOShare, gas: 30_000 }(new bytes(0));
-        require(sentLFO, "Justice: Failed to send Ether to payment address");
         // Pay the split denominated in split[1] to the pr1s0nart fund address for operations
         uint256 PAShare = amount * (split[1] / 100 );
         (bool sentPA, ) = fund.call{value: PAShare, gas: 30_000}(new bytes(0));
-        require(sentPA, "Justice: Failed to send Ether to fund address");
         // Pay the split denominated in split[2] to the specified creator address
         uint256 creatorShare = amount * (split[2] / 100 );
         (bool sentCreator, ) = creator.call{value: creatorShare, gas: 30_000 }(new bytes(0));
-        require(sentCreator, "Justice: Failed to send Ether to creator address");
-        return true;
+        if (sentLFO && sentPA && sentCreator) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

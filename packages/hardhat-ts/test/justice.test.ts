@@ -173,17 +173,14 @@ describe('Justice', () => {
       });
     await maliciousBid.wait();
 
-    // TODO: This reveals a problem. If we try to send ETH to a contract address, it fails with "Justice: Failed to send Ether to creator address"
-    // as it should when said contract implements a "invalid()" fallback. How do we get around this?
+    const tx = await justice.connect(bidderB).createBid(tokenId, {
+      value: RESERVE_PRICE * 2,
+      gasLimit: 1_000_000,
+    });
+    const result = await tx.wait();
 
-    // const tx = await justice.connect(bidderB).createBid(tokenId, {
-    //   value: RESERVE_PRICE * 2,
-    //   gasLimit: 1_000_000,
-    // });
-    // const result = await tx.wait();
-
-    // expect(result.gasUsed.toNumber()).to.be.lessThan(200_000);
-    // expect(await weth.balanceOf(maliciousBidder.address)).to.equal(RESERVE_PRICE);
+    expect(result.gasUsed.toNumber()).to.be.lessThan(200_000);
+    expect(await weth.balanceOf(maliciousBidder.address)).to.equal(RESERVE_PRICE);
   });
 
   it('should emit an `AuctionBid` event on a successful bid', async () => {
