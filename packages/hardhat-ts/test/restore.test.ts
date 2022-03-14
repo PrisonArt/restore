@@ -1,29 +1,27 @@
 import { ethers } from "hardhat";
 import chai from "chai";
-import { Restore__factory, Restore } from "../typechain";
+import { Restore } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
-import { int } from "hardhat/internal/core/params/argumentTypes";
+import { deployRestore } from './utils';
 
 const { expect } = chai;
 
 let restore: Restore;
-let restoreFactory: Restore__factory;
 let deployer: SignerWithAddress;
 let alice: SignerWithAddress;
 let payment: SignerWithAddress;
 
-const PROXY_REGISTRATION_ADDRESS = "0xf57b2c51ded3a29e6891aba85459d600256cf317";
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+const TIME_BUFFER = 15 * 60;
+const RESERVE_PRICE = 2;
+const MIN_INCREMENT_BID_PERCENTAGE = 5;
+const DURATION = 60 * 60 * 24;
 
 describe("Restore", function () {
   beforeEach(async function () {
     [deployer, alice, payment] = await ethers.getSigners();
-    restoreFactory = (await ethers.getContractFactory(
-        'Restore',
-        deployer
-    )) as Restore__factory;
-
-    restore = (await restoreFactory.deploy(PROXY_REGISTRATION_ADDRESS)) as Restore;
+    restore = await deployRestore(deployer);
     expect(restore.address).to.properAddress;
   });
 
@@ -43,24 +41,9 @@ describe("Restore", function () {
         .to.emit(restore, "ReadyForAuction")
         .withArgs(tokenId, tokenURI);
 
-      expect(await restore.balanceOf(deployer.address)).to.equal(1);
-      expect(await restore.ownerOf(tokenId)).to.equal(deployer.address);
-      expect(await restore.tokenURI(tokenId)).to.equal(tokenURI);
-
-      await expect(restore.connect(deployer).freeze(alice.address, tokenId))
-        .to.emit(restore, "ArtFrozen")
-        .withArgs(alice.address, tokenId);
-
-      const text = "Hello Alice!";
-
-      const data = ethers.utils.formatBytes32String(text);
-
-      await expect(restore.connect(deployer).transferToBuyer(tokenId, data))
-        .to.emit(restore, "ArtTransferred")
-        .withArgs(tokenId, data);
-
-      //TODO: view log data from transaction to see if Hello Alice is there
-
+      expect(await restore.balanceOf(restore.address)).to.equal(1);
+      expect(await restore.ownerOf(tokenId)).to.equal(restore.address);
+      expect(await restore.tokenURI(tokenId)).to.equal(tokenURI);   
     });
 
     it("other accounts cannot mint tokens", async () => {
@@ -123,13 +106,6 @@ describe("Restore", function () {
         expect(info[1].toNumber()).to.be.equal(5);
         expect(info[0]).to.be.equal(ZERO_ADDRESS);
     });
-  })
-
-  describe("transferToBuyer", async () => {
-    it("should let the owner transfer sold tokens to the buyer", async () => {
-      // I would like to figure out if we can actually freeze transfers first before writing these tests.
-
-    })
   })
 
 });

@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.11;
 
-interface IRestore {
+import { IERC721 } from '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 
-    // Keep track of currently frozen token and who bought it.
-    struct FrozenToken {
-        uint256 tokenId;
-        address buyer;
-    }
+interface IRestore is IERC721 {
 
     event ReadyForAuction(uint256 tokenId, string uri);
 
-    event ArtTransferred(address buyer, uint256 indexed tokenID, bytes data);
+    event ArtFrozen(address buyer, uint256 indexed tokenId);
 
-    function transferToBuyer(uint256 frozenTokenId, bytes memory data) external;
+    event ArtTransferred(address buyer, uint256 indexed tokenID, bytes data);
 
     function mintForAuction(address creator, string memory uri) external returns (uint256 tokenId);
 
-    function returnToPA(uint256 frozenTokenId, bytes memory data) external;
+    function transferToBuyer(uint256 tokenId, bytes memory data) external;
+
+    function returnToPA(uint256 tokenId, bytes memory data) external;
+
+    function freeze(address buyer, uint256 frozenTokenId) external;
 }

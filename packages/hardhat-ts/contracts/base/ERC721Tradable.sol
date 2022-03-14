@@ -13,6 +13,7 @@ import { ERC721 } from "./ERC721.sol";
 import { ERC721Enumerable } from "./ERC721Enumerable.sol";
 import { ERC721URIStorage } from "./ERC721URIStorage.sol";
 import { ERC721Burnable } from "./ERC721Burnable.sol";
+import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import { ERC2981ContractWideRoyalties, ERC2981Royalties } from "./ERC2981ContractWideRoyalties.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
@@ -26,6 +27,7 @@ abstract contract ERC721Tradable is
     ERC721Enumerable,
     ERC721URIStorage,
     ERC721Burnable,
+    IERC721Receiver,
     ERC2981ContractWideRoyalties
 {
 
@@ -88,5 +90,19 @@ abstract contract ERC721Tradable is
         }
 
         return super.isApprovedForAll(owner, operator);
+    }
+
+    /**
+     * @dev See {IERC721Receiver-onERC721Received}.
+     *
+     * Always returns `IERC721Receiver.onERC721Received.selector`.
+     */
+    function onERC721Received(address, address, uint256, bytes memory) 
+        public 
+        virtual 
+        override 
+        returns (bytes4) 
+    {
+        return this.onERC721Received.selector;
     }
 }

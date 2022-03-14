@@ -31,12 +31,12 @@ import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 //          \|___|                   \/____/                  \/____/                                                                \|___|                   \/____/         
 
 
-abstract contract Restore is ERC721Tradable, Ownable, IRestore {
+contract Restore is ERC721Tradable, Ownable, IRestore {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    // The current frozen token
-    IRestore.FrozenToken public frozenToken;
+    // A mapping of all frozen tokens
+    mapping(uint256 => address) buyers;
 
     constructor(
         address _proxyRegistryAddress
@@ -75,6 +75,7 @@ abstract contract Restore is ERC721Tradable, Ownable, IRestore {
     {
         uint256 newTokenId = _tokenIdCounter.current();
         _safeMint(creator, address(this), newTokenId);
+        onERC721Received(creator, address(0), newTokenId, bytes("New token ready for auction"));
         _setTokenURI(newTokenId, uri);
         _tokenIdCounter.increment();
 
@@ -89,12 +90,12 @@ abstract contract Restore is ERC721Tradable, Ownable, IRestore {
      * @param data URI to receipt metadata that will be added to the NFT
      * TODO: is it an issue that we store the receipt uri in bytes and the metadata uri above as a string?
      */
-    function transferToBuyer(bytes memory data)
+    function transferToBuyer(uint256 tokenId, bytes memory data)
         public
         onlyOwner
     {
-        _safeTransfer(address(this), frozenToken.buyer, frozenToken.tokenId, data);
-        emit ArtTransferred(frozenToken.buyer, frozenToken.tokenId, data);
+        _safeTransfer(address(this), buyers[tokenId], tokenId, data);
+        emit ArtTransferred(buyers[tokenId], tokenId, data);
     }
 
     /**
@@ -104,9 +105,24 @@ abstract contract Restore is ERC721Tradable, Ownable, IRestore {
      */
     function returnToPA(uint256 tokenId, bytes memory data) 
         public
+        override
     {
         require(tx.origin == owner(), "Restore: unbought auction must be settled by owner");
         _safeTransfer(address(this), owner(), tokenId, data);
+    }
+
+    /**
+     * @notice called when an auction is settled, sets the frozenToken struct.
+     * @param buyer address of winning bid
+     * @param tokenId index of the NFT bought in the auction
+     */
+    function freeze(address buyer, uint256 tokenId) 
+        public
+        override
+    {
+        require(tx.origin == owner(), "Restore: auctioned piece must be frozen by owner");
+        buyers[tokenId] = buyer;
+        emit ArtFrozen(buyer, tokenId);
     }
 
 }

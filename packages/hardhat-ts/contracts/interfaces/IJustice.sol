@@ -4,13 +4,13 @@ pragma solidity ^0.8.11;
 interface IJustice {
 
     struct Auction {
+        // Fixed-size array of max 3 members for specifiying splits from sales
+        // 0 = pr1s0nartPayment, 1 = pr1s0nartFund, 2 = creatorAddress
+        uint8[3] saleSplit;
         // address of creator. If they have none, we use pr1s0nartPayment 
         address creator;
         // ID for the Art (ERC721 token ID)
         uint256 tokenId;
-        // Fixed-size array of max 3 members for specifiying splits from sales
-        // 1 = pr1s0nartPayment, 2 = pr1s0nartFund, 3 = creatorAddress
-        uint8[3] saleSplit;
         // The current highest bid amount
         uint256 amount;
         // The time that the auction started
@@ -22,8 +22,6 @@ interface IJustice {
         // Whether or not the auction has been settled
         bool settled;
     }
-
-    event ArtFrozen(address buyer, uint256 indexed tokenId);
 
     event AuctionCreated(uint256 indexed tokenId, uint256 startTime, uint256 endTime);
 
@@ -44,8 +42,6 @@ interface IJustice {
     event AuctionMinBidIncrementPercentageUpdated(uint256 minBidIncrementPercentage);
 
     function settleAuction() external;
-
-    function settleCurrentAuction() external;
 
     function createBid(uint256 tokenId) external payable;
 

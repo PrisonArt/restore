@@ -27,7 +27,7 @@ import { IWETH } from './interfaces/IWETH.sol';
  */
                                                                                                                                                                            
 
-abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
+contract Justice is IJustice, ReentrancyGuard, Ownable {
     // The Restore ERC721 token contract
     IRestore public restore;
 
@@ -48,9 +48,6 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
 
     // The active auction
     IJustice.Auction public auction;
-
-    // The currently frozen token
-    IRestore.FrozenToken public frozenToken;
 
     // The contract that handles sale splits
     address payment;
@@ -109,6 +106,7 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
         address payable lastBidder = _auction.bidder;
 
         // Refund the last bidder, if applicable
+        // TODO: if this fails, and we leave the fallback as is, it is a problem.
         if (lastBidder != address(0)) {
             uint8[3] memory noSplit = [0, 0, 100];
             _safeTransferETHWithFallback(lastBidder, noSplit, _auction.amount);
@@ -196,9 +194,9 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
             uint256 endTime = startTime + duration;
 
             auction = Auction({
+                saleSplit: split,
                 creator: creator,
                 tokenId: tokenId,
-                saleSplit: split,
                 amount: 0,
                 startTime: startTime,
                 endTime: endTime,
@@ -225,7 +223,7 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
         if (_auction.bidder == address(0)) {
             restore.returnToPA(_auction.tokenId, bytes('no buyer'));
         } else {
-            _freeze(_auction.bidder, _auction.tokenId);
+            restore.freeze(_auction.bidder, _auction.tokenId);
         }
 
         if (_auction.amount > 0) {
@@ -233,17 +231,6 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
         }
 
         emit AuctionSettled(_auction.tokenId, _auction.bidder, _auction.amount);
-    }
-
-    /**
-    * @notice called when an auction is settled, sets the frozenToken struct.
-    * @param buyer address of winning bid
-    * @param tokenId index of the NFT bought in the auction
-    */
-    function _freeze(address buyer, uint256 tokenId) internal {
-        frozenToken.tokenId = tokenId;
-        frozenToken.buyer = buyer;
-        emit ArtFrozen(buyer, tokenId);
     }
 
     /**
@@ -274,7 +261,7 @@ abstract contract Justice is IJustice, ReentrancyGuard, Ownable {
         // Pay the split denominated in split[2] to the specified creator address
         uint256 creatorShare = amount * (split[2] / 100 );
         (bool sentCreator, ) = creator.call{value: creatorShare, gas: 30_000 }(new bytes(0));
-        require(sentCreator, "Justice: Failed to send Ether to contract address");
+        require(sentCreator, "Justice: Failed to send Ether to creator address");
         return true;
     }
 
