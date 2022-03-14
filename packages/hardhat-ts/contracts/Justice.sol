@@ -106,7 +106,6 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         address payable lastBidder = _auction.bidder;
 
         // Refund the last bidder, if applicable
-        // TODO: if this fails, and we leave the fallback as is, it is a problem.
         if (lastBidder != address(0)) {
             uint8[3] memory noSplit = [0, 0, 100];
             _safeTransferETHWithFallback(lastBidder, noSplit, _auction.amount);
@@ -235,7 +234,9 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
 
     /**
      * @notice Transfer ETH. If the ETH transfer fails, wrap the ETH and try send it as WETH to pr1s0nart to account for.
-     * TODO: implement proper splits for WETH fallback if possible.
+     * @param creator the address of the creator for payment routing purposes
+     * @param split a fixed sized array of 3 members which carries the split % information required for routing.
+     * @param amount the total amount to be split amongst the three addresses: PA payment, PA fund, and the art creator.
      */
     function _safeTransferETHWithFallback(address creator, uint8[3] memory split, uint256 amount) internal {
         if (!_safeTransferETH(creator, split, amount)) {
@@ -248,8 +249,6 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
 
     /**
      * @notice Transfer ETH and return the success status.
-     * TODO: check that these sends don't run out of gas.
-     *       We will need to seed this contract with ETH.
      */
     function _safeTransferETH(address creator, uint8[3] memory split, uint256 amount) internal returns (bool) {
         // Pay the split denominated in split[0] to the pr1s0nart payment address for LFOs

@@ -44,6 +44,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
 
     /**
      * @dev Link to Contract metadata https://docs.opensea.io/docs/contract-level-metadata
+     * TODO: add contract metadata
     */
     function contractURI() public pure returns (string memory) {
         return "https://arweave.net/";
