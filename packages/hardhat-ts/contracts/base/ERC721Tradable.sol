@@ -23,7 +23,7 @@ contract ProxyRegistry {
     mapping(address => OwnableDelegateProxy) public proxies;
 }
 
-abstract contract ERC721Tradable is
+contract ERC721Tradable is
     ERC721Enumerable,
     ERC721URIStorage,
     ERC721Burnable,

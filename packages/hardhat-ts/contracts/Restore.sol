@@ -2,9 +2,7 @@
 pragma solidity ^0.8.11;
 
 import { ERC721Tradable } from "./base/ERC721Tradable.sol";
-import { ERC721 } from "./base/ERC721.sol";
 import { IRestore } from "./interfaces/IRestore.sol";
-import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 
