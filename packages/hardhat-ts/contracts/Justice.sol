@@ -107,8 +107,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
 
         // Refund the last bidder, if applicable
         if (lastBidder != address(0)) {
-            uint8[3] memory noSplit = [0, 0, 100];
-            _safeTransferETHWithFallback(lastBidder, noSplit, _auction.amount);
+            _safeTransferETHWithFallback(lastBidder, _auction.amount);
         }
 
         auction.amount = msg.value;
@@ -226,45 +225,36 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         }
 
         if (_auction.amount > 0) {
-            _safeTransferETHWithFallback(_auction.creator, _auction.saleSplit, _auction.amount);
+            uint256 LFOShare = _auction.amount * (_auction.saleSplit[0] / 100 );
+            _safeTransferETHWithFallback(payment, LFOShare);
+            uint256 PAShare = _auction.amount  * (_auction.saleSplit[1] / 100 );
+            _safeTransferETHWithFallback(fund, PAShare);
+            // We do this to ensure effectively 100% of the sale proceeds get distributed and to guard against weird % edge cases
+            uint256 creatorShare = _auction.amount - LFOShare - PAShare;
+            _safeTransferETHWithFallback(_auction.creator, creatorShare);
         }
 
         emit AuctionSettled(_auction.tokenId, _auction.bidder, _auction.amount);
     }
 
     /**
-     * @notice Transfer ETH. If the ETH transfer fails, wrap the ETH and try send it as WETH to pr1s0nart to account for.
-     * @param creator the address of the creator for payment routing purposes
-     * @param split a fixed sized array of 3 members which carries the split % information required for routing.
-     * @param amount the total amount to be split amongst the three addresses: PA payment, PA fund, and the art creator.
+     * @notice Transfer ETH. If the ETH transfer fails, wrap the ETH and try send it as WETH.
+     * @param recipient the address of the receiver
+     * @param amount the total amount
      */
-    function _safeTransferETHWithFallback(address creator, uint8[3] memory split, uint256 amount) internal {
-        if (!_safeTransferETH(creator, split, amount)) {
+    function _safeTransferETHWithFallback(address recipient, uint256 amount) internal {
+        if (!_safeTransferETH(recipient, amount)) {
             IWETH(weth).deposit{ value: amount }();
-            IERC20(weth).transfer(payment, amount * (split[0] / 100));
-            IERC20(weth).transfer(fund, amount * (split[1] / 100));
-            IERC20(weth).transfer(creator, amount * (split[2] / 100));
+            IERC20(weth).transfer(recipient, amount);
         }
     }
 
     /**
      * @notice Transfer ETH and return the success status.
      */
-    function _safeTransferETH(address creator, uint8[3] memory split, uint256 amount) internal returns (bool) {
-        // Pay the split denominated in split[0] to the pr1s0nart payment address for LFOs
-        uint256 LFOShare = amount * (split[0] / 100 );
-        (bool sentLFO, ) = payment.call{value: LFOShare, gas: 30_000 }(new bytes(0));
-        // Pay the split denominated in split[1] to the pr1s0nart fund address for operations
-        uint256 PAShare = amount * (split[1] / 100 );
-        (bool sentPA, ) = fund.call{value: PAShare, gas: 30_000}(new bytes(0));
-        // Pay the split denominated in split[2] to the specified creator address
-        uint256 creatorShare = amount * (split[2] / 100 );
-        (bool sentCreator, ) = creator.call{value: creatorShare, gas: 30_000 }(new bytes(0));
-        if (sentLFO && sentPA && sentCreator) {
-            return true;
-        } else {
-            return false;
+    function _safeTransferETH(address recipient, uint256 amount) internal returns (bool) {
+        (bool success, ) = recipient.call{value: amount, gas: 30_000 }(new bytes(0));
+            return success;
         }
-    }
 
 }
