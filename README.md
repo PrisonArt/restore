@@ -24,7 +24,7 @@ This enables us to illuminate restorative stories, both social and financial. Ho
          Buyer               pr1s0n art                   `----+----'              `----+----'
            |                    |        mints new NFT        |                         |     
            |                    |---------------------------->|                         |     
-           |                    |<----------------------------|                         |     
+           |                    |                             |                         |     
            |                    |                             |                         |     
            |                    |        sets up auction      |                         |     
            |                    |------------------------------------------------------>|     
