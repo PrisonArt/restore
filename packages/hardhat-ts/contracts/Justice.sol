@@ -254,7 +254,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      */
     function _safeTransferETH(address recipient, uint256 amount) internal returns (bool) {
         (bool success, ) = recipient.call{value: amount, gas: 30_000 }(new bytes(0));
-            return success;
-        }
+        return success;
+    }
 
 }

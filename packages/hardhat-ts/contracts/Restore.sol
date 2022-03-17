@@ -36,6 +36,9 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     // A mapping of all frozen tokens
     mapping(uint256 => address) buyers;
 
+    // A reference to the Justice contract for security checks
+    address public justice;
+
     constructor(
         address _proxyRegistryAddress
     ) ERC721Tradable('Restore', 'REST', _proxyRegistryAddress) {}
@@ -106,7 +109,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         public
         override
     {
-        require(tx.origin == owner() && msg.sender.code.length > 0, "Restore: unbought auction must be settled by owner via Justice");
+        require(msg.sender == justice, "Restore: unbought auction must be settled by owner via Justice");
         _safeTransfer(address(this), owner(), tokenId, data);
         emit ArtTransferred(owner(), tokenId, data);
     }
@@ -120,9 +123,17 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         public
         override
     {
-        require(tx.origin == owner() && msg.sender.code.length > 0, "Restore: auctioned piece must be frozen by owner via Justice");
+        require(msg.sender == justice, "Restore: auctioned piece must be frozen by owner via Justice");
         buyers[tokenId] = buyer;
         emit ArtFrozen(buyer, tokenId);
+    }
+
+    /**
+     * @notice called by the owner to make sure the checks in freeze and transferToBuyer pass correctly
+     * @param _justice the address of the justice contract
+     */
+    function setJustice(address _justice) public onlyOwner {
+        justice =_justice;
     }
 
 }
