@@ -11,7 +11,7 @@ import "hardhat-deploy";
 import 'hardhat-deploy-ethers';
 
 import './tasks/operations/accounts';
-import './tasks/operations/mint-token';
+import './tasks/operations/mint-createauction';
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
 const MAINNET_DEPLOYER_PRIVATE_KEY =
