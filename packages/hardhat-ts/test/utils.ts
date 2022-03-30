@@ -10,18 +10,24 @@ import {
 
 export type TestSigners = {
   deployer: SignerWithAddress;
-  pr1s0nArt: SignerWithAddress;
+  pr1s0nart: SignerWithAddress;
+  payment: SignerWithAddress;
+  fund: SignerWithAddress;
   bidderA: SignerWithAddress;
   bidderB: SignerWithAddress;
+  other: SignerWithAddress;
 };
 
 export const getSigners = async (): Promise<TestSigners> => {
-  const [deployer, pr1s0nArt, bidderA, bidderB] = await ethers.getSigners();
+  const [deployer, pr1s0nart, payment, fund, bidderA, bidderB, other] = await ethers.getSigners();
   return {
     deployer,
-    pr1s0nArt,
+    pr1s0nart,
+    payment,
+    fund,
     bidderA,
     bidderB,
+    other
   };
 };
 

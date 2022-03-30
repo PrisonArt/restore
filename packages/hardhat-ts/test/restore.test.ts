@@ -8,7 +8,7 @@ const { expect } = chai;
 
 let restore: Restore;
 let deployer: SignerWithAddress;
-let alice: SignerWithAddress;
+let other: SignerWithAddress;
 let payment: SignerWithAddress;
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -20,7 +20,7 @@ const DURATION = 60 * 60 * 24;
 
 describe("Restore", function () {
   beforeEach(async function () {
-    [deployer, alice, payment] = await ethers.getSigners();
+    [deployer,,payment,,,,other, ] = await ethers.getSigners();
     restore = await deployRestore(deployer);
     expect(restore.address).to.properAddress;
   });
@@ -49,7 +49,7 @@ describe("Restore", function () {
     it("other accounts cannot mint tokens", async () => {
       const tokenURI = "https://eth.iwahi.com/2d3a";
       await expect(
-        restore.connect(alice).mintForAuction(alice.address, tokenURI)
+        restore.connect(other).mintForAuction(other.address, tokenURI)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
@@ -106,7 +106,7 @@ describe("Restore", function () {
 
     it("throws if someone other than the owner tries to set royalties", async() => {
       await expect(
-        restore.connect(alice).setRoyalties(payment.address, royalty)
+        restore.connect(other).setRoyalties(payment.address, royalty)
       ).to.be.revertedWith("Ownable: caller is not the owner");
     })
 
