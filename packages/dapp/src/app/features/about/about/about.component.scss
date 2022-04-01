@@ -1,0 +1,133 @@
+@import '../../../../styles-variables';
+
+h1 {
+  text-align: center;
+  font-size: 3em;
+  text-transform: uppercase;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.5em;
+  text-transform: uppercase;
+}
+
+p {
+  text-align: center;
+}
+
+.background {
+  padding: 80px 0 0 0;
+  position: relative;
+
+  .actions {
+    text-align: center;
+    margin: 50px;
+    z-index: 1;
+
+    span {
+      display: inline-block;
+      font-weight: bold;
+      padding: 20px 10px 30px 10px;
+    }
+
+    a {
+      margin: 0 5px 10px 0;
+
+      &.actions-main {
+        text-transform: uppercase;
+        padding: 3px 24px;
+      }
+
+      fa-icon {
+        position: relative;
+        bottom: 1px;
+      }
+    }
+  }
+
+  .get-started {
+    max-width: 700px;
+    margin: 50px auto;
+    letter-spacing: 0.01px;
+    overflow-wrap: break-word;
+    z-index: 1;
+    overflow: hidden;
+
+
+
+    code {
+      font-size: 0.9em;
+      display: inline-block;
+      word-wrap: break-word;
+      white-space: normal;
+      margin: 0 0 10px 0;
+    }
+  }
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.7;
+    content: '';
+    z-index: 0;
+  }
+
+  .gradient {
+    &::before {
+      position: absolute;
+      top: 51%;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      content: '';
+      z-index: 0;
+    }
+  }
+
+  .container {
+    position: relative;
+  }
+}
+
+@media (max-width: map-get($grid-breakpoints, md)) {
+  .background {
+    .actions {
+      margin: 50px 0;
+    }
+    .get-started {
+      width: auto;
+    }
+  }
+}
+
+@media (max-width: map-get($grid-breakpoints, sm)) {
+  .background {
+    padding: 40px 0 0 0;
+
+    h1 {
+      line-height: 1em;
+    }
+
+    .actions {
+      margin: 40px 0 0 0;
+
+      span {
+        padding: 10px 0 20px 0;
+      }
+
+      a {
+        width: 100%;
+      }
+    }
+
+    .get-started {
+      width: auto;
+      margin: 40px auto 40px auto;
+    }
+  }
+
+}
