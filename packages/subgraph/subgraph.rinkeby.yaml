@@ -1,0 +1,66 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Justice
+    network: rinkeby
+    source:
+      address: "0x3D22C4aC0dcc7a043a22ED7F245259648BC0b16c"
+      abi: Justice
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - NFT
+        - Auction
+        - Bid
+        - Account
+      abis:
+        - name: Justice
+          file: ../../packages/hardhat-ts/deployments/rinkeby/Justice.json
+      eventHandlers:
+        - event: AuctionBid(indexed uint256,address,uint256,bool)
+          handler: handleAuctionBid
+        - event: AuctionCreated(indexed uint256,uint256,uint256)
+          handler: handleAuctionCreated
+        - event: AuctionExtended(indexed uint256,uint256)
+          handler: handleAuctionExtended
+        - event: AuctionSettled(indexed uint256,address,uint256)
+          handler: handleAuctionSettled
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/justice-mapping.ts
+  - kind: ethereum
+    name: Restore
+    network: rinkeby
+    source:
+      address: "0x9e3647eF0F85402110f9A54f99B32a00B66a4Fca"
+      abi: Restore
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - NFT
+        - Account
+      abis:
+        - name: Restore
+          file: ../../packages/hardhat-ts/deployments/rinkeby/Restore.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: ArtFrozen(address,indexed uint256)
+          handler: handleArtFrozen
+        - event: ArtTransferred(address,indexed uint256,bytes)
+          handler: handleArtTransferred
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: ReadyForAuction(uint256,string)
+          handler: handleReadyForAuction
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/restore-mapping.ts
