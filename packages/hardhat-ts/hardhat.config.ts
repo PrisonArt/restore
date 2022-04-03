@@ -1,52 +1,54 @@
-import { config as dotEnvConfig } from "dotenv";
+import { config as dotEnvConfig } from 'dotenv';
 dotEnvConfig();
 
-import { HardhatUserConfig, HttpNetworkHDAccountsConfig } from "hardhat/types";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-solhint";
+import { HardhatUserConfig, HttpNetworkHDAccountsConfig } from 'hardhat/types';
+import '@nomiclabs/hardhat-waffle';
+import '@nomiclabs/hardhat-solhint';
 import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
-import "solidity-coverage";
-import "hardhat-deploy";
+import 'solidity-coverage';
+import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 
 import './tasks/operations/accounts';
 import './tasks/operations/mint-createauction';
+import './tasks/operations/bid';
+import './tasks/operations/settle-buyertx';
 
-const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
+const INFURA_API_KEY = process.env.INFURA_API_KEY || '';
 const MAINNET_DEPLOYER_PRIVATE_KEY =
     process.env.MAINNET_DEPLOYER_PRIVATE_KEY ||
-    "";
+    '';
 const RINKEBY_DEPLOYER_PRIVATE_KEY =
     process.env.RINKEBY_DEPLOYER_PRIVATE_KEY ||
-    "";
+    '';
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
 const accounts: HttpNetworkHDAccountsConfig = {
-    mnemonic: "test test test test test test test test test test test junk",
+    mnemonic: 'test test test test test test test test test test test junk',
     path: "m/44'/60'/0'/0",
     initialIndex: 0,
     count: 10,
-    passphrase: ""
+    passphrase: ''
 };
 
 const config: HardhatUserConfig = {
     solidity: {
-        compilers: [{ version: "0.8.11", settings: {} }],
+        compilers: [{ version: '0.8.11', settings: {} }],
     },
     paths: {
         sources: 'contracts',
     },
     namedAccounts: {
         deployer: 0,
-        pr1s0nart: 1, //creator
+        pr1s0nart: 1, // creator
         payment: 2,
         fund: 3,
         bidderA: 4,
         bidderB: 5,
         other: 6
     },
-    defaultNetwork: "hardhat",
+    defaultNetwork: 'hardhat',
     networks: {
         hardhat: {
             chainId: 1337,
@@ -55,11 +57,11 @@ const config: HardhatUserConfig = {
               interval: 10000
             },
             allowUnlimitedContractSize: true,
-            initialBaseFeePerGas: 0, //https://github.com/sc-forks/solidity-coverage/issues/652,
+            initialBaseFeePerGas: 0, // https://github.com/sc-forks/solidity-coverage/issues/652,
             accounts: accounts
         },
         localhost: {
-            url: "http://localhost:8545",
+            url: 'http://localhost:8545',
             accounts: accounts,
         },
         rinkeby: {
@@ -73,7 +75,7 @@ const config: HardhatUserConfig = {
     },
     gasReporter: {
         enabled: process.env.REPORT_GAS ? true : false,
-        currency: "USD",
+        currency: 'USD',
     },
     typechain: {
         outDir: 'typechain',

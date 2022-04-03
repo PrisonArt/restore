@@ -25,6 +25,7 @@
     "hardhat:deployrinkeby": "pnpm --filter hardhat-ts deployrinkeby",
     "hardhat:deploymainnet": "pnpm --filter hardhat-ts deploymainnet",
     "hardhat:accounts": "pnpm --filter hardhat-ts accounts",
-    "hardhat:check": "pnpm --filter hardhat-ts checksol"
+    "hardhat:check": "pnpm --filter hardhat-ts checksol",
+    "hardhat:lint": "pnpm --filter hardhat-ts lint"
   }
 }

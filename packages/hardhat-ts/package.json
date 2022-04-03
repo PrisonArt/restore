@@ -11,7 +11,8 @@
     "test": "pnpx hardhat test",
     "coverage": "pnpx hardhat coverage",
     "accounts": "pnpx hardhat accounts",
-    "checksol": "pnpx hardhat check"
+    "checksol": "pnpx hardhat check",
+    "lint": "eslint --color -c .eslintrc --ext .ts ."
   },
   "license": "MIT",
   "devDependencies": {

@@ -1,5 +1,5 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction } from "hardhat-deploy/types";
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
 
 const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
@@ -36,7 +36,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const restore = await get('Restore');
   const weth = await get('WETH');
   
-  await deploy("Justice", {
+  await deploy('Justice', {
     from: deployer,
     // gas: 4000000,
     args: [
@@ -50,7 +50,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
       DURATION],
   });
 
-  console.log("deployed Justice");
+  console.log('deployed Justice');
 };
 export default func;
 func.runAtTheEnd = true;

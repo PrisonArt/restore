@@ -5,7 +5,7 @@ import { IERC721 } from '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 
 interface IRestore is IERC721 {
 
-    event ReadyForAuction(uint256 tokenId, string uri);
+    event ReadyForAuction(address to, uint256 tokenId, string uri);
 
     event ArtFrozen(address buyer, uint256 indexed tokenId);
 
