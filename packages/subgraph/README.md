@@ -32,15 +32,25 @@ sudo -u postgres psql
 create database "graph-node";
 ```
 
+## Clone the graph-node repo
+
+```bash
+git clone https://github.com/graphprotocol/graph-node
+```
+
 ## Run The Graph on localhost
 
 ### Start the local node
+
+Start HTTP and WebSocket JSON-RPC server at <http://127.0.0.1:8545/>
 
 ```bash
 pnpm hardhat:localnode
 ```
 
 ### Start the IPFS server
+
+Start IPFS on <http://127.0.0.1:5001>
 
 ```bash
 ipfs daemon
