@@ -29,6 +29,7 @@ ipfs init
 ```bash
 sudo systemctl start postgresql@12-main
 sudo -u postgres psql
+drop database "graph-node";
 create database "graph-node";
 ```
 
@@ -73,6 +74,7 @@ cargo run -p graph-node --release -- --postgres-url postgresql://postgres:passwo
 
 ```bash
 cd packages/subgraph
+pnpm create-local
 pnpm deploy:local
 ```
 
@@ -80,7 +82,38 @@ pnpm deploy:local
 
 <http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost/graphql>
 
+```
+query MyQuery {
+  auctions {
+    id
+    startTime
+    endTime
+    settled
+    amount
+    saleSplit
+    bidder {
+      id
+    }
+    bids {
+      id
+      amount
+      blockNumber
+      bidder {
+        id
+      }
+    }
+    nft {
+      owner {
+        id
+      }
+      data
+      isFrozen
+    }
+  }
+}
+```
 
 ## TODO
 
 * Map all the events in  `src/justice-mapping.ts` and `src/restore-mapping.ts`
+

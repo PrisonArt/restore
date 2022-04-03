@@ -1636,6 +1636,12 @@
               "inputs": [
                 {
                   "indexed": false,
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
                   "internalType": "uint256",
                   "name": "tokenId",
                   "type": "uint256"

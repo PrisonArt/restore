@@ -2,6 +2,18 @@ type NFT @entity {
   "The NFT's ERC721 token id"
   id: ID!
 
+  "The NFT's data"
+  data: Bytes!
+
+  "NFT is frozen waiting for a receipt to be added."
+  isFrozen: Boolean!
+
+  "The NFT's metadata URI"
+  metadataURI: String!
+
+  "The time that the NFT was created"
+  createdAtTimestamp: BigInt!
+
   "The owner of the NFT"
   owner: Account!
 }
@@ -36,6 +48,12 @@ type Auction @entity {
   "The NFT's ERC721 token id"
   id: ID!
 
+  "The saleSplit"
+  saleSplit: [Int!]!
+
+  "address of creator"
+  creator: Account
+
   "The NFT"
   nft: NFT!
 
@@ -63,5 +81,5 @@ type Account @entity {
   id: ID!
 
   "The NFTs owned by this account"
-  nft: [NFT!]!
+  nfts: [NFT!]! @derivedFrom(field: "owner")
 }

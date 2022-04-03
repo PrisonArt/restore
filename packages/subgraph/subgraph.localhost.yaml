@@ -59,7 +59,7 @@ dataSources:
           handler: handleArtTransferred
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event: ReadyForAuction(uint256,string)
+        - event: ReadyForAuction(address,uint256,string)
           handler: handleReadyForAuction
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
