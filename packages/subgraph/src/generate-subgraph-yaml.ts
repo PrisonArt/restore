@@ -4,8 +4,6 @@ import Mustache from 'mustache';
 
 fs.readFile('./subgraph.yaml.mustache', async function(err, data) {
 
-    console.log(data);
-
     const chainIds = Object.keys(networkMapping);
 
     for (const chainId of chainIds) {
