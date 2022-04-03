@@ -82,7 +82,7 @@ pnpm deploy:local
 
 <http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost/graphql>
 
-```
+```graphql
 query MyQuery {
   auctions {
     id
