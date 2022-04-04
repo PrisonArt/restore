@@ -46,6 +46,7 @@ export function handleArtTransferred(event: ArtTransferred): void {
   }
   nft.data = data;
   nft.owner = buyerAccount.id;
+  nft.isFrozen = false;
   nft.save();
 
   buyerAccount.save();

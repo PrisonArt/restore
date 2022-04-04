@@ -74,7 +74,7 @@ cargo run -p graph-node --release -- --postgres-url postgresql://postgres:passwo
 
 ```bash
 cd packages/subgraph
-pnpm create-local
+pnpm create:local
 pnpm deploy:local
 ```
 
@@ -91,6 +91,9 @@ query MyQuery {
     settled
     amount
     saleSplit
+    winner {
+      id
+    }
     bidder {
       id
     }
@@ -108,6 +111,9 @@ query MyQuery {
       }
       data
       isFrozen
+    }
+    creator {
+      id
     }
   }
 }

@@ -6,8 +6,10 @@ import {
   AuctionSettled,
   OwnershipTransferred,
 } from '../generated/Justice/Justice'
-import { Auction, NFT, Bid } from '../generated/schema'
+import { Account, Auction, NFT, Bid } from '../generated/schema'
 import { getOrCreateAccount } from './utils/helpers';
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export function handleAuctionBid(event: AuctionBid): void {
   const tokenId = event.params.tokenId.toString();
@@ -40,9 +42,11 @@ export function handleAuctionBid(event: AuctionBid): void {
   bid.save();
 }
 
-// TODO: Add saleSplit
 export function handleAuctionCreated(event: AuctionCreated): void {
   const tokenId = event.params.tokenId.toString();
+  const saleSplit = event.params.saleSplit;
+  const creatorAddress = event.params.creator.toHex();
+  const creator = getOrCreateAccount(creatorAddress);
 
   const nft = NFT.load(tokenId);
   if (nft == null) {
@@ -56,6 +60,8 @@ export function handleAuctionCreated(event: AuctionCreated): void {
   const auction = new Auction(tokenId);
   auction.nft = nft.id;
   auction.amount = BigInt.fromI32(0);
+  auction.saleSplit = saleSplit;
+  auction.creator = creator.id;
   auction.startTime = event.params.startTime;
   auction.endTime = event.params.endTime;
   auction.settled = false;
@@ -78,9 +84,12 @@ export function handleAuctionExtended(event: AuctionExtended): void {
   auction.save();
 }
 
-// TODO: update isFrozen
 export function handleAuctionSettled(event: AuctionSettled): void {
   const tokenId = event.params.tokenId.toString();
+  const winnerAddress = event.params.winner.toHex();
+  const amount = event.params.amount;
+
+  const winner: Account = getOrCreateAccount(winnerAddress);
 
   const auction = Auction.load(tokenId);
   if (auction == null) {
@@ -91,8 +100,32 @@ export function handleAuctionSettled(event: AuctionSettled): void {
     return;
   }
 
-  auction.settled = true;
+  let nftIsFrozen = true;
+  if (winner.id == ZERO_ADDRESS) {
+    nftIsFrozen = false;
+  }
+
+  auction.winner = winner.id;
+  auction.amount = amount;
+  auction.settled = true; // auction is settled whether or not there was a winner
   auction.save();
+
+  log.error('[handleAuctionSettled] tokenId #{} winner: {} amoutn: {}', [
+    tokenId,
+    winner.id,
+    amount.toString()
+  ]);
+
+  const nft = NFT.load(tokenId);
+  if (nft == null) {
+    log.error('[handleAuctionSettled] NFT #{} not found. Hash: {}', [
+      tokenId,
+      event.transaction.hash.toHex(),
+    ]);
+    return;
+  }
+  nft.isFrozen = nftIsFrozen;
+  nft.save();
 }
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}

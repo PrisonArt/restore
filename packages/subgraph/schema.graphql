@@ -69,6 +69,9 @@ type Auction @entity {
   "The account with the current highest bid"
   bidder: Account
 
+  "The account that won the auction"
+  winner: Account
+
   "Whether or not the auction has been settled"
   settled: Boolean!
 
