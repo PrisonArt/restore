@@ -9,3 +9,6 @@ cache
 artifacts
 
 solcInputs
+
+#local deployments
+deployments/localhost/*
