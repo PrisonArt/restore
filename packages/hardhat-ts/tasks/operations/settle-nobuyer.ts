@@ -1,9 +1,9 @@
 import { task, types } from 'hardhat/config';
 import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers';
 import { Restore, Justice } from '../../typechain';
-import { TASK_SETTLE_BUYERTX } from '../task-names';
-// hh settle-buyertx --network localhost|rinkeby|mainnet --token-id 0
-task(TASK_SETTLE_BUYERTX, 'Settles the Auction, and transfers the token to the buyer')
+import { TASK_SETTLE_NOBUYER } from '../task-names';
+// hh settle-nobuyer --network localhost|rinkeby|mainnet --token-id 0
+task(TASK_SETTLE_NOBUYER, 'Settles an Auction with no buyer')
   .addParam('tokenId', 'tokenId', null, types.int)
   .setAction(async ({ tokenId, amount }, hre) => {
 
@@ -29,12 +29,6 @@ task(TASK_SETTLE_BUYERTX, 'Settles the Auction, and transfers the token to the b
 
     // wait for the transaction to be mined
     const createBidReceipt: ContractReceipt = await createBidTx.wait();
-
-    const text = 'LFO paid in full';
-    const data = ethers.utils.formatBytes32String(text);
-  
-    const transferToBuyerTx: ContractTransaction = await
-      restoreContract.connect(deployer).transferToBuyer(tokenId, data);
 
     process.exit(0)
   });

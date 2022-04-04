@@ -11,9 +11,11 @@ import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 
 import './tasks/operations/accounts';
+import './tasks/operations/set-justice';
 import './tasks/operations/mint-createauction';
 import './tasks/operations/bid';
 import './tasks/operations/settle-buyertx';
+import './tasks/operations/settle-nobuyer';
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY || '';
 const MAINNET_DEPLOYER_PRIVATE_KEY =

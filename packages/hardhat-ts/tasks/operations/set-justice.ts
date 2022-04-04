@@ -1,11 +1,10 @@
 import { task, types } from 'hardhat/config';
 import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers';
 import { Restore, Justice } from '../../typechain';
-import { TASK_SETTLE_BUYERTX } from '../task-names';
-// hh settle-buyertx --network localhost|rinkeby|mainnet --token-id 0
-task(TASK_SETTLE_BUYERTX, 'Settles the Auction, and transfers the token to the buyer')
-  .addParam('tokenId', 'tokenId', null, types.int)
-  .setAction(async ({ tokenId, amount }, hre) => {
+import { TASK_SET_JUSTICE } from '../task-names';
+// hh set-justice --network localhost|rinkeby|mainnet
+task(TASK_SET_JUSTICE, 'Sets the Justice contract')
+  .setAction(async ({ }, hre) => {
 
     const { deployments, ethers } = hre;
 
@@ -24,17 +23,11 @@ task(TASK_SETTLE_BUYERTX, 'Settles the Auction, and transfers the token to the b
     const restoreContract: Restore = new hre.ethers.Contract(restoreDeployment.address, restoreDeployment.abi, deployer) as Restore;
     const justiceContract: Justice = new hre.ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
 
-    const createBidTx: ContractTransaction = await justiceContract.connect(deployer)
-      .settleAuction();
+    const setJusticeTx: ContractTransaction = await restoreContract.connect(deployer)
+      .setJustice(justiceContract.address);
 
-    // wait for the transaction to be mined
-    const createBidReceipt: ContractReceipt = await createBidTx.wait();
-
-    const text = 'LFO paid in full';
-    const data = ethers.utils.formatBytes32String(text);
-  
-    const transferToBuyerTx: ContractTransaction = await
-      restoreContract.connect(deployer).transferToBuyer(tokenId, data);
+    const setJusticeReceipt: ContractReceipt = await setJusticeTx.wait();
+    console.log('justice set:', setJusticeReceipt);
 
     process.exit(0)
   });
