@@ -1806,6 +1806,19 @@
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "justice",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "address",
@@ -2027,6 +2040,19 @@
                 }
               ],
               "name": "setApprovalForAll",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_justice",
+                  "type": "address"
+                }
+              ],
+              "name": "setJustice",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -2593,6 +2619,18 @@
                   "internalType": "uint256",
                   "name": "tokenId",
                   "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8[3]",
+                  "name": "saleSplit",
+                  "type": "uint8[3]"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
                 },
                 {
                   "indexed": false,

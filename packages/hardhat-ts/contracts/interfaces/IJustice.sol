@@ -23,7 +23,7 @@ interface IJustice {
         bool settled;
     }
 
-    event AuctionCreated(uint256 indexed tokenId, uint256 startTime, uint256 endTime);
+    event AuctionCreated(uint256 indexed tokenId, uint8[3] saleSplit, address creator, uint256 startTime, uint256 endTime);
 
     event AuctionBid(uint256 indexed tokenId, address sender, uint256 value, bool extended);
 

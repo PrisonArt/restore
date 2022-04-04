@@ -202,7 +202,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
                 settled: false
             });
 
-            emit AuctionCreated(tokenId, startTime, endTime);
+            emit AuctionCreated(tokenId, split, creator, startTime, endTime);
     }
 
     /**
