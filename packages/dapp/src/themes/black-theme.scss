@@ -1,0 +1,11 @@
+@use '~@angular/material' as mat;
+
+$pr1s0nart-black-primary: mat.define-palette(mat.$grey-palette, 700, 300, 900);
+$pr1s0nart-black-accent: mat.define-palette(mat.$blue-grey-palette, 400);
+$pr1s0nart-black-warn: mat.define-palette(mat.$red-palette, 500);
+
+$pr1s0nart-black-theme: mat.define-dark-theme(
+  $pr1s0nart-black-primary,
+  $pr1s0nart-black-accent,
+  $pr1s0nart-black-warn
+);

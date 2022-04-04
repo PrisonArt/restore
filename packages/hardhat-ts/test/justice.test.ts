@@ -48,7 +48,6 @@ describe('Justice', () => {
 
   before(async () => {
     [deployer, pr1s0nart, payment, fund, bidderA, bidderB] = await ethers.getSigners();
-
     restore = await deployRestore(deployer);
     weth = await deployWeth(deployer);
     justice = await deployJustice(payment, fund, deployer);
@@ -72,7 +71,7 @@ describe('Justice', () => {
     const fund = ethers.BigNumber.from(10);
     const creator = ethers.BigNumber.from(20);
 
-    const split = [payment, fund, creator]
+    const split = [payment, fund, creator];
 
     await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 

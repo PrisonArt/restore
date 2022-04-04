@@ -1,0 +1,85 @@
+type NFT @entity {
+  "The NFT's ERC721 token id"
+  id: ID!
+
+  "The NFT's data"
+  data: Bytes!
+
+  "NFT is frozen waiting for a receipt to be added."
+  isFrozen: Boolean!
+
+  "The NFT's metadata URI"
+  metadataURI: String!
+
+  "The time that the NFT was created"
+  createdAtTimestamp: BigInt!
+
+  "The owner of the NFT"
+  owner: Account!
+}
+
+type Bid @entity {
+  "Bid transaction hash"
+  id: ID!
+
+  "The NFT being bid on"
+  nft: NFT!
+
+  "Bid amount"
+  amount: BigInt!
+
+  "Bidder account"
+  bidder: Account
+
+  "Block number of the bid"
+  blockNumber: BigInt!
+
+  "Index of transaction within block"
+  txIndex: BigInt!
+
+  "The auction being bid in"
+  auction: Auction!
+
+  "The timestamp of the block the bid is in"
+  blockTimestamp: BigInt!
+}
+
+type Auction @entity {
+  "The NFT's ERC721 token id"
+  id: ID!
+
+  "The saleSplit"
+  saleSplit: [Int!]!
+
+  "address of creator"
+  creator: Account
+
+  "The NFT"
+  nft: NFT!
+
+  "The current highest bid amount"
+  amount: BigInt!
+
+  "The time that the auction started"
+  startTime: BigInt!
+
+  "The time that the auction is scheduled to end"
+  endTime: BigInt!
+
+  "The account with the current highest bid"
+  bidder: Account
+
+  "Whether or not the auction has been settled"
+  settled: Boolean!
+
+  "The auction bids"
+  bids: [Bid!]! @derivedFrom(field: "auction")
+}
+
+type Account @entity {
+  "An Account is any address that holds any amount of NFTs, the id used is the blockchain address."
+  id: ID!
+
+  "The NFTs owned by this account"
+  nfts: [NFT!]! @derivedFrom(field: "owner")
+}

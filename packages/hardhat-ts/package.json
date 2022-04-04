@@ -4,14 +4,15 @@
   "scripts": {
     "clean": "pnpx hardhat clean",
     "compile": "pnpx hardhat compile",
-    "deployrinkeby": "pnpx hardhat deploy --network rinkeby --export-all ../dapp/src/deployments.json",
-    "deploymainnet": "pnpx hardhat deploy --network mainnet --export-all ../dapp/src/deployments.json",
-    "localnode": "pnpx hardhat node --export-all ../dapp/src/deployments.json",
+    "deployrinkeby": "pnpx hardhat deploy --network rinkeby --export-all ../dapp/src/deployments.json,../subgraph/config/deployments.json",
+    "deploymainnet": "pnpx hardhat deploy --network mainnet --export-all ../dapp/src/deployments.json,../subgraph/config/deployments.json",
+    "localnode": "pnpx hardhat node --export-all ../dapp/src/deployments.json,../subgraph/config/deployments.json",
     "watch": "pnpx hardhat node --watch --export-all ../dapp/src/deployments.json",
     "test": "pnpx hardhat test",
     "coverage": "pnpx hardhat coverage",
     "accounts": "pnpx hardhat accounts",
-    "checksol": "pnpx hardhat check"
+    "checksol": "pnpx hardhat check",
+    "lint": "eslint --color -c .eslintrc --ext .ts ."
   },
   "license": "MIT",
   "devDependencies": {

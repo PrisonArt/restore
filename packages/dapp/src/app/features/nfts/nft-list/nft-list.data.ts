@@ -1,0 +1,77 @@
+import { NFT, Attribute } from '../nft.interface';
+
+export const nfts: NFT[] = [
+  {
+    id: 0,
+    name: 'NFT #0',
+    tokenId: '2',
+    description: 'A mysterious hacker with luminous skin and hair',
+    checkpoint: '447000',
+    cpAncestor: '860',
+    imageHash: 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY',
+    metadataHash: '8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM',
+    mods: ['Nano'],
+    callings: ['Hacker'],
+    hybrids: ['Animal'],
+    attributes: ['Metamodernist', 'Visionary']
+  },
+  {
+    id: 1,
+    name: 'NFT #1',
+    tokenId: '2',
+    description: 'A mysterious hacker with luminous skin and hair',
+    checkpoint: '447000',
+    cpAncestor: '860',
+    imageHash: 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY',
+    metadataHash: '8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM',
+    mods: ['Nano'],
+    attributes: ['Metamodernist', 'Visionary']
+  },
+  {
+    id: 2,
+    name: 'NFT #2',
+    tokenId: '2',
+    description: 'A mysterious hacker with luminous skin and hair',
+    checkpoint: '447000',
+    cpAncestor: '860',
+    imageHash: 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY',
+    metadataHash: '8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM',
+  },
+  {
+    id: 3,
+    name: 'NFT #3',
+    tokenId: '2',
+    description: 'A mysterious hacker with luminous skin and hair',
+    checkpoint: '447000',
+    cpAncestor: '860',
+    imageHash: 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY',
+    metadataHash: '8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM',
+   callings: ['Hacker'],
+  },
+  {
+    id: 4,
+    name: 'NFT #4',
+    tokenId: '2',
+    description: 'A mysterious hacker with luminous skin and hair',
+    checkpoint: '447000',
+    cpAncestor: '860',
+    imageHash: 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY',
+    metadataHash: '8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM',
+    mods: ['Nano'],
+    hybrids: ['Animal'],
+    attributes: ['Metamodernist', 'Visionary']
+  },
+  {
+    id: 5,
+    name: 'NFT #5',
+    tokenId: '2',
+    description: 'A mysterious hacker with luminous skin and hair',
+    checkpoint: '447000',
+    cpAncestor: '860',
+    imageHash: 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY',
+    metadataHash: '8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM',
+    mods: ['Nano'],
+    hybrids: ['Animal'],
+    attributes: ['Metamodernist', 'Visionary']
+  },
+];

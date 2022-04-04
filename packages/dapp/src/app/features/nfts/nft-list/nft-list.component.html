@@ -1,0 +1,39 @@
+<div class="container">
+  <mat-form-field appearance="standard">
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. #5 or Metamod" #input>
+  </mat-form-field>
+  <div class="row">
+    <div *ngFor="let np of nps | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>
+            {{np.name}}
+          </mat-card-title>
+          <mat-card-subtitle rtl>
+            {{np.description}}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image src={{baseArweaveURL}}{{np.imageHash}} alt={{np.name}}>
+        <mat-card-content>
+          <div *ngFor="let attr of np.attributes" [ngClass]="routeAnimationsElements">
+            <span><code><b>{{attr.trait_type}}:</b> {{attr.value}}</code></span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <a mat-raised-button color="accent" routerLink="{{np.id}}">
+            <fa-icon icon="rocket"></fa-icon>Detail
+          </a>
+          <a *ngIf="np.tokenId" mat-raised-button color="accent" href={{baseOpenseaUrl}}{{np.tokenId}} rel="noopener noreferrer"
+            target="_blank">
+            <fa-icon icon="water"></fa-icon>OpenSea
+          </a>
+
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+  <div style=float:left;>
+    <mat-paginator [pageSizeOptions]="[3, 6, 9, 12]"></mat-paginator>
+  </div>
+</div>

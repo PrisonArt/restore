@@ -81,7 +81,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         _setTokenURI(newTokenId, uri);
         _tokenIdCounter.increment();
 
-        emit ReadyForAuction(newTokenId, uri);
+        emit ReadyForAuction(address(this), newTokenId, uri);
 
         return(newTokenId);
     }

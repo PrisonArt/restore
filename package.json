@@ -3,20 +3,19 @@
   "version": "1.0.1",
   "keywords": [
     "ethereum",
-    "react"
+    "angular",
+    "hardhat"
   ],
   "private": true,
   "scripts": {
-    "dapp:dev": "pnpm --filter dapp dev",
-    "dapp:dev-testnet": "pnpm --filter dapp dev-testnet",
-    "dapp:dev-mainnet": "pnpm --filter dapp dev-mainnet",
-    "dapp:build": "pnpm --filter dapp build",    
+    "dapp:ng": "pnpm --filter dapp ng",
     "dapp:start": "pnpm --filter dapp start",
+    "dapp:build": "pnpm --filter dapp build",    
+    "dapp:buildprod": "pnpm --filter dapp build:prod",
     "dapp:test": "pnpm --filter dapp test",
     "dapp:lint": "pnpm --filter dapp lint",
-    "dapp:format": "pnpm --filter dapp format",
-    "dapp:check": "pnpm --filter dapp checkformat",
-    "dapp:type-check": "pnpm --filter dapp type-check",
+    "dapp:watch": "pnpm --filter dapp watch",
+    "dapp:e2e": "pnpm --filter dapp e2e",
     "hardhat:clean": "pnpm --filter hardhat-ts clean",
     "hardhat:compile": "pnpm --filter hardhat-ts compile",
     "hardhat:watch": "pnpm --filter hardhat-ts watch",
@@ -26,6 +25,7 @@
     "hardhat:deployrinkeby": "pnpm --filter hardhat-ts deployrinkeby",
     "hardhat:deploymainnet": "pnpm --filter hardhat-ts deploymainnet",
     "hardhat:accounts": "pnpm --filter hardhat-ts accounts",
-    "hardhat:check": "pnpm --filter hardhat-ts checksol"
+    "hardhat:check": "pnpm --filter hardhat-ts checksol",
+    "hardhat:lint": "pnpm --filter hardhat-ts lint"
   }
 }

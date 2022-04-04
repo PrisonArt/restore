@@ -1,0 +1,7 @@
+@use '~@angular/material' as mat;
+
+$pr1s0nart-primary: mat.define-palette(mat.$indigo-palette, 800, 300, 900);
+$pr1s0nart-accent: mat.define-palette(mat.$light-blue-palette);
+$pr1s0nart-warn: mat.define-palette(mat.$pink-palette, 600);
+
+$pr1s0nart-theme: mat.define-light-theme($pr1s0nart-primary, $pr1s0nart-accent, $pr1s0nart-warn);
