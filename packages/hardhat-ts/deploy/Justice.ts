@@ -1,16 +1,18 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
+import { ContractReceipt, ContractTransaction } from 'ethers';
+import { Restore } from '../typechain';
+
 
 const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
-  const { deployments, getNamedAccounts } = hre;
+  const { deployments, getNamedAccounts, ethers } = hre;
   const { deploy, get } = deployments;
 
-  let deployer = '';
   let payment = '';
   let fund = '';
-
   const namedAccounts = await getNamedAccounts();
-  deployer = namedAccounts.deployer;
+  
+  const [ deployer ] = await ethers.getSigners();
 
   if (hre.network.name === 'hardhat') {
     payment = namedAccounts.payment;
@@ -33,15 +35,15 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const MIN_INCREMENT_BID_PERCENTAGE = 5;
   const DURATION = 60 * 60 * 24;
 
-  const restore = await get('Restore');
-  const weth = await get('WETH');
+  const restoreDeployment = await get('Restore');
+  const wethDeployment = await get('WETH');
   
-  await deploy('Justice', {
-    from: deployer,
+  const deployResult = await deploy('Justice', {
+    from: deployer.address,
     // gas: 4000000,
     args: [
-      restore.address,
-      weth.address,
+      restoreDeployment.address,
+      wethDeployment.address,
       payment,
       fund,
       TIME_BUFFER,
@@ -50,7 +52,25 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
       DURATION],
   });
 
-  console.log('deployed Justice');
+  // get address from the deployed justice contract
+  const justiceAddress = deployResult.address;
+  console.log('justice contract address:', justiceAddress);
+
+  // get contract instance from the deployed restore contract
+  console.log(`restore contract address: ${restoreDeployment.address}`);
+  const restoreContract: Restore = new hre.ethers.Contract(restoreDeployment.address, restoreDeployment.abi, deployer) as Restore;
+  
+  // set the justice contract address in the restore contract
+  const setJusticeTx: ContractTransaction = await restoreContract.connect(deployer)
+    .setJustice(justiceAddress);
+
+  const setJusticeReceipt: ContractReceipt = await setJusticeTx.wait();
+
+  if (setJusticeReceipt.status === 1) {
+    console.log('justice set successfully');
+  } else {
+    console.log('justice set failed with status:', setJusticeReceipt.status);
+  }
 };
 export default func;
 func.runAtTheEnd = true;
