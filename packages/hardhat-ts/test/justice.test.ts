@@ -89,7 +89,22 @@ describe('Justice', () => {
       // TODO: figure out what is going on with the split array and how to set and access it properly here.
       // console.log(auction);
     });
-  });
+    // TODO: Contract should not create an Auction for token ids that are bigger than the token balance
+  //   it('can\'t create an auction for a non-existant token', async () => {
+  //     const tokenBalance = await restore.balanceOf(restore.address);
+  //     console.log('tokenBalance: ', tokenBalance);
+  //     const tokenId = 100;
+
+  //     const paymentSplit = ethers.BigNumber.from(70);
+  //     const fundSplit = ethers.BigNumber.from(10);
+  //     const creatorSplit = ethers.BigNumber.from(20);
+
+  //     await expect(
+  //       justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit])
+  //     ).to.be.revertedWith('Token does not exist');
+
+  //   });
+  // });
   describe('bidding', function () {
     it('should revert if a user creates a bid for an inactive auction', async () => {
       const tokenId = ethers.BigNumber.from(0);
@@ -114,7 +129,7 @@ describe('Justice', () => {
     });
 
     it('should revert if a user creates a bid with an amount below the reserve price', async () => {
-      const tokenId = ethers.BigNumber.from(1);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const tx = justice.connect(bidderA).createBid(tokenId, {
@@ -125,7 +140,7 @@ describe('Justice', () => {
     });
 
     it('should revert if a user creates a bid less than the min bid increment percentage', async () => {
-      const tokenId = ethers.BigNumber.from(2);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -141,7 +156,7 @@ describe('Justice', () => {
     });
 
     it('should refund the previous bidder when the following user creates a bid', async () => {
-      const tokenId = ethers.BigNumber.from(3);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -158,7 +173,7 @@ describe('Justice', () => {
     });
 
     it('should cap the maximum bid griefing cost at 30K gas + the cost to wrap and transfer WETH', async () => {
-      const tokenId = ethers.BigNumber.from(4);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const maliciousBidderFactory = new MaliciousBidderFactory(bidderA);
@@ -182,8 +197,7 @@ describe('Justice', () => {
     });
 
     it('should emit an `AuctionBid` event on a successful bid', async () => {
-      // TODO: These constantly incrementing tokenIds for auctions show I don't fully understand the createAuction => settleAuction flow.
-      const tokenId = ethers.BigNumber.from(5);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const tx = justice.connect(bidderA).createBid(tokenId, {
@@ -197,7 +211,7 @@ describe('Justice', () => {
   });
   describe('extend auction', function () {
     it('should emit an `AuctionExtended` event if the auction end time is within the time buffer', async () => {
-      const tokenId = ethers.BigNumber.from(5);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const auction = await justice.auction();
@@ -215,7 +229,7 @@ describe('Justice', () => {
   });
   describe('settle auction', function () {
     it('should revert if auction settlement is attempted while the auction is still active', async () => {
-      const tokenId = ethers.BigNumber.from(6);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -227,7 +241,7 @@ describe('Justice', () => {
     });
 
     it('should emit `AuctionSettled` and `AuctionCreated` events if all conditions are met', async () => {
-      const tokenId = ethers.BigNumber.from(7);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -251,7 +265,7 @@ describe('Justice', () => {
 
     it('should not allow anyone other than the owner to settle an auction', async () => {
       // TODO: could just protect this route with onlyOwner to save people who try to call it some gas?
-      const tokenId = ethers.BigNumber.from(8);
+      const tokenId = ethers.BigNumber.from(0);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
