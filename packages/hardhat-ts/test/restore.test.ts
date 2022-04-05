@@ -1,7 +1,7 @@
-import { ethers } from "hardhat";
-import chai from "chai";
-import { Restore } from "../typechain";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import { ethers } from 'hardhat';
+import chai from 'chai';
+import { Restore } from '../typechain';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { deployRestore } from './utils';
 
 const { expect } = chai;
@@ -18,57 +18,57 @@ const RESERVE_PRICE = 2;
 const MIN_INCREMENT_BID_PERCENTAGE = 5;
 const DURATION = 60 * 60 * 24;
 
-describe("Restore", function () {
+describe('Restore', function () {
   beforeEach(async function () {
     [deployer,,payment,,,,other, ] = await ethers.getSigners();
     restore = await deployRestore(deployer);
     expect(restore.address).to.properAddress;
   });
 
-  describe("ERC721", function () {
-    it("has correct name and symbol", async function () {
-      expect(await restore.name()).to.equal("Restore");
-      expect(await restore.symbol()).to.equal("REST");
+  describe('ERC721', function () {
+    it('has correct name and symbol', async function () {
+      expect(await restore.name()).to.equal('Restore');
+      expect(await restore.symbol()).to.equal('REST');
     });    
   });
 
-  describe("minting", async () => {
-    it("contract owner can mint tokens", async () => {
+  describe('minting', async () => {
+    it('contract owner can mint tokens', async () => {
       const tokenId = ethers.BigNumber.from(0);
-      const tokenURI = "https://eth.iwahi.com/1df0";
+      const tokenURI = 'https://eth.iwahi.com/1df0';
 
       await expect(restore.connect(deployer).mintForAuction(deployer.address, tokenURI))
-        .to.emit(restore, "ReadyForAuction")
-        .withArgs(tokenId, tokenURI);
+        .to.emit(restore, 'ReadyForAuction')
+        .withArgs(restore.address, tokenId, tokenURI);
 
       expect(await restore.balanceOf(restore.address)).to.equal(1);
       expect(await restore.ownerOf(tokenId)).to.equal(restore.address);
       expect(await restore.tokenURI(tokenId)).to.equal(tokenURI);   
     });
 
-    it("other accounts cannot mint tokens", async () => {
-      const tokenURI = "https://eth.iwahi.com/2d3a";
+    it('other accounts cannot mint tokens', async () => {
+      const tokenURI = 'https://eth.iwahi.com/2d3a';
       await expect(
         restore.connect(other).mintForAuction(other.address, tokenURI)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it("no-one, including the owner, can freeze a token, except through another contract", async() => {
+    it('no-one, including the owner, can freeze a token, except through another contract', async() => {
       const tokenId = ethers.BigNumber.from(0);
-      const tokenURI = "https://eth.iwahi.com/1df0";
+      const tokenURI = 'https://eth.iwahi.com/1df0';
 
       await expect(restore.connect(deployer).mintForAuction(deployer.address, tokenURI))
-        .to.emit(restore, "ReadyForAuction")
-        .withArgs(tokenId, tokenURI);
+        .to.emit(restore, 'ReadyForAuction')
+        .withArgs(restore.address, tokenId, tokenURI);
 
       await expect(
         restore.connect(deployer).freeze(deployer.address, tokenId)
-      ).to.be.revertedWith("Restore: auctioned piece must be frozen by owner via Justice")
+      ).to.be.revertedWith('Restore: auctioned piece must be frozen by owner via Justice')
     })
   });
 
-  describe("royalties", async() => {
-    const tokenURI = "https://eth.iwahi.com/1df0";
+  describe('royalties', async() => {
+    const tokenURI = 'https://eth.iwahi.com/1df0';
     const salePrice = ethers.BigNumber.from(100);
     const royalty = ethers.BigNumber.from(1000); // 10% with the two decimals places the contract is expecting
     const excessRoyalty = ethers.BigNumber.from(10001); // 100.01%
@@ -104,10 +104,10 @@ describe("Restore", function () {
         expect(info[0]).to.be.equal(payment.address);
     });
 
-    it("throws if someone other than the owner tries to set royalties", async() => {
+    it('throws if someone other than the owner tries to set royalties', async() => {
       await expect(
         restore.connect(other).setRoyalties(payment.address, royalty)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     })
 
     it('can set address(0) as royalties recipient', async function () {

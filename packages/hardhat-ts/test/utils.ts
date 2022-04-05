@@ -8,7 +8,7 @@ import {
   WETH__factory,
 } from '../typechain';
 
-export type TestSigners = {
+export interface TestSigners {
   deployer: SignerWithAddress;
   pr1s0nart: SignerWithAddress;
   payment: SignerWithAddress;
@@ -32,7 +32,7 @@ export const getSigners = async (): Promise<TestSigners> => {
 };
 
 export const deployRestore = async (deployer?: SignerWithAddress): Promise<Restore> => {
-  const PROXY_REGISTRATION_ADDRESS = "0xf57b2c51ded3a29e6891aba85459d600256cf317";
+  const PROXY_REGISTRATION_ADDRESS = '0xf57b2c51ded3a29e6891aba85459d600256cf317';
 
   const factory = new Restore__factory(deployer || (await await getSigners()).deployer);
 
@@ -47,24 +47,21 @@ export const deployWeth = async (deployer?: SignerWithAddress): Promise<WETH> =>
 
 // The following adapted from `https://github.com/compound-finance/compound-protocol/blob/master/tests/Utils/Ethereum.js`
 
-const rpc = <T = unknown>({
-  method,
-  params,
-}: {
+const rpc = <T = unknown>({method, params}: {
   method: string;
   params?: unknown[];
-}): Promise<T> => {
-  return network.provider.send(method, params);
-};
+}): Promise<T> => 
+  network.provider.send(method, params)
+;
 
 export const encodeParameters = (types: string[], values: unknown[]): string => {
   const abi = new ethers.utils.AbiCoder();
   return abi.encode(types, values);
 };
 
-export const blockByNumber = async (n: number | string): Promise<Block> => {
-  return rpc({ method: 'eth_getBlockByNumber', params: [n, false] });
-};
+export const blockByNumber = async (n: number | string): Promise<Block> => 
+  rpc({ method: 'eth_getBlockByNumber', params: [n, false] })
+;
 
 export const increaseTime = async (seconds: number): Promise<unknown> => {
   await rpc({ method: 'evm_increaseTime', params: [seconds] });
@@ -113,10 +110,10 @@ export const mineBlock = async (): Promise<void> => {
   await network.provider.send('evm_mine');
 };
 
-export const chainId = async (): Promise<number> => {
-  return parseInt(await network.provider.send('eth_chainId'), 16);
-};
+export const chainId = async (): Promise<number> => 
+  parseInt(await network.provider.send('eth_chainId'), 16)
+;
 
-export const address = (n: number): string => {
-  return `0x${n.toString(16).padStart(40, '0')}`;
-};
+export const address = (n: number): string => 
+  `0x${n.toString(16).padStart(40, '0')}`
+;

@@ -8,6 +8,8 @@ task(TASK_ACCOUNTS, 'Prints the list of accounts', async (_taskArgs, hre) => {
   const accounts = await getNamedAccounts();
 
   for (const name in accounts) {
-    console.log(name, accounts[name]);
+    if (accounts.hasOwnProperty(name)) {
+      console.log(name, accounts[name]);
+    }
   }
 });
