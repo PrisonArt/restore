@@ -20,13 +20,13 @@ task(TASK_CREATEAUCTION, 'Creates an auction from a token')
     const [ deployer ] = await ethers.getSigners();
     console.log(`deployer address: ${deployer.address}`);
 
-    const network = await hre.ethers.provider.getNetwork();
+    const network = await ethers.provider.getNetwork();
     console.log(`network: ${network.name}`);
 
     const justiceDeployment = await deployments.get('Justice');
     console.log(`justice contract address: ${justiceDeployment.address}`);
 
-    const justiceContract: Justice = new hre.ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
+    const justiceContract: Justice = new ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
 
     console.log('creating auction for tokenId:', tokenId);
     const splitArray = split.split(',').map((string: any) => BigNumber.from(string));

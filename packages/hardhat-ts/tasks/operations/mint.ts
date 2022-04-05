@@ -18,13 +18,13 @@ task(TASK_MINT, 'Mints a token with token metadata uri')
     const [ deployer ] = await ethers.getSigners();
     console.log(`deployer address: ${deployer.address}`);
 
-    const network = await hre.ethers.provider.getNetwork();
+    const network = await ethers.provider.getNetwork();
     console.log(`network: ${network.name}`);
 
     const restoreDeployment = await deployments.get('Restore');
     console.log(`restore contract address: ${restoreDeployment.address}`);
 
-    const restoreContract: Restore = new hre.ethers.Contract(restoreDeployment.address, restoreDeployment.abi, deployer) as Restore;
+    const restoreContract: Restore = new ethers.Contract(restoreDeployment.address, restoreDeployment.abi, deployer) as Restore;
 
     const mintTx: ContractTransaction = await restoreContract.connect(deployer)
       .mintForAuction(deployer.address, metadataUri, { gasLimit: 300000 });

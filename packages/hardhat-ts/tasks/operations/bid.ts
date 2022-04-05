@@ -1,6 +1,6 @@
 import { task, types } from 'hardhat/config';
-import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers';
-import { Restore, Justice } from '../../typechain';
+import { ContractTransaction } from 'ethers';
+import { Justice } from '../../typechain';
 import { TASK_BID } from '../task-names';
 // hh bid --network localhost|rinkeby|mainnet --token-id 0 --amount 1000
 task(TASK_BID, 'Mints a token with token metadata uri, then creates an auction with the token')
@@ -13,13 +13,13 @@ task(TASK_BID, 'Mints a token with token metadata uri, then creates an auction w
     const [ deployer ] = await ethers.getSigners();
     console.log(`deployer address: ${deployer.address}`);
 
-    const network = await hre.ethers.provider.getNetwork();
+    const network = await ethers.provider.getNetwork();
     console.log(`network: ${network.name}`);
 
     const justiceDeployment = await deployments.get('Justice');
     console.log(`justice contract address: ${justiceDeployment.address}`);
 
-    const justiceContract: Justice = new hre.ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
+    const justiceContract: Justice = new ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
 
     const createBidTx: ContractTransaction = await justiceContract.connect(deployer)
       .createBid(tokenId, {

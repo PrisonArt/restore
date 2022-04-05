@@ -14,8 +14,8 @@ import './tasks/operations/accounts';
 import './tasks/operations/mint';
 import './tasks/operations/createauction';
 import './tasks/operations/bid';
-import './tasks/operations/settle-buyertx';
-import './tasks/operations/settle-nobuyer';
+import './tasks/operations/settle';
+import './tasks/operations/transferbuyer';
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY || '';
 const MAINNET_DEPLOYER_PRIVATE_KEY =
