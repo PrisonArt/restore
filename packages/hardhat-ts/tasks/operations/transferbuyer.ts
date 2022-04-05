@@ -2,10 +2,10 @@ import { task, types } from 'hardhat/config';
 import { ContractReceipt, ContractTransaction } from 'ethers';
 import { Restore } from '../../typechain';
 import { TASK_TRANSFERBUYER } from '../task-names';
-// hh transferbuyer --network localhost|rinkeby|mainnet --token-id 0 -- lfo-text "Paid in Full"
+// hh transferbuyer --network localhost|rinkeby|mainnet --token-id 0 --lfo-text "Paid in Full"
 task(TASK_TRANSFERBUYER, 'Transfers the token to the buyer')
   .addParam('tokenId', 'tokenId', null, types.int)
-  .addParam('lfoText', 'lfoText', null, types.int)
+  .addParam('lfoText', 'lfoText', null, types.string)
   .setAction(async ({ tokenId, lfoText }, hre) => {
 
     const { deployments, ethers } = hre;
