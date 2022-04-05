@@ -11,8 +11,8 @@ import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 
 import './tasks/operations/accounts';
-import './tasks/operations/set-justice';
-import './tasks/operations/mint-createauction';
+import './tasks/operations/mint';
+import './tasks/operations/createauction';
 import './tasks/operations/bid';
 import './tasks/operations/settle-buyertx';
 import './tasks/operations/settle-nobuyer';
@@ -28,7 +28,7 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
 const accounts: HttpNetworkHDAccountsConfig = {
     mnemonic: 'test test test test test test test test test test test junk',
-    path: "m/44'/60'/0'/0",
+    path: 'm/44\'/60\'/0\'/0',
     initialIndex: 0,
     count: 10,
     passphrase: ''
