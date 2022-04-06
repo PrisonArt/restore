@@ -89,7 +89,7 @@ describe('Justice', () => {
       // TODO: figure out what is going on with the split array and how to set and access it properly here.
       // console.log(auction);
     });
-    // TODO: Contract should not create an Auction for token ids that are bigger than the token balance
+
     it('can\'t create an auction for a non-existent token', async () => {
       const tokenBalance = await restore.balanceOf(restore.address);
       console.log('tokenBalance: ', tokenBalance);
