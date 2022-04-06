@@ -90,20 +90,20 @@ describe('Justice', () => {
       // console.log(auction);
     });
     // TODO: Contract should not create an Auction for token ids that are bigger than the token balance
-  //   it('can\'t create an auction for a non-existant token', async () => {
-  //     const tokenBalance = await restore.balanceOf(restore.address);
-  //     console.log('tokenBalance: ', tokenBalance);
-  //     const tokenId = 100;
+    it('can\'t create an auction for a non-existant token', async () => {
+      const tokenBalance = await restore.balanceOf(restore.address);
+      console.log('tokenBalance: ', tokenBalance);
+      const tokenId = 100;
 
-  //     const paymentSplit = ethers.BigNumber.from(70);
-  //     const fundSplit = ethers.BigNumber.from(10);
-  //     const creatorSplit = ethers.BigNumber.from(20);
+      const paymentSplit = ethers.BigNumber.from(70);
+      const fundSplit = ethers.BigNumber.from(10);
+      const creatorSplit = ethers.BigNumber.from(20);
 
-  //     await expect(
-  //       justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit])
-  //     ).to.be.revertedWith('Token does not exist');
+      await expect(
+        justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit])
+      ).to.be.revertedWith('Justice: token does not exist');
 
-  //   });
+    });
   });
   describe('bidding', function () {
     it('should revert if a user creates a bid for an inactive auction', async () => {
