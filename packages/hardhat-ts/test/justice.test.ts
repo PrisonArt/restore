@@ -104,7 +104,7 @@ describe('Justice', () => {
   //     ).to.be.revertedWith('Token does not exist');
 
   //   });
-  // });
+  });
   describe('bidding', function () {
     it('should revert if a user creates a bid for an inactive auction', async () => {
       const tokenId = ethers.BigNumber.from(0);
