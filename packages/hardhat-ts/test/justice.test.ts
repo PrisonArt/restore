@@ -90,7 +90,7 @@ describe('Justice', () => {
       // console.log(auction);
     });
     // TODO: Contract should not create an Auction for token ids that are bigger than the token balance
-    it('can\'t create an auction for a non-existant token', async () => {
+    it('can\'t create an auction for a non-existent token', async () => {
       const tokenBalance = await restore.balanceOf(restore.address);
       console.log('tokenBalance: ', tokenBalance);
       const tokenId = 100;
@@ -101,7 +101,7 @@ describe('Justice', () => {
 
       await expect(
         justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit])
-      ).to.be.revertedWith('Justice: token does not exist');
+      ).to.be.revertedWith('Restore: unknown token');
 
     });
   });
@@ -130,6 +130,8 @@ describe('Justice', () => {
 
     it('should revert if a user creates a bid with an amount below the reserve price', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const tx = justice.connect(bidderA).createBid(tokenId, {
@@ -141,6 +143,8 @@ describe('Justice', () => {
 
     it('should revert if a user creates a bid less than the min bid increment percentage', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -157,6 +161,8 @@ describe('Justice', () => {
 
     it('should refund the previous bidder when the following user creates a bid', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -174,6 +180,8 @@ describe('Justice', () => {
 
     it('should cap the maximum bid griefing cost at 30K gas + the cost to wrap and transfer WETH', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const maliciousBidderFactory = new MaliciousBidderFactory(bidderA);
@@ -198,6 +206,8 @@ describe('Justice', () => {
 
     it('should emit an `AuctionBid` event on a successful bid', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const tx = justice.connect(bidderA).createBid(tokenId, {
@@ -212,6 +222,8 @@ describe('Justice', () => {
   describe('extend auction', function () {
     it('should emit an `AuctionExtended` event if the auction end time is within the time buffer', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       const auction = await justice.auction();
@@ -230,6 +242,8 @@ describe('Justice', () => {
   describe('settle auction', function () {
     it('should revert if auction settlement is attempted while the auction is still active', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -242,6 +256,8 @@ describe('Justice', () => {
 
     it('should emit `AuctionSettled` and `AuctionCreated` events if all conditions are met', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {
@@ -266,6 +282,8 @@ describe('Justice', () => {
     it('should not allow anyone other than the owner to settle an auction', async () => {
       // TODO: could just protect this route with onlyOwner to save people who try to call it some gas?
       const tokenId = ethers.BigNumber.from(0);
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
 
       await justice.connect(bidderA).createBid(tokenId, {

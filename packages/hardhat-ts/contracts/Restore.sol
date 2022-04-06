@@ -136,4 +136,13 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
         justice =_justice;
     }
 
+    /**
+     * @notice called by Justice to ensure that this token exists and can be auctioned before creating an auction
+     * @param tokenId the tokenId to be checked for auction
+     */
+    function auctionable(uint256 tokenId) external view returns (bool) {
+        require(_exists(tokenId), "Restore: unknown token");
+        return address(0) == buyers[tokenId];
+    }
+
 }
