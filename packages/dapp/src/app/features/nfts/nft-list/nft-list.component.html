@@ -4,7 +4,7 @@
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. #5 or Metamod" #input>
   </mat-form-field>
   <div class="row">
-    <div *ngFor="let np of nps | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+    <div *ngFor="let np of nfts$ | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
       <mat-card>
         <mat-card-header>
           <mat-card-title>

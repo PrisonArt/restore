@@ -29,7 +29,6 @@ ipfs init
 ```bash
 sudo systemctl start postgresql@12-main
 sudo -u postgres psql
-drop database "graph-node";
 create database "graph-node";
 ```
 
@@ -45,6 +44,8 @@ git clone https://github.com/graphprotocol/graph-node
 
 Start HTTP and WebSocket JSON-RPC server at <http://127.0.0.1:8545/>
 
+Terminal 1:
+
 ```bash
 pnpm hardhat:localnode
 ```
@@ -53,24 +54,32 @@ pnpm hardhat:localnode
 
 Start IPFS on <http://127.0.0.1:5001>
 
+Terminal 2:
+
 ```bash
 ipfs daemon
 ```
 
-### Start the database
-
-```bash
-sudo systemctl start postgresql@12-main
-```
-
 ### Start the graph
+
+Terminal 3:
 
 ```bash
 cd ../graph-node
 cargo run -p graph-node --release -- --postgres-url postgresql://postgres:password@localhost:5432/graph-node --ethereum-rpc localhost:http://127.0.0.1:8545 --ipfs 127.0.0.1:5001
 ```
 
+if you receive "Not starting block ingestor (chain is defective)", drop the database, then re-run graph command
+
+```bash
+sudo -u postgres psql
+drop database "graph-node";
+create database "graph-node";
+```
+
 ### Create a graph on localhost
+
+Terminal 4:
 
 ```bash
 cd packages/subgraph
@@ -84,13 +93,25 @@ pnpm deploy:local
 
 ```graphql
 query MyQuery {
+  nfts {
+    id
+    metadataURI
+    data
+    isFrozen    
+    owner {
+      id
+    }
+  }
   auctions {
     id
     startTime
     endTime
-    settled
+    settled    
     amount
-    saleSplit
+    saleSplit    
+    nft {
+      id
+    }
     winner {
       id
     }
@@ -100,17 +121,9 @@ query MyQuery {
     bids {
       id
       amount
+      bidder
       blockNumber
-      bidder {
-        id
-      }
-    }
-    nft {
-      owner {
-        id
-      }
-      data
-      isFrozen
+      blockTimestamp
     }
     creator {
       id
@@ -118,8 +131,4 @@ query MyQuery {
   }
 }
 ```
-
-## TODO
-
-* Map all the events in  `src/justice-mapping.ts` and `src/restore-mapping.ts`
 

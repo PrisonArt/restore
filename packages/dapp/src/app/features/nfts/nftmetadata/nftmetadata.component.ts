@@ -31,14 +31,14 @@ export class NFTMetadataComponent implements OnInit, OnDestroy {
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
     })
-    this.nftService.getNFTMetadata(this.id).subscribe(
-      data => {
-        this.nft = data;
-        this.nftJson = JSON.stringify(this.nft, null, 4);
-      },
-      error => {
-        this.notificationService.error(error.message);
-      }
-    );
+    // this.nftService.getNFTMetadata(this.id).subscribe(
+    //   data => {
+    //     this.nft = data;
+    //     this.nftJson = JSON.stringify(this.nft, null, 4);
+    //   },
+    //   error => {
+    //     this.notificationService.error(error.message);
+    //   }
+    // );
   }
 }

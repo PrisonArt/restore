@@ -9,26 +9,86 @@ export interface NFTResponse {
 	nfts: NFT[];
 }
 
-export const normalizeNFT = (nft: any): NFT => ({
-  id: Number(nft.id),
-  name: '',
-  description: '',
-  imageHash: '',
-});
+export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
+  const imageHash = res['image'].substring(5);
+  return {
+    id: Number(nftId),
+    data: '',
+    name: res['name'],
+    tokenId: '',
+    description: res['description'],
+    imageHash: imageHash,
+    owner: '',
+    metadataHash: '',
+    isFrozen: false
+  }
+};
+
+export const normalizeNFT = (nft: any): NFT => {
+  // trim the leading five characters of nft.metadataURI
+  const metadataHash = nft.metadataURI.substring(5);
+
+  // load metadata from arweave
+
+  const imageHash = 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY';
+  return {
+    id: Number(nft.id),
+    data: nft.data,
+    name: nft.id,
+    tokenId: nft.id,
+    description: '',
+    imageHash: imageHash,
+    owner: nft.owner.id,
+    metadataHash: metadataHash,
+    isFrozen: nft.isFrozen
+  }
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class NFTService {
 
-  // FIXME: update to use "prisonart" subgraph link
-  graphURL = 'https://api.thegraph.com/subgraphs/name/nounsdao/nouns-subgraph-rinkeby-v4';
+  // FIXME: use localhost, rinkeby, or mainnet url
+  graphURL = 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost';
 
-  // FIXME: update "nouns" query to use "prisonart" subgraph value
   nftsGql = `
 {
-  nouns {
+  nfts {
     id
+    metadataURI
+    data
+    isFrozen
+    owner {
+      id
+    }
+  }
+  auctions {
+    id
+    startTime
+    endTime
+    settled
+    amount
+    saleSplit
+    nft {
+      id
+    }
+    winner {
+      id
+    }
+    bidder {
+      id
+    }
+    bids {
+      id
+      amount
+      bidder
+      blockNumber
+      blockTimestamp
+    }
+    creator {
+      id
+    }
   }
 }
 `;
@@ -40,32 +100,24 @@ export class NFTService {
     // FIXME: incorporate nftId into the query
     return this.http.post<NFTResponse>(this.graphURL, { query: this.nftsGql })
     .pipe(
-      // FIXME: update nouns to nfts
-      tap((res: any) => console.log(`generated text: ${res.data.nouns}`)),
-      map(res => res.data.nouns[0]),
+      tap((res: any) => console.log(`generated text: ${res.data.nfts}`)),
+      map(res => res.data.nfts[0]),
       map(nft => normalizeNFT(nft))
     );
   }
 
-  getNFTMetadata(nftId: string): Observable<NFT> {
-
-    // FIXME: incorporate nftId into the query
-    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftsGql })
+  getNFTMetadata(nftId: string, metadataHash: string): Observable<NFT> {
+    return this.http.get(`https://arweave.net/${metadataHash}`)
     .pipe(
-      // FIXME: update nouns to nfts
-      tap((res: any) => console.log(`generated text: ${res.data.nouns}`)),
-      map(res => res.data.nouns[0]),
-      map(nft => normalizeNFT(nft))
+      map(res => normalizeNFTDelete(nftId, res)),
     );
   }
 
   getNFTs(): Observable<NFT[]> {
-
     return this.http.post<NFTResponse>(this.graphURL, { query: this.nftsGql })
     .pipe(
-      // FIXME: update nouns to nfts
-      tap((res: any) => console.log(`generated text: ${res.data.nouns}`)),
-      map(res => res.data.nouns),
+      tap((res: any) => console.log(`# nfts: ${res.data.nfts.length}`)),
+      map(res => res.data.nfts),
       map(nfts => nfts.map((nft: any) => normalizeNFT(nft)))
     );
 
