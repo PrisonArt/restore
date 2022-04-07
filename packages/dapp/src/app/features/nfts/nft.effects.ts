@@ -2,15 +2,12 @@ import { NFTService } from './../../service/nft.service';
 import { Injectable } from '@angular/core';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { forkJoin, from, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import {
   catchError,
-  concatMap,
-  exhaustMap,
   map,
   mergeMap,
   switchMap,
-  tap,
 } from 'rxjs/operators';
 
 import {
@@ -19,12 +16,9 @@ import {
   nftLoad,
   nftLoadSuccess,
   nftFailure,
-  nftLoadMetadata,
   nftLoadMetadataSuccess
 } from './nft.actions';
 
-import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 
 @Injectable()
 export class NFTEffects {
@@ -32,7 +26,7 @@ export class NFTEffects {
   loadNFTs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(nftsLoad),
-      mergeMap((nfts) =>
+      mergeMap(() =>
         this.nftService.getNFTs().pipe(
           map(nfts =>
             nftsLoadSuccess({nfts})
@@ -55,7 +49,6 @@ export class NFTEffects {
     )
   );
 
-
   loadNFTsMetadata$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(nftsLoadSuccess),
@@ -75,9 +68,9 @@ export class NFTEffects {
 
   loadNFTMetadata$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(nftLoadMetadata),
+      ofType(nftLoadSuccess),
       switchMap((action) =>
-        this.nftService.getNFTMetadata(action.nftId, action.metadataHash).pipe(
+        this.nftService.getNFTMetadata(action.nft.id.toString(), action.nft.metadataHash).pipe(
           map(nft => nftLoadMetadataSuccess({ nft })),
           catchError((error) => of(nftFailure({ error })))
         )
@@ -87,8 +80,6 @@ export class NFTEffects {
 
   constructor(
     private nftService: NFTService,
-    private store: Store,
     private actions$: Actions,
-    private router: Router
   ) { }
 }

@@ -34,6 +34,9 @@ export const {
   selectIds: selectNFTIds,
   selectEntities: selectNFTEntities,
   selectAll: selectAllNFTs,
-  selectTotal: selectTotalNFTs,
+  selectTotal: selectTotalNFTs
 } = fromNFTs.adapter.getSelectors(selectNFTEntitiesState);
+
+export const selectNFT = (id: number) =>
+  createSelector(selectAllNFTs, (nfts) => nfts[id]);
 

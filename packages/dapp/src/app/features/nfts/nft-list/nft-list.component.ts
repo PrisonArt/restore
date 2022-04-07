@@ -12,7 +12,7 @@ import * as fromNFT from '../reducers/';
 import * as NFTActions from '../nft.actions';
 
 @Component({
-  selector: 'pr1s0nart-neurapunk-list',
+  selector: 'pr1s0nart-list',
   templateUrl: './nft-list.component.html',
   styleUrls: ['./nft-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

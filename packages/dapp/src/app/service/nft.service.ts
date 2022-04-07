@@ -28,16 +28,13 @@ export const normalizeNFT = (nft: any): NFT => {
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
-  // load metadata from arweave
-
-  const imageHash = 'HN5rspPSOAEeXVa7rbPEiSzHGzyU8QOeu5NViBp6zkY';
   return {
     id: Number(nft.id),
     data: nft.data,
-    name: nft.id,
+    name: '',
     tokenId: nft.id,
     description: '',
-    imageHash: imageHash,
+    imageHash: '',
     owner: nft.owner.id,
     metadataHash: metadataHash,
     isFrozen: nft.isFrozen
@@ -51,6 +48,21 @@ export class NFTService {
 
   // FIXME: use localhost, rinkeby, or mainnet url
   graphURL = 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost';
+
+
+  nftGql = `
+{
+  nft(id: "0") {
+    id
+    metadataURI
+    data
+    isFrozen
+    owner {
+      id
+    }
+  }
+}
+`;
 
   nftsGql = `
 {
@@ -97,11 +109,12 @@ export class NFTService {
   }
 
   getNFT(nftId: string): Observable<NFT> {
+    console.log(`# getNFT: ${nftId}`);
     // FIXME: incorporate nftId into the query
-    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftsGql })
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql })
     .pipe(
-      tap((res: any) => console.log(`generated text: ${res.data.nfts}`)),
-      map(res => res.data.nfts[0]),
+      tap((res: any) => console.log(`generated text: ${res.data.nft}`)),
+      map(res => res.data.nft),
       map(nft => normalizeNFT(nft))
     );
   }
