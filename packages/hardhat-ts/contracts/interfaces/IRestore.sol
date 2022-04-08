@@ -15,8 +15,6 @@ interface IRestore is IERC721 {
 
     function transferToBuyer(uint256 tokenId, bytes memory data) external;
 
-    function returnToPA(uint256 tokenId, bytes memory data) external;
-
     function freeze(address buyer, uint256 frozenTokenId) external;
 
     function auctionable(uint256 tokenId) external returns (bool);

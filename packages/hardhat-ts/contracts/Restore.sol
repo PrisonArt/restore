@@ -101,20 +101,6 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     }
 
     /**
-     * @notice called when there is no buyer for an auction
-     * @param tokenId index of the NFT bought in the auction
-     * @param data data which reads 'no buyer' to add to token's transactional history for completeness.
-     */
-    function returnToPA(uint256 tokenId, bytes memory data) 
-        public
-        override
-    {
-        require(msg.sender == justice, "Restore: unbought auction must be settled by owner via Justice");
-        _safeTransfer(address(this), owner(), tokenId, data);
-        emit ArtTransferred(owner(), tokenId, data);
-    }
-
-    /**
      * @notice called when an auction is settled, sets the frozenToken struct.
      * @param buyer address of winning bid
      * @param tokenId index of the NFT bought in the auction

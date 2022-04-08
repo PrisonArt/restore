@@ -188,7 +188,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      *              This is likely only the case if they are no longer incarcerated and have an ETH address.
      */
     function createAuction(address creator, uint256 tokenId, uint8[3] memory split) public onlyOwner {
-            require(restore.auctionable(tokenId) && address(restore) == restore.ownerOf(tokenId), 'Justice: token id is not auctionnable');
+            require(restore.auctionable(tokenId) && address(restore) == restore.ownerOf(tokenId), 'Justice: token id is not auctionable');
             uint256 startTime = block.timestamp;
             uint256 endTime = startTime + duration;
 
@@ -220,7 +220,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         auction.settled = true;
 
         if (_auction.bidder == address(0)) {
-            restore.returnToPA(_auction.tokenId, bytes('no buyer'));
+            emit NoBuyer(_auction.tokenId);
         } else {
             restore.freeze(_auction.bidder, _auction.tokenId);
         }

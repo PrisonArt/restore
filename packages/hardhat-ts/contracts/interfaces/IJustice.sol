@@ -31,6 +31,8 @@ interface IJustice {
 
     event AuctionSettled(uint256 indexed tokenId, address winner, uint256 amount);
 
+    event NoBuyer(uint256 indexed tokenId);
+
     event PaymentAddressUpdated(address newPayment);
 
     event FundAddressUpdated(address newFund);
