@@ -2,14 +2,17 @@ import { Component, ChangeDetectionStrategy, ViewChild, AfterViewInit, ChangeDet
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
+import { select, Store } from '@ngrx/store';
 
 import { ROUTE_ANIMATIONS_ELEMENTS, NotificationService } from '../../../core/core.module';
 
 import { NFT, Attribute } from '../nft.interface';
 import { NFTService } from 'app/service/nft.service';
+import * as fromNFT from '../reducers/';
+import * as NFTActions from '../nft.actions';
 
 @Component({
-  selector: 'pr1s0nart-neurapunk-list',
+  selector: 'pr1s0nart-list',
   templateUrl: './nft-list.component.html',
   styleUrls: ['./nft-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -17,7 +20,7 @@ import { NFTService } from 'app/service/nft.service';
 export class NFTListComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource: MatTableDataSource<NFT> = new MatTableDataSource();
-  nps: Observable<NFT[]>;
+  nfts$: Observable<NFT[]>;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
   baseArweaveURL = 'https://arweave.net/';
@@ -25,24 +28,20 @@ export class NFTListComponent implements AfterViewInit {
 
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
+    private store: Store,
     public nftService: NFTService,
     private notificationService: NotificationService) {
   }
 
-  getNFTs(): void {
-    this.nftService.getNFTs().subscribe(
-      data => this.dataSource.data = data,
-      error => {
-        this.notificationService.error(error.message);
-      }
-    );
-  }
 
   ngAfterViewInit(): void {
     this.changeDetectorRef.detectChanges();
     this.dataSource.paginator = this.paginator;
-    this.getNFTs();
-    this.nps = this.dataSource.connect();
+    this.store.dispatch(NFTActions.nftsLoad());
+    this.nfts$ = this.store.pipe(select(fromNFT.selectAllNFTs));
+    this.nfts$.subscribe(data => {
+      this.dataSource.data = data;
+    });
 
     this.dataSource.filterPredicate = (np: NFT, filter: string): boolean =>
       np.name.toLowerCase().includes(filter)

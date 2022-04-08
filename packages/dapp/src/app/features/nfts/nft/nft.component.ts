@@ -2,28 +2,46 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ROUTE_ANIMATIONS_ELEMENTS, NotificationService } from '../../../core/core.module';
 
-import { NFT } from '../nft.interface';
+import { Bid, NFT } from '../nft.interface';
 import { NFTService } from 'app/service/nft.service';
+import * as fromNFT from '../reducers/';
+import * as NFTActions from '../nft.actions';
+import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { MatTableDataSource } from '@angular/material/table';
+
+const DATA: Bid[] = [
+  {
+    bidder: '0x47...C7e9',
+    amount: 42.3
+  },
+  {
+    bidder: '0x6B...6C34',
+    amount: 40
+  },
+];
 
 @Component({
-  selector: 'pr1s0nart-app-neurapunk',
+  selector: 'pr1s0nart-app',
   templateUrl: './nft.component.html',
   styleUrls: ['./nft.component.scss']
 })
 export class NFTComponent implements OnInit, OnDestroy {
+  bids: MatTableDataSource<Bid> = new MatTableDataSource(DATA);
+  displayedColumns: string[] = ['bidder', 'amount'];
   id: any;
   sub: any;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+  nft$: Observable<NFT>;
   nft: NFT;
   baseArweaveURL = 'https://arweave.net/';
-  baseNPioUrl = '/neurapunks/metadata/';
-  baseOpenseaUrl = 'https://opensea.io/assets/0xf46f332d20a05bb1d13b640f8138ba4dcc8d945c/';
 
   metadataUrl: string;
   openseaUrl: string;
 
   constructor(public route: ActivatedRoute,
+    private store: Store,
     public nftService: NFTService,
     private notificationService: NotificationService) {
   }
@@ -36,18 +54,11 @@ export class NFTComponent implements OnInit, OnDestroy {
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'];
     })
-    this.nftService.getNFT(this.id).subscribe(
-      data => {
-        this.nft = data;
-        this.metadataUrl = this.nft.metadataHash ? `${this.baseArweaveURL}${this.nft.metadataHash}` :
-          `${this.baseNPioUrl}${this.id}`;
-        if (this.nft.tokenId) {
-          this.openseaUrl = `${this.baseOpenseaUrl}${this.nft.tokenId}`
-        }
-      },
-      error => {
-        this.notificationService.error(error.message);
-      }
-    );
+    this.store.dispatch(NFTActions.nftLoad({ nftId: this.id }));
+    this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
+    this.nft$.subscribe(data => {
+      this.nft = data;
+    });
+
   }
 }

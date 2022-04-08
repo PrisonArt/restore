@@ -12,17 +12,17 @@ const routes: Routes = [
       {
         path: ':id',
         component: NFTComponent,
-        data: { title: 'pr1s0nart.menu.neurapunk' }
+        data: { title: 'pr1s0nart.menu.nft' }
       },
       {
         path: 'metadata/:id',
         component: NFTComponent,
-        data: { title: 'pr1s0nart.menu.neurapunk' }
+        data: { title: 'pr1s0nart.menu.nft' }
       },
       {
         path: '',
         component: NFTListComponent,
-        data: { title: 'pr1s0nart.menu.neurapunks' }
+        data: { title: 'pr1s0nart.menu.nfts' }
       }
     ]
   }

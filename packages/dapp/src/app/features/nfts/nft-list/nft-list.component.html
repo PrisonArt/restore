@@ -4,31 +4,25 @@
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. #5 or Metamod" #input>
   </mat-form-field>
   <div class="row">
-    <div *ngFor="let np of nps | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+    <div *ngFor="let nft of nfts$ | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
       <mat-card>
         <mat-card-header>
           <mat-card-title>
-            {{np.name}}
+            {{nft.name}}
           </mat-card-title>
           <mat-card-subtitle rtl>
-            {{np.description}}
+            <div *ngFor="let attr of nft.attributes" [ngClass]="routeAnimationsElements">
+              <span><code><b>{{attr.traitType}}:</b> {{attr.value}}</code></span>
+            </div>
           </mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image src={{baseArweaveURL}}{{np.imageHash}} alt={{np.name}}>
+        <img mat-card-image src={{baseArweaveURL}}{{nft.imageHash}} alt={{nft.name}}>
         <mat-card-content>
-          <div *ngFor="let attr of np.attributes" [ngClass]="routeAnimationsElements">
-            <span><code><b>{{attr.trait_type}}:</b> {{attr.value}}</code></span>
-          </div>
         </mat-card-content>
         <mat-card-actions>
-          <a mat-raised-button color="accent" routerLink="{{np.id}}">
+          <a mat-raised-button color="accent" routerLink="{{nft.id}}">
             <fa-icon icon="rocket"></fa-icon>Detail
           </a>
-          <a *ngIf="np.tokenId" mat-raised-button color="accent" href={{baseOpenseaUrl}}{{np.tokenId}} rel="noopener noreferrer"
-            target="_blank">
-            <fa-icon icon="water"></fa-icon>OpenSea
-          </a>
-
         </mat-card-actions>
       </mat-card>
     </div>

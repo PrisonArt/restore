@@ -34,7 +34,8 @@ export class AppComponent implements OnInit {
   languages = ['en'];
   navigation = [
     { link: 'about', label: 'pr1s0nart.menu.about' },
-    { link: 'nfts', label: 'pr1s0nart.menu.nfts' }
+    { link: 'nfts', label: 'pr1s0nart.menu.nfts' },
+    { link: 'connectwallet', label: 'pr1s0nart.menu.connectwallet' }
   ];
   navigationSideMenu = [
     ...this.navigation

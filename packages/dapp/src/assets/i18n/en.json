@@ -5,9 +5,10 @@
   "pr1s0nart.about.nfts": "View Gallery",
   "pr1s0nart.menu.about": "About",
   "pr1s0nart.menu.nfts": "Gallery",
+  "pr1s0nart.menu.connectwallet": "Connect Wallet",
   "pr1s0nart.menu.nft": "NFT",
-  "pr1s0nart.title.long": "Pr1son Art NFTs",
-  "pr1s0nart.title.short": "Pr1son Art NFTs",
+  "pr1s0nart.title.long": "Pr1s0n Art NFTs",
+  "pr1s0nart.title.short": "Pr1s0n Art NFTs",
   "pr1s0nart.notfound.title": "Error 404",
   "pr1s0nart.notfound.description": "The page you requested was not found."
 }
