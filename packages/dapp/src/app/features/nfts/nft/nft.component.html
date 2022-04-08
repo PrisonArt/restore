@@ -1,3 +1,4 @@
+<div class="row">
 <div class="col-md-6 col-lg-4 mx-auto">
     <mat-card *ngIf="nft">
         <mat-card-header>
@@ -5,19 +6,54 @@
                 {{nft.name}}
             </mat-card-title>
             <mat-card-subtitle rtl>
-                {{nft.description}}
+              <div *ngFor="let attr of nft.attributes" class="col-md-6 col-lg-4"
+              [ngClass]="routeAnimationsElements">
+              <span><code><b>{{attr.traitType}}:</b> {{attr.value}}</code></span><br>
+              </div>
             </mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image src={{baseArweaveURL}}{{nft.imageHash}} alt={{nft.name}}>
+          <video mat-card-image height="500" controls preload="metadata">
+              <source src="https://2sbpw3pbmyuzng3pnenk7tr4s4mpnin7e2i2am2twdv6alzj.arweave.net/1IL7beFmKZabb2k-ar848lxj2ob8mkaAzU7_Dr4C8p0" type="video/mp4">
+          </video>
         <mat-card-content>
-            <div *ngFor="let attr of nft.attributes" class="col-md-6 col-lg-4"
-                [ngClass]="routeAnimationsElements">
-                <span><code><b>{{attr.trait_type}}:</b> {{attr.value}}</code></span><br>
-            </div>
+          <div [innerText]="nft.description"></div>
         </mat-card-content>
         <mat-card-actions>
-
-
         </mat-card-actions>
     </mat-card>
+</div>
+<div class="col-md-6">
+  <h2>Auction</h2>
+  <div>Current Bid: 42.30 Ξ</div>
+  <div>Time left: 5 hours 20 minutes</div>
+  <div><br><br></div>
+  <form class="col-md-6">
+    <div class="row">
+      <div class="col-md-10">
+        <mat-form-field >
+          <mat-label>Min Bid 45</mat-label>
+          <input type="text" matInput placeholder="45">
+          <span matSuffix>Ξ &nbsp;</span>
+        </mat-form-field>
+      </div>
+      <div class="col-md-1">
+        <button mat-raised-button color="accent">Place Bid</button>
+      </div>
+    </div>
+  </form>
+  <div><br></div>
+  <table mat-table [dataSource]="bids" class="mat-elevation-z8 col-md-11">
+    <!-- Bidder Column -->
+    <ng-container matColumnDef="bidder">
+      <td mat-cell *matCellDef="let bid"> {{bid.bidder}} </td>
+    </ng-container>
+
+    <!-- Amount Column -->
+    <ng-container matColumnDef="amount">
+      <td mat-cell *matCellDef="let bid"> {{bid.amount}} Ξ</td>
+    </ng-container>
+
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
 </div>

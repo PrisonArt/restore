@@ -12,7 +12,7 @@ export interface State extends fromRoot.AppState {
 }
 
 export interface NFTsState {
-  nfts: fromNFTs.State; //entity
+  nfts: fromNFTs.State; // entity
 }
 
 export function nftReducers(state: NFTsState | undefined, action: Action) {

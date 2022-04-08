@@ -3,14 +3,27 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { NFT } from '../features/nfts/nft.interface';
+import { Attribute, NFT } from '../features/nfts/nft.interface';
 
 export interface NFTResponse {
 	nfts: NFT[];
 }
 
 export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
+  const attributes: Attribute[] = res['attributes'].map(
+    (attribute: { [x: string]: any }) => {
+      return {
+        traitType: attribute['trait_type'],
+        value: attribute['value'],
+      };
+    }
+  );
+
   const imageHash = res['image'].substring(5);
+  // FIXME: The standard Arweave URL redirects to a arweave subdomain, causing a CORS error
+  // const animationURL = res['animation_url'].substring(5);
+  const animationURL = 'https://2sbpw3pbmyuzng3pnenk7tr4s4mpnin7e2i2am2twdv6alzj.arweave.net/1IL7beFmKZabb2k-ar848lxj2ob8mkaAzU7_Dr4C8p0'
+  console.log('animationURL:', animationURL);
   return {
     id: Number(nftId),
     data: '',
@@ -18,9 +31,11 @@ export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
     tokenId: '',
     description: res['description'],
     imageHash: imageHash,
+    animationURL: animationURL,
     owner: '',
     metadataHash: '',
-    isFrozen: false
+    isFrozen: false,
+    attributes: attributes
   }
 };
 
@@ -35,6 +50,7 @@ export const normalizeNFT = (nft: any): NFT => {
     tokenId: nft.id,
     description: '',
     imageHash: '',
+    animationURL: '',
     owner: nft.owner.id,
     metadataHash: metadataHash,
     isFrozen: nft.isFrozen
@@ -120,7 +136,7 @@ export class NFTService {
   }
 
   getNFTMetadata(nftId: string, metadataHash: string): Observable<NFT> {
-    return this.http.get(`https://arweave.net/${metadataHash}`)
+    return this.http.get(`https://arweave.net/${metadataHash}.json`)
     .pipe(
       map(res => normalizeNFTDelete(nftId, res)),
     );

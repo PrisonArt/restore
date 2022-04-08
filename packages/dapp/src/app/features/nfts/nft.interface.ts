@@ -7,6 +7,7 @@ export interface NFT {
   description: string;
   imageHash?: string;
   metadataHash: string;
+  animationURL: string;
   attributes?: Attribute[];
   image?: string;
   external_url?: string;
@@ -15,6 +16,11 @@ export interface NFT {
 }
 
 export interface Attribute {
-  trait_type: string;
+  traitType: string;
   value: string;
+}
+
+export interface Bid {
+  bidder: string;
+  amount: number;
 }
