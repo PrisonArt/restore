@@ -314,7 +314,10 @@ describe('Justice', () => {
 
       const receipt = await tx.wait();
 
+      const noBuyerEvent = receipt.events?.find(e => e.event === 'NoBuyer');
       const settledEvent = receipt.events?.find(e => e.event === 'AuctionSettled');
+
+      expect(noBuyerEvent?.args?.tokenId).to.equal(tokenId);
 
       expect(settledEvent?.args?.tokenId).to.equal(tokenId);
       expect(settledEvent?.args?.winner).to.equal(ZERO_ADDRESS);
