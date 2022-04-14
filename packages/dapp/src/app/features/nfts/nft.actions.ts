@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 
-import { NFT } from './nft.interface';
+import { Auction, NFT } from './nft.interface';
 
 export const nftsLoad = createAction('[NFT/API] Load NFTs');
 export const nftsLoadSuccess = createAction('[NFT/Command] Load NFTs Success', props<{ nfts: NFT[] }>());
@@ -12,3 +12,9 @@ export const nftLoadMetadata = createAction('[NFT/API] Load NFT Metadata', props
 export const nftLoadMetadataSuccess = createAction('[NFT/Command] Load NFT Metadata Success', props<{ nft: NFT }>());
 
 export const nftFailure = createAction('[NFT/API] NFT Failure', props<{ error: any }>());
+
+export const auctionsLoad = createAction('[NFT/API] Load Auctions');
+export const auctionsLoadSuccess = createAction('[NFT/Command] Load Auctions Success', props<{ auctions: Auction[] }>());
+
+export const auctionLoad = createAction('[NFT/API] Load Auction', props<{ auctionId: string }>());
+export const auctionLoadSuccess = createAction('[NFT/Command] Load Auction Success', props<{ auction: Auction }>());

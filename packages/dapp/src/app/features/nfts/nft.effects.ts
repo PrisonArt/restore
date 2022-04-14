@@ -16,7 +16,9 @@ import {
   nftLoad,
   nftLoadSuccess,
   nftFailure,
-  nftLoadMetadataSuccess
+  nftLoadMetadataSuccess,
+  auctionsLoad,
+  auctionsLoadSuccess,
 } from './nft.actions';
 
 
@@ -77,6 +79,21 @@ export class NFTEffects {
       )
     )
   );
+
+  loadAuctions$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(auctionsLoad),
+      mergeMap(() =>
+        this.nftService.getAuctions().pipe(
+          map(auctions =>
+            auctionsLoadSuccess({auctions})
+          ),
+          catchError((error) => of(nftFailure({ error })))
+        )
+      )
+    )
+  );
+
 
   constructor(
     private nftService: NFTService,

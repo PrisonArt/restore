@@ -26,6 +26,10 @@
         </mat-card-actions>
       </mat-card>
     </div>
+    <div *ngFor="let auction of auctions$ | async">
+
+      <div>{{ auction.startTime | dayjs:'DD.MM.YYYY' }}</div>
+    </div>
   </div>
   <div style=float:left;>
     <mat-paginator [pageSizeOptions]="[3, 6, 9, 12]"></mat-paginator>

@@ -6,9 +6,11 @@ import {
 } from '@ngrx/store';
 import * as fromRoot from '../../../core/core.state';
 import * as fromNFTs from './nft.reducer';
+import * as fromAuctions from './auction.reducer';
 
 export interface State extends fromRoot.AppState {
   nft: NFTsState;
+  auction: AuctionsState;
 }
 
 export interface NFTsState {
@@ -39,4 +41,36 @@ export const {
 
 export const selectNFT = (id: number) =>
   createSelector(selectAllNFTs, (nfts) => nfts[id]);
+
+
+// Auctions
+export interface AuctionsState {
+  auctions: fromAuctions.State; // entity
+}
+
+export function auctionReducers(state: AuctionsState | undefined, action: Action) {
+  return combineReducers({
+    auctions: fromAuctions.reducer,
+  })(state, action);
+}
+
+export const selectAuctionsState = createFeatureSelector<AuctionsState>(
+  'auction'
+);
+
+export const selectAuctionEntitiesState = createSelector(
+  selectAuctionsState,
+  (state) => state.auctions
+);
+
+export const {
+  selectIds: selectAuctionIds,
+  selectEntities: selectAuctionEntities,
+  selectAll: selectAllAuctions,
+  selectTotal: selectTotalAuctions
+} = fromAuctions.adapter.getSelectors(selectAuctionEntitiesState);
+
+export const selectAuction = (id: number) =>
+  createSelector(selectAllAuctions, (auctions) => auctions[id]);
+
 

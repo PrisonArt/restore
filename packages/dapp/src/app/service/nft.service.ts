@@ -3,10 +3,11 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { Attribute, NFT } from '../features/nfts/nft.interface';
+import { Attribute, Auction, NFT } from '../features/nfts/nft.interface';
 
 export interface NFTResponse {
 	nfts: NFT[];
+  auctions: Auction[];
 }
 
 export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
@@ -57,6 +58,13 @@ export const normalizeNFT = (nft: any): NFT => {
   }
 };
 
+export const normalizeAuction = (auction: any): Auction => {
+  return {
+    id: Number(auction.id),
+    startTime: auction.startTime,
+  }
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -80,7 +88,7 @@ export class NFTService {
 }
 `;
 
-  nftsGql = `
+nftsGql = `
 {
   nfts {
     id
@@ -91,6 +99,11 @@ export class NFTService {
       id
     }
   }
+}
+`;
+
+auctionsGql = `
+{
   auctions {
     id
     startTime
@@ -149,7 +162,15 @@ export class NFTService {
       map(res => res.data.nfts),
       map(nfts => nfts.map((nft: any) => normalizeNFT(nft)))
     );
+  }
 
+  getAuctions(): Observable<Auction[]> {
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.auctionsGql })
+    .pipe(
+      tap((res: any) => console.log(`# auctions: ${res.data.auctions.length}`)),
+      map(res => res.data.auctions),
+      map(auctions => auctions.map((auction: any) => normalizeAuction(auction)))
+    );
   }
 
   private handleError(error: HttpErrorResponse): Observable<any> {
