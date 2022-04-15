@@ -60,31 +60,7 @@ This enables us to illuminate restorative stories, both social and financial. Ho
 
 ## Develop
 
-1. Install the dependencies using [pnpm](https://pnpm.io/installation):
-
-```bash
-pnpm install
-```
-
-2. Copy the `.env.example` file in `packages/hardhat-ts` and call it `.env`, and place in there your Infura, Etherscan and Ethereum keys. Then run:
-
-```bash
-pnpm hardhat:compile
-pnpm hardhat:test
-```
-
-3. Copy the `.env.example` file in `packages/dapp` and call in `.env.local`. You need not change anything there. Then run the development server:
-
-```bash
-pnpm dapp:dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## ToDo
-
-1. Figure out the infra requirements for attaching receipts in `safeTransfer`.
-2. Make a beautiful frontend with the Zora foundation (another reason for using typescript).
+Please read our [contributing guide](./CONTRIBUTING.md) to get up and running if you'd like to help out.
 
 ## Features
 
@@ -97,36 +73,3 @@ This repo began life as a clone of the [Zora Custom Auction House](https://docs.
 5. uses `@emotion`: [emotion.sh](https://emotion.sh) for styling.
 6. uses `typescript`
 7. based on [next.js](https://nextjs.org/)
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-Or click the button below:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Fourzora%2Fcreate-auction-house&env=NEXT_PUBLIC_APP_TITLE,NEXT_PUBLIC_BASE_URL,NEXT_PUBLIC_NETWORK,NEXT_PUBLIC_CURATORS_ID&envDescription=Curator%20ID%20%26%20Network&envLink=https%3A%2F%2Fgithub.com%2Fourzora%2Fauction-house%23curators&project-name=our-auction-house&repo-name=our-auction-house&redirect-url=https%3A%2F%2Fcreate-auction-house.vercel.app)
-
-...Don't forget to add the necessary environment variables!
-
-## Extras!
-+ [Start of with some static designs using this .sketch design template](https://zora.fleek.co/ipfs/bafybeifqr3uoascyyrz3i7k2yjzzcdck4g54kvubqzlapchjvquwf5wlcu) - if you prefer Figma you can import the [sketch.app file](https://help.figma.com/hc/en-us/articles/360040514273-Import-files-from-Sketch).
-+ Minimal styling has been added to the styles/GlobalStyles.tsx, we love [@emotion](https://emotion.sh/docs/introduction) as it integrates with @zoralabs/nft-components - go ahead and uncomment the styling in styles/theme.ts to see it in action.
-+ A few additional styling patterns have been included: the usage of css variables, styling mixins & styled components. None of this is necessary - feel free to style as you wish!
-+ An example page is included - ```custom-thumbnails.tsx``` - in this page we are adding some css classes to the nft thumbnails based on auction state.
-+ We've included a markdown rendering component to allow for the easy addition of formatted copy. See it in action in the about page.
-
-  ```bash
-  import readMe from '../README.md'
-  ...
-  export default function About() {
-    return (
-      <>
-        ...
-          <Markdown markdown={readMe}/>
-        ...
-      </>
-    )
-  }
-  ```

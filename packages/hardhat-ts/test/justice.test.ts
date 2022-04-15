@@ -92,7 +92,6 @@ describe('Justice', () => {
 
     it('can\'t create an auction for a non-existent token', async () => {
       const tokenBalance = await restore.balanceOf(restore.address);
-      console.log('tokenBalance: ', tokenBalance);
       const tokenId = 100;
 
       const paymentSplit = ethers.BigNumber.from(70);
