@@ -1,25 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ROUTE_ANIMATIONS_ELEMENTS, NotificationService } from '../../../core/core.module';
 
-import { Bid, NFT } from '../nft.interface';
+import { Auction, Bid, NFT } from '../nft.interface';
 import { NFTService } from 'app/service/nft.service';
 import * as fromNFT from '../reducers/';
 import * as NFTActions from '../nft.actions';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
-
-const DATA: Bid[] = [
-  {
-    bidder: '0x47...C7e9',
-    amount: 42.3
-  },
-  {
-    bidder: '0x6B...6C34',
-    amount: 40
-  },
-];
+import { BigNumber } from 'ethers';
+import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'pr1s0nart-app',
@@ -27,14 +18,18 @@ const DATA: Bid[] = [
   styleUrls: ['./nft.component.scss']
 })
 export class NFTComponent implements OnInit, OnDestroy {
-  bids: MatTableDataSource<Bid> = new MatTableDataSource(DATA);
-  displayedColumns: string[] = ['bidder', 'amount'];
+  @ViewChild(MatSort) sort: MatSort;
+  bids$: Observable<Bid[]>;
+  bidDataSource: MatTableDataSource<Bid> = new MatTableDataSource();
+
+  displayedColumns: string[] = ['bidder', 'amount', 'blockTimestamp'];
   id: any;
   sub: any;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
   nft$: Observable<NFT>;
   nft: NFT;
+  auctions$: Observable<Auction[]>;
   baseArweaveURL = 'https://arweave.net/';
 
   metadataUrl: string;
@@ -58,6 +53,18 @@ export class NFTComponent implements OnInit, OnDestroy {
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
     this.nft$.subscribe(data => {
       this.nft = data;
+    });
+
+    // TODO: load auctions by nftId
+    this.store.dispatch(NFTActions.auctionsLoad());
+    this.auctions$ = this.store.pipe(select(fromNFT.selectAllAuctions));
+
+    // TODO: load bids by auctionId
+    this.store.dispatch(NFTActions.bidsLoad());
+    this.bids$ = this.store.pipe(select(fromNFT.selectAllBids));
+    this.bids$.subscribe(data => {
+      this.bidDataSource.data = data;
+      this.bidDataSource.sort = this.sort;
     });
 
   }

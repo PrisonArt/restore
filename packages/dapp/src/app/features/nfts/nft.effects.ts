@@ -19,20 +19,19 @@ import {
   nftLoadMetadataSuccess,
   auctionsLoad,
   auctionsLoadSuccess,
+  bidsLoad,
+  bidsLoadSuccess
 } from './nft.actions';
 
 
 @Injectable()
 export class NFTEffects {
-
   loadNFTs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(nftsLoad),
       mergeMap(() =>
         this.nftService.getNFTs().pipe(
-          map(nfts =>
-            nftsLoadSuccess({nfts})
-          ),
+          map((nfts) => nftsLoadSuccess({ nfts })),
           catchError((error) => of(nftFailure({ error })))
         )
       )
@@ -44,7 +43,7 @@ export class NFTEffects {
       ofType(nftLoad),
       switchMap((action) =>
         this.nftService.getNFT(action.nftId).pipe(
-          map(nft => nftLoadSuccess({ nft })),
+          map((nft) => nftLoadSuccess({ nft })),
           catchError((error) => of(nftFailure({ error })))
         )
       )
@@ -54,17 +53,18 @@ export class NFTEffects {
   loadNFTsMetadata$ = createEffect(() =>
     this.actions$.pipe(
       ofType(nftsLoadSuccess),
-      switchMap(action =>
+      switchMap((action) =>
         from(action.nfts).pipe(
           mergeMap((nft) =>
-            this.nftService.getNFTMetadata(nft.id.toString(), nft.metadataHash).pipe(
-              switchMap((nft) => [
-                nftLoadMetadataSuccess({ nft })
-              ]),
-              catchError((error) => of(nftFailure({ error })))
-            )
+            this.nftService
+              .getNFTMetadata(nft.id.toString(), nft.metadataHash)
+              .pipe(
+                switchMap((nft) => [nftLoadMetadataSuccess({ nft })]),
+                catchError((error) => of(nftFailure({ error })))
+              )
           )
-      ))
+        )
+      )
     )
   );
 
@@ -72,10 +72,12 @@ export class NFTEffects {
     this.actions$.pipe(
       ofType(nftLoadSuccess),
       switchMap((action) =>
-        this.nftService.getNFTMetadata(action.nft.id.toString(), action.nft.metadataHash).pipe(
-          map(nft => nftLoadMetadataSuccess({ nft })),
-          catchError((error) => of(nftFailure({ error })))
-        )
+        this.nftService
+          .getNFTMetadata(action.nft.id.toString(), action.nft.metadataHash)
+          .pipe(
+            map((nft) => nftLoadMetadataSuccess({ nft })),
+            catchError((error) => of(nftFailure({ error })))
+          )
       )
     )
   );
@@ -85,18 +87,24 @@ export class NFTEffects {
       ofType(auctionsLoad),
       mergeMap(() =>
         this.nftService.getAuctions().pipe(
-          map(auctions =>
-            auctionsLoadSuccess({auctions})
-          ),
+          map((auctions) => auctionsLoadSuccess({ auctions })),
           catchError((error) => of(nftFailure({ error })))
         )
       )
     )
   );
 
+  loadBids$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bidsLoad),
+      mergeMap(() =>
+        this.nftService.getBids().pipe(
+          map((bids) => bidsLoadSuccess({ bids })),
+          catchError((error) => of(nftFailure({ error })))
+        )
+      )
+    )
+  );
 
-  constructor(
-    private nftService: NFTService,
-    private actions$: Actions,
-  ) { }
+  constructor(private nftService: NFTService, private actions$: Actions) {}
 }

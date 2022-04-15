@@ -22,11 +22,16 @@ export interface Attribute {
 }
 
 export interface Bid {
+  id: number;
   bidder: string;
-  amount: number;
+  amount: BigNumber;
+  blockTimestamp: BigNumber;
 }
 
 export interface Auction {
   id: number;
+  amount: BigNumber;
   startTime: BigNumber;
+  endTime: BigNumber;
+  settled: boolean;
 }

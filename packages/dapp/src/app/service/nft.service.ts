@@ -3,13 +3,14 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { Attribute, Auction, NFT } from '../features/nfts/nft.interface';
+import { Attribute, Auction, Bid, NFT } from '../features/nfts/nft.interface';
 
 export interface NFTResponse {
 	nfts: NFT[];
   auctions: Auction[];
 }
 
+// FIXME: populate a NFTMetadata object and update the reducer function to update just the metadata values
 export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
   const attributes: Attribute[] = res['attributes'].map(
     (attribute: { [x: string]: any }) => {
@@ -41,6 +42,8 @@ export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
 };
 
 export const normalizeNFT = (nft: any): NFT => {
+  console.log('normalizeNFT:', nft);
+
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
@@ -61,7 +64,19 @@ export const normalizeNFT = (nft: any): NFT => {
 export const normalizeAuction = (auction: any): Auction => {
   return {
     id: Number(auction.id),
+    amount: auction.amount,
     startTime: auction.startTime,
+    endTime: auction.endTime,
+    settled: auction.settled
+  }
+};
+
+export const normalizeBid = (bid: any): Bid => {
+  return {
+    id: Number(bid.id),
+    bidder: bid.bidder.id,
+    amount: bid.amount,
+    blockTimestamp: bid.blockTimestamp,
   }
 };
 
@@ -74,9 +89,9 @@ export class NFTService {
   graphURL = 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost';
 
 
-  nftGql = `
+nftGql = (nftId: string) => `
 {
-  nft(id: "0") {
+  nft(id: "${nftId}") {
     id
     metadataURI
     data
@@ -120,13 +135,6 @@ auctionsGql = `
     bidder {
       id
     }
-    bids {
-      id
-      amount
-      bidder
-      blockNumber
-      blockTimestamp
-    }
     creator {
       id
     }
@@ -134,15 +142,49 @@ auctionsGql = `
 }
 `;
 
+bidsGql = `
+{
+  bids {
+    id
+    amount
+    blockNumber
+    blockTimestamp
+    txIndex
+    bidder {
+      id
+    }
+    nft {
+      id
+    }
+  }
+}
+`;
+
+bidsByAuctionGql = (auctionId: string) => `
+{
+  bids(auction: "${auctionId}") {
+    id
+    amount
+    blockNumber
+    blockTimestamp
+    txIndex
+    bidder {
+      id
+    }
+    nft {
+      id
+    }
+  }
+}
+ `;
+
   constructor(private http: HttpClient) {
   }
 
   getNFT(nftId: string): Observable<NFT> {
-    console.log(`# getNFT: ${nftId}`);
-    // FIXME: incorporate nftId into the query
-    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql })
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql(nftId.toString())})
     .pipe(
-      tap((res: any) => console.log(`generated text: ${res.data.nft}`)),
+      tap((res: any) => console.log(`nft: ${res.data.nft.id}`)),
       map(res => res.data.nft),
       map(nft => normalizeNFT(nft))
     );
@@ -170,6 +212,15 @@ auctionsGql = `
       tap((res: any) => console.log(`# auctions: ${res.data.auctions.length}`)),
       map(res => res.data.auctions),
       map(auctions => auctions.map((auction: any) => normalizeAuction(auction)))
+    );
+  }
+
+  getBids(): Observable<Bid[]> {
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.bidsGql })
+    .pipe(
+      tap((res: any) => console.log(`# bids: ${res.data.bids.length}`)),
+      map(res => res.data.bids),
+      map(bids => bids.map((bid: any) => normalizeBid(bid)))
     );
   }
 

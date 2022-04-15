@@ -42,15 +42,23 @@
     </div>
   </form>
   <div><br></div>
-  <table mat-table [dataSource]="bids" class="mat-elevation-z8 col-md-11">
+  <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-11">
     <!-- Bidder Column -->
     <ng-container matColumnDef="bidder">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
       <td mat-cell *matCellDef="let bid"> {{bid.bidder}} </td>
     </ng-container>
 
     <!-- Amount Column -->
     <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
       <td mat-cell *matCellDef="let bid"> {{bid.amount}} Ξ</td>
+    </ng-container>
+
+    <!-- Timestamp Column -->
+    <ng-container matColumnDef="blockTimestamp">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+      <td mat-cell *matCellDef="let bid"> {{bid.blockTimestamp | dayjs:'DD.MM.YYYY h:mm A' }} </td>
     </ng-container>
 
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

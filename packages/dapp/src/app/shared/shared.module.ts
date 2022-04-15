@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -73,6 +74,7 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
     MatTooltipModule,
     MatSnackBarModule,
     MatSlideToggleModule,
+    MatSortModule,
     MatDividerModule,
     MatTableModule,
     MatPaginatorModule,
@@ -102,6 +104,7 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
     MatTooltipModule,
     MatSnackBarModule,
     MatSlideToggleModule,
+    MatSortModule,
     MatDividerModule,
     MatSliderModule,
     MatDatepickerModule,

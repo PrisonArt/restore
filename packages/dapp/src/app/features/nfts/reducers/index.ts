@@ -7,10 +7,12 @@ import {
 import * as fromRoot from '../../../core/core.state';
 import * as fromNFTs from './nft.reducer';
 import * as fromAuctions from './auction.reducer';
+import * as fromBids from './bid.reducer';
 
 export interface State extends fromRoot.AppState {
   nft: NFTsState;
   auction: AuctionsState;
+  bid: BidsState;
 }
 
 export interface NFTsState {
@@ -73,4 +75,33 @@ export const {
 export const selectAuction = (id: number) =>
   createSelector(selectAllAuctions, (auctions) => auctions[id]);
 
+// Bids
+export interface BidsState {
+  bids: fromBids.State; // entity
+}
+
+export function bidReducers(state: BidsState | undefined, action: Action) {
+  return combineReducers({
+    bids: fromBids.reducer,
+  })(state, action);
+}
+
+export const selectBidsState = createFeatureSelector<BidsState>(
+  'bid'
+);
+
+export const selectBidEntitiesState = createSelector(
+  selectBidsState,
+  (state) => state.bids
+);
+
+export const {
+  selectIds: selectBidIds,
+  selectEntities: selectBidEntities,
+  selectAll: selectAllBids,
+  selectTotal: selectTotalBids
+} = fromBids.adapter.getSelectors(selectBidEntitiesState);
+
+export const selectBid = (id: number) =>
+  createSelector(selectAllBids, (bids) => bids[id]);
 
