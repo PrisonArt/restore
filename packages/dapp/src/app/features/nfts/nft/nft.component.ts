@@ -9,7 +9,6 @@ import * as NFTActions from '../nft.actions';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
-import { BigNumber } from 'ethers';
 import { MatSort, Sort } from '@angular/material/sort';
 
 @Component({

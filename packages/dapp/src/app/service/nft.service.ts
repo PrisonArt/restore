@@ -13,12 +13,12 @@ export interface NFTResponse {
 // FIXME: populate a NFTMetadata object and update the reducer function to update just the metadata values
 export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
   const attributes: Attribute[] = res['attributes'].map(
-    (attribute: { [x: string]: any }) => {
-      return {
+    (attribute: { [x: string]: any }) => (
+      {
         traitType: attribute['trait_type'],
         value: attribute['value'],
-      };
-    }
+      }
+    )
   );
 
   const imageHash = res['image'].substring(5);
@@ -61,24 +61,24 @@ export const normalizeNFT = (nft: any): NFT => {
   }
 };
 
-export const normalizeAuction = (auction: any): Auction => {
-  return {
+export const normalizeAuction = (auction: any): Auction => (
+  {
     id: Number(auction.id),
     amount: auction.amount,
     startTime: auction.startTime,
     endTime: auction.endTime,
     settled: auction.settled
   }
-};
+);
 
-export const normalizeBid = (bid: any): Bid => {
-  return {
+export const normalizeBid = (bid: any): Bid => (
+  {
     id: Number(bid.id),
     bidder: bid.bidder.id,
     amount: bid.amount,
     blockTimestamp: bid.blockTimestamp,
   }
-};
+);
 
 @Injectable({
   providedIn: 'root'
@@ -87,21 +87,6 @@ export class NFTService {
 
   // FIXME: use localhost, rinkeby, or mainnet url
   graphURL = 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost';
-
-
-nftGql = (nftId: string) => `
-{
-  nft(id: "${nftId}") {
-    id
-    metadataURI
-    data
-    isFrozen
-    owner {
-      id
-    }
-  }
-}
-`;
 
 nftsGql = `
 {
@@ -160,6 +145,23 @@ bidsGql = `
 }
 `;
 
+constructor(private http: HttpClient) {
+}
+
+nftGql = (nftId: string) => `
+{
+  nft(id: "${nftId}") {
+    id
+    metadataURI
+    data
+    isFrozen
+    owner {
+      id
+    }
+  }
+}
+`;
+
 bidsByAuctionGql = (auctionId: string) => `
 {
   bids(auction: "${auctionId}") {
@@ -177,9 +179,6 @@ bidsByAuctionGql = (auctionId: string) => `
   }
 }
  `;
-
-  constructor(private http: HttpClient) {
-  }
 
   getNFT(nftId: string): Observable<NFT> {
     return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql(nftId.toString())})

@@ -55,6 +55,8 @@ import {
 } from './settings/settings.selectors';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  faCalendar,
+  faClock,
   faCog,
   faBars,
   faRocket,
@@ -169,7 +171,9 @@ export class CoreModule {
       throw new Error('CoreModule is already loaded. Import only in AppModule');
     }
     faIconLibrary.addIcons(
+      faCalendar,
       faCog,
+      faClock,
       faBars,
       faRocket,
       faPowerOff,

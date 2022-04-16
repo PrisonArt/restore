@@ -4,7 +4,7 @@ import * as BidActions from '../nft.actions';
 
 import { Bid } from '../nft.interface';
 
-export interface State extends EntityState<Bid> {}
+export type State = EntityState<Bid>;
 
 export const adapter: EntityAdapter<Bid> = createEntityAdapter<Bid>({
   selectId: (bid: Bid) => bid.id,

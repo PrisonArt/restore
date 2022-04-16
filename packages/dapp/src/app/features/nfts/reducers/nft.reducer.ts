@@ -4,7 +4,7 @@ import * as NFTActions from '../nft.actions';
 
 import { NFT } from '../nft.interface';
 
-export interface State extends EntityState<NFT> {}
+export type State = EntityState<NFT>;
 
 export const adapter: EntityAdapter<NFT> = createEntityAdapter<NFT>({
   selectId: (nft: NFT) => nft.id,
