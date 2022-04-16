@@ -30,6 +30,7 @@ export interface Bid {
 
 export interface Auction {
   id: number;
+  nftId: number;
   amount: BigNumber;
   startTime: BigNumber;
   endTime: BigNumber;

@@ -75,6 +75,23 @@ export const {
 export const selectAuction = (id: number) =>
   createSelector(selectAllAuctions, (auctions) => auctions[id]);
 
+export const selectSelectedNFTId = createSelector(
+  selectNFTsState,
+  (state) => state.nfts.selectedNFTid
+);
+
+export const selectAuctionsByNFT = createSelector(
+  selectAllAuctions,
+  selectSelectedNFTId,
+ (auctions, nftId) => {
+   if (nftId == null) {
+     return auctions;
+   }
+   // FIXME: strict equality is not working
+   return auctions.filter(auction => auction.nftId == nftId)
+  }
+ );
+
 // Bids
 export interface BidsState {
   bids: fromBids.State; // entity

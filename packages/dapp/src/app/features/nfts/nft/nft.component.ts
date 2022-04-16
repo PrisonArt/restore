@@ -22,7 +22,7 @@ export class NFTComponent implements OnInit, OnDestroy {
   bidDataSource: MatTableDataSource<Bid> = new MatTableDataSource();
 
   displayedColumns: string[] = ['bidder', 'amount', 'blockTimestamp'];
-  id: any;
+  id: number;
   sub: any;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
@@ -46,17 +46,18 @@ export class NFTComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub = this.route.params.subscribe(params => {
-      this.id = params['id'];
+      this.id = params['id'] as number;
+      this.store.dispatch(NFTActions.nftSelect({ _id: this.id}));
     })
-    this.store.dispatch(NFTActions.nftLoad({ nftId: this.id }));
+
+    this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
     this.nft$.subscribe(data => {
       this.nft = data;
     });
 
-    // TODO: load auctions by nftId
     this.store.dispatch(NFTActions.auctionsLoad());
-    this.auctions$ = this.store.pipe(select(fromNFT.selectAllAuctions));
+    this.auctions$ = this.store.pipe(select(fromNFT.selectAuctionsByNFT));
 
     // TODO: load bids by auctionId
     this.store.dispatch(NFTActions.bidsLoad());

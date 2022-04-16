@@ -11,6 +11,8 @@ export const nftLoadSuccess = createAction('[NFT/Command] Load NFT Success', pro
 export const nftLoadMetadata = createAction('[NFT/API] Load NFT Metadata', props<{ nftId: string, metadataHash: string }>());
 export const nftLoadMetadataSuccess = createAction('[NFT/Command] Load NFT Metadata Success', props<{ nft: NFT }>());
 
+export const nftSelect = createAction('[View NFT Page] Select NFT', props<{ _id: number }>());
+
 export const nftFailure = createAction('[NFT/API] NFT Failure', props<{ error: any }>());
 
 export const auctionsLoad = createAction('[NFT/API] Load Auctions');

@@ -42,8 +42,6 @@ export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
 };
 
 export const normalizeNFT = (nft: any): NFT => {
-  console.log('normalizeNFT:', nft);
-
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
@@ -64,6 +62,7 @@ export const normalizeNFT = (nft: any): NFT => {
 export const normalizeAuction = (auction: any): Auction => (
   {
     id: Number(auction.id),
+    nftId: Number(auction.nft.id),
     amount: auction.amount,
     startTime: auction.startTime,
     endTime: auction.endTime,

@@ -24,6 +24,9 @@
 </div>
 <div class="col-md-6">
   <h2>Auction</h2>
+  <div *ngFor="let auction of auctions$ | async">
+    <div>{{ auction.startTime | dayjs:'DD.MM.YYYY' }}</div>
+  </div>
   <div>Current Bid: 42.30 Ξ</div>
   <div>Time left: 5 hours 20 minutes</div>
   <div><br><br></div>
