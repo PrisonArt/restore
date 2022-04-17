@@ -73,6 +73,8 @@ export const normalizeAuction = (auction: any): Auction => (
 export const normalizeBid = (bid: any): Bid => (
   {
     id: Number(bid.id),
+    auctionId: Number(bid.auction.id),
+    nftId: Number(bid.nft.id),
     bidder: bid.bidder.id,
     amount: bid.amount,
     blockTimestamp: bid.blockTimestamp,
@@ -135,6 +137,9 @@ bidsGql = `
     blockTimestamp
     txIndex
     bidder {
+      id
+    }
+    auction {
       id
     }
     nft {

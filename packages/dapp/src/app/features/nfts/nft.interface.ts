@@ -23,6 +23,8 @@ export interface Attribute {
 
 export interface Bid {
   id: number;
+  auctionId: number;
+  nftId: number;
   bidder: string;
   amount: BigNumber;
   blockTimestamp: BigNumber;

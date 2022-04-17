@@ -47,7 +47,6 @@ export class NFTComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'] as number;
-      this.store.dispatch(NFTActions.nftSelect({ _id: this.id}));
     })
 
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
@@ -57,11 +56,10 @@ export class NFTComponent implements OnInit, OnDestroy {
     });
 
     this.store.dispatch(NFTActions.auctionsLoad());
-    this.auctions$ = this.store.pipe(select(fromNFT.selectAuctionsByNFT));
+    this.auctions$ = this.store.pipe(select(fromNFT.selectAuctionsByNFT(this.id)));
 
-    // TODO: load bids by auctionId
     this.store.dispatch(NFTActions.bidsLoad());
-    this.bids$ = this.store.pipe(select(fromNFT.selectAllBids));
+    this.bids$ = this.store.pipe(select(fromNFT.selectBidsByNFT(this.id)));
     this.bids$.subscribe(data => {
       this.bidDataSource.data = data;
       this.bidDataSource.sort = this.sort;
