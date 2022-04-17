@@ -10,6 +10,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, Sort } from '@angular/material/sort';
+import BigNumber from 'bignumber.js';
 
 @Component({
   selector: 'pr1s0nart-app',
@@ -24,6 +25,9 @@ export class NFTComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['bidder', 'amount', 'blockTimestamp'];
   id: number;
   sub: any;
+
+  // FIXME get from contract
+  minBidIncPercentage = new BigNumber(5).div(100).plus(1);
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
   nft$: Observable<NFT>;

@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import BigNumber from 'bignumber.js';
 /* eslint-disable @typescript-eslint/naming-convention */
 export interface NFT {
   id: number;
@@ -28,11 +28,16 @@ export interface Bid {
   bidder: string;
   amount: BigNumber;
   blockTimestamp: BigNumber;
+  blockNumber: number;
+  txIndex: number;
 }
 
 export interface Auction {
   id: number;
   nftId: number;
+  winnerId: string;
+  bidderId: string;
+  creatorId: string;
   amount: BigNumber;
   startTime: BigNumber;
   endTime: BigNumber;

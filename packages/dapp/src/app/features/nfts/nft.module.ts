@@ -9,11 +9,12 @@ import { NFTComponent } from './nft/nft.component';
 import { NFTMetadataComponent } from './nftmetadata/nftmetadata.component';
 
 import { DayjsPipe } from '../../app/pipes/dayjs.pipe';
+import { DayjsDiffPipe } from '../../app/pipes/dayjsdiff.pipe';
 import { EtherPipe } from '../../app/pipes/eth.pipe';
 import { FmtAddrPipe } from '../../app/pipes/fmtaddr.pipe';
 
 @NgModule({
-  declarations: [NFTListComponent, NFTComponent, NFTMetadataComponent, DayjsPipe, EtherPipe, FmtAddrPipe],
+  declarations: [NFTListComponent, NFTComponent, NFTMetadataComponent, DayjsPipe, DayjsDiffPipe, EtherPipe, FmtAddrPipe],
   imports: [CommonModule, SharedModule, NFTListRoutingModule]
 })
 export class NFTsModule {}

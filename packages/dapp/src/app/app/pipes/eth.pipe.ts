@@ -1,11 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import * as ethers from 'ethers';
+import BigNumber from 'bignumber.js';
+import { formatEther } from 'ethers/lib/utils';
 
 @Pipe({name: 'eth'})
 export class EtherPipe implements PipeTransform {
-    transform(value: ethers.BigNumberish): string {
+    transform(value: BigNumber): string {
+      console.log(new BigNumber(value).toFixed());
         if (value === undefined) return '...';
-        else return ethers.utils.formatEther(value) + ' Ξ';
+        else return formatEther(new BigNumber(value).toFixed()) + ' Ξ'; //
     }
 }

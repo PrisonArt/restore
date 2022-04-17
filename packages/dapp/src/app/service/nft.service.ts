@@ -27,7 +27,7 @@ export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
   const animationURL = 'https://2sbpw3pbmyuzng3pnenk7tr4s4mpnin7e2i2am2twdv6alzj.arweave.net/1IL7beFmKZabb2k-ar848lxj2ob8mkaAzU7_Dr4C8p0'
   console.log('animationURL:', animationURL);
   return {
-    id: Number(nftId),
+    id: +nftId,
     data: '',
     name: res['name'],
     tokenId: '',
@@ -46,7 +46,7 @@ export const normalizeNFT = (nft: any): NFT => {
   const metadataHash = nft.metadataURI.substring(5);
 
   return {
-    id: Number(nft.id),
+    id: +nft.id,
     data: nft.data,
     name: '',
     tokenId: nft.id,
@@ -59,25 +59,34 @@ export const normalizeNFT = (nft: any): NFT => {
   }
 };
 
-export const normalizeAuction = (auction: any): Auction => (
-  {
-    id: Number(auction.id),
-    nftId: Number(auction.nft.id),
+export const normalizeAuction = (auction: any): Auction => {
+  const winnerId = auction.winner ? auction.winner.id : '';
+  const bidderId = auction.bidder ? auction.bidder.id : '';
+  const creatorId = auction.creator ? auction.creator.id : '';
+
+  return {
+    id: +auction.id,
+    nftId: +auction.nft.id,
+    winnerId: winnerId,
+    bidderId: bidderId,
+    creatorId: creatorId,
     amount: auction.amount,
     startTime: auction.startTime,
     endTime: auction.endTime,
     settled: auction.settled
   }
-);
+};
 
 export const normalizeBid = (bid: any): Bid => (
   {
-    id: Number(bid.id),
-    auctionId: Number(bid.auction.id),
-    nftId: Number(bid.nft.id),
+    id: +bid.id,
+    auctionId: +bid.auction.id,
+    nftId: +bid.nft.id,
     bidder: bid.bidder.id,
     amount: bid.amount,
     blockTimestamp: bid.blockTimestamp,
+    blockNumber: bid.blockNumber,
+    txIndex: bid.txIndex
   }
 );
 
