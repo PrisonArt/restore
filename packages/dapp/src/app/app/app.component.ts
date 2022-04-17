@@ -1,3 +1,4 @@
+import { WalletService } from './../service/wallet.service';
 import browser from 'browser-detect';
 import { Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
@@ -18,6 +19,7 @@ import {
   actionSettingsChangeAnimationsPageDisabled,
   actionSettingsChangeLanguage
 } from '../core/settings/settings.actions';
+import { setAccountAddress } from 'app/features/wallet/wallet.actions';
 
 @Component({
   selector: 'pr1s0nart-root',
@@ -47,7 +49,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private store: Store<AppState>,
-    private storageService: LocalStorageService
+    private storageService: LocalStorageService,
+    private walletService: WalletService
   ) {}
 
   private static isIEorEdgeOrSafari() {
@@ -74,4 +77,10 @@ export class AppComponent implements OnInit {
       actionSettingsChangeLanguage({ language: event.value })
     );
   }
+
+  connectWallet() {
+    this.store.dispatch(setAccountAddress({ accountAddress: '0x0' }));
+    this.walletService.connectWallet();
+  }
+
 }

@@ -44,6 +44,7 @@ import {
   faLanguage,
   faPaintBrush,
   faLightbulb,
+  faWallet,
   faWindowMaximize,
   faStream,
   faBook,
@@ -140,6 +141,7 @@ export class SharedModule {
       faWindowMaximize,
       faStream,
       faBook,
+      faWallet,
       faWater
     );
   }

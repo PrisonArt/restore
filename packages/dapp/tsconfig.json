@@ -18,6 +18,8 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "target": "es2017",
     "typeRoots": ["node_modules/@types"],
