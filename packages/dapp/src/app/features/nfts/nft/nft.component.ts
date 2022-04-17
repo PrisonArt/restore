@@ -18,7 +18,7 @@ import BigNumber from 'bignumber.js';
   styleUrls: ['./nft.component.scss']
 })
 export class NFTComponent implements OnInit, OnDestroy {
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   bids$: Observable<Bid[]>;
   bidDataSource: MatTableDataSource<Bid> = new MatTableDataSource();
 

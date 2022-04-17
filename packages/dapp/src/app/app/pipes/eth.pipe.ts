@@ -6,7 +6,6 @@ import { formatEther } from 'ethers/lib/utils';
 @Pipe({name: 'eth'})
 export class EtherPipe implements PipeTransform {
     transform(value: BigNumber): string {
-      console.log(new BigNumber(value).toFixed());
         if (value === undefined) return '...';
         else return formatEther(new BigNumber(value).toFixed()) + ' Ξ'; //
     }
