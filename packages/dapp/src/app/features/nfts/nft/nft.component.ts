@@ -1,3 +1,4 @@
+import { WalletService } from './../../../service/wallet.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ROUTE_ANIMATIONS_ELEMENTS, NotificationService } from '../../../core/core.module';
@@ -11,6 +12,8 @@ import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, Sort } from '@angular/material/sort';
 import BigNumber from 'bignumber.js';
+import { BigNumber as BigNumberEthers } from 'ethers';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'pr1s0nart-app',
@@ -41,6 +44,7 @@ export class NFTComponent implements OnInit, OnDestroy {
   constructor(public route: ActivatedRoute,
     private store: Store,
     public nftService: NFTService,
+    public walletService: WalletService,
     private notificationService: NotificationService) {
   }
 
@@ -68,6 +72,14 @@ export class NFTComponent implements OnInit, OnDestroy {
       this.bidDataSource.data = data;
       this.bidDataSource.sort = this.sort;
     });
+  }
 
+  // TODO: get bid amount from form, capture error and notify user
+  placeBid() {
+    this.walletService.bid(0, BigNumberEthers.from(12000000000)).pipe(
+      tap(() => {
+        this.notificationService.success('Bid placed');
+      })
+    )
   }
 }

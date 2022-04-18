@@ -16,9 +16,9 @@ export class WalletEffects {
       ofType(WalletActions.loadUserBalance),
       mergeMap((action) =>
         this.walletService.getBalanceOf(action.accountAddress).pipe(
-          map((balance) => {
-            return WalletActions.loadUserBalanceSuccess({userBalance: balance.toNumber()})
-          }),
+          map((balance) =>
+            WalletActions.loadUserBalanceSuccess({userBalance: balance.toNumber()})
+          ),
           catchError((error) =>
             of(WalletActions.loadUserBalanceFailure(error))
           )

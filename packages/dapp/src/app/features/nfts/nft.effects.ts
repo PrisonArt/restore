@@ -59,7 +59,7 @@ export class NFTEffects {
             this.nftService
               .getNFTMetadata(nft.id.toString(), nft.metadataHash)
               .pipe(
-                switchMap((nft) => [nftLoadMetadataSuccess({ nft })]),
+                switchMap((nftMetadata) => [nftLoadMetadataSuccess({ nft: nftMetadata })]),
                 catchError((error) => of(nftFailure({ error })))
               )
           )

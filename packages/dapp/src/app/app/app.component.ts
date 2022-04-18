@@ -19,7 +19,7 @@ import {
   actionSettingsChangeAnimationsPageDisabled,
   actionSettingsChangeLanguage
 } from '../core/settings/settings.actions';
-import { selectAccountAddress, selectNetworkName } from 'app/features/wallet/reducers';
+import { selectAccountAddressShortened, selectNetworkName } from 'app/features/wallet/reducers';
 
 
 @Component({
@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
     this.language$ = this.store.pipe(select(selectSettingsLanguage));
     this.theme$ = this.store.pipe(select(selectEffectiveTheme));
 
-    this.accountAddress$ = this.store.pipe(select(selectAccountAddress));
+    this.accountAddress$ = this.store.pipe(select(selectAccountAddressShortened));
     this.networkName$ = this.store.pipe(select(selectNetworkName));
   }
 
