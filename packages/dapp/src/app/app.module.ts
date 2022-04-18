@@ -6,6 +6,7 @@ import { CoreModule } from './core/core.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { NFTEffects } from './features/nfts/nft.effects';
+import { WalletEffects } from './features/wallet/wallet.effects';
 import { nftReducers, auctionReducers, bidReducers } from './features/nfts/reducers';
 import { walletReducers } from './features/wallet/reducers';
 
@@ -34,7 +35,7 @@ import { SharedModule } from './shared/shared.module';
     StoreModule.forFeature('auction', auctionReducers),
     StoreModule.forFeature('bid', bidReducers),
     StoreModule.forFeature('wallet', walletReducers),
-    EffectsModule.forFeature([NFTEffects])
+    EffectsModule.forFeature([NFTEffects, WalletEffects])
   ],
   declarations: [AppComponent, NotfoundComponent],
   bootstrap: [AppComponent]

@@ -16,26 +16,31 @@ export function walletReducers(state: WalletState | undefined, action: Action) {
   })(state, action);
 }
 
-export const getWalletState = createFeatureSelector<WalletState>('wallet');
+export const selectWalletState = createFeatureSelector<WalletState>('wallet');
 
-export const getAccountAddress = createSelector(
-    getWalletState,
+export const selectNetworkName = createSelector(
+  selectWalletState,
+  (state) => state.wallet.networkName
+);
+
+export const selectAccountAddress = createSelector(
+  selectWalletState,
     (state) => state.wallet.accountAddress
 );
 
-export const getAccountAddressShortened = createSelector(
-    getAccountAddress,
+export const selectAccountAddressShortened = createSelector(
+    selectAccountAddress,
     (address) => (!address)
           ? address
           : address.substring(0, 5) + '...' + address.substring(address.length - 3)
 );
 
-export const getAllowance = createSelector(
-  getWalletState,
+export const selectAllowance = createSelector(
+  selectWalletState,
   (state) => state.wallet.contractAllowance
 );
 
-export const getUserBalance = createSelector(
-  getWalletState,
+export const selectUserBalance = createSelector(
+  selectWalletState,
   (state) => state.wallet.userBalance
 );

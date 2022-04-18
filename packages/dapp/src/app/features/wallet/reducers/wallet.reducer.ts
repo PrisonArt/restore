@@ -4,20 +4,23 @@ import * as WalletActions from '../wallet.actions';
 export const walletFeatureKey = 'wallet';
 
 export interface State {
-  accountAddress: string | null;
-  contractAllowance: number | null;
-  userBalance: number | null;
+  networkName: string;
+  accountAddress: string;
+  contractAllowance: number;
+  userBalance: number;
 }
 
 export const initialState: State = {
-  accountAddress: null,
-  contractAllowance: null,
-  userBalance: null
+  networkName: '',
+  accountAddress: '',
+  contractAllowance: 0,
+  userBalance: 0
 };
 
 export const reducer = createReducer(
   initialState,
   on(WalletActions.setAccountAddress, (state, { accountAddress }) => ({ ...state, accountAddress })),
+  on(WalletActions.setNetworkName, (state, { networkName }) => ({ ...state, networkName })),
   on(WalletActions.logoutUser, (state) => ({...initialState})),
   on(WalletActions.loadContractAllowanceSuccess, (state, { contractAllowance }) =>
     ({ ...state, contractAllowance })

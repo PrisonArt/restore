@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import Web3Modal from 'web3modal';
-import { Subject } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { filter, take} from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { getAccountAddress } from './../features/wallet/reducers/index';
-import { /* logoutUser */ setAccountAddress, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
+import { selectAccountAddress } from './../features/wallet/reducers/index';
+import { logoutUser, setNetworkName, setAccountAddress, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
 
 import networkMapping from './../../deployments.json';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,8 @@ export class WalletService {
   private signer: ethers.providers.JsonRpcSigner;
   private web3Modal: Web3Modal;
 
-  private justiceContract: any;
+  private justiceContract: ethers.Contract;
+  private restoreContract: ethers.Contract;
 
   private accountStatusSource = new Subject<any>();
   accountStatus$ = this.accountStatusSource.asObservable();
@@ -28,7 +29,7 @@ export class WalletService {
   constructor(private store: Store) {
     this.setupWeb3Modal();
 
-    this.store.select(getAccountAddress)
+    this.store.select(selectAccountAddress)
       .pipe(
         take(1),
         filter(address => !!address)
@@ -50,23 +51,16 @@ export class WalletService {
 
   async connectWallet(): Promise<void> {
     await this.processProvider();
-    this.initializeContracts();
   }
 
   async processProvider(): Promise<void> {
     try {
       this.wallet = await this.web3Modal.connect();
       this.provider = new ethers.providers.Web3Provider(this.wallet);
-      this.signer = this.provider.getSigner();
 
-      this.initializeContracts();
+      this.initializeSignerAndContract();
 
-      if (this.signer) {
-        this.store.dispatch(setAccountAddress({ accountAddress: this.signer._address }));
-        this.store.dispatch(loadContractAllowance({ accountAddress: this.signer._address, contractAddress: this.getJusticeContract().address }));
-        this.store.dispatch(loadUserBalance({ accountAddress: this.signer._address }));
-        // this.setupListeners();
-      }
+      // this.setupListeners();
     }
     catch (e) {
       console.log(e);
@@ -76,21 +70,44 @@ export class WalletService {
   // TODO: Subscribe to accounts change
   // private setupListeners(): void {
 
+  private async initializeSignerAndContract(): Promise<void> {
+   const signerUnkChain = this.provider.getSigner();
+    if (signerUnkChain) {
+      const chainId: number = await signerUnkChain.getChainId();
+      const chainIdStr: string = chainId.toString();
+      const networkName: string = await this.provider.getNetwork().then(network => network.name);
 
-  private async initializeContracts(): Promise<void> {
-    const chainId: number = await this.signer.getChainId();
-    const chainIdStr: string = chainId.toString();
-    console.log(`Connected on chain ${chainId}`);
+      const networkMappingForChain =
+      networkMapping[chainIdStr as keyof typeof networkMapping];
 
-    const networkMappingForChain =
-    networkMapping[chainIdStr as keyof typeof networkMapping];
+      // only update network name or address if the Justice contract has been deployed
+      if (networkMappingForChain !== undefined) {
+        this.store.dispatch(setNetworkName({ networkName }));
 
-    if (networkMappingForChain !== undefined) {
-      const justiceMapping = networkMappingForChain[0]['contracts']['Justice'];
+        const justiceMapping = networkMappingForChain[0]['contracts']['Justice'];
+        this.justiceContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi, this.provider);
+        console.log(`Justice Contract Address ${this.justiceContract.address}`);
 
-      this.justiceContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi);
-      console.log(this.justiceContract.address);
+        const restoreMapping = networkMappingForChain[0]['contracts']['Restore'];
+        this.restoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, this.provider);
+        console.log(`Restore Contract Address ${this.restoreContract.address}`);
+
+        this.signer = signerUnkChain;
+        this.provider.listAccounts().then(res => {
+          const address = res[0];
+          this.store.dispatch(setAccountAddress({ accountAddress: address }));
+          this.store.dispatch(loadContractAllowance({ accountAddress: address, contractAddress: this.justiceContract.address }));
+          this.store.dispatch(loadUserBalance({ accountAddress: address }));
+        })
+
+      } else {
+        throw new Error('No contract found for this chain, please switch to Rinkeby or Mainnet');
+      }
     }
+  }
+
+  public getBalanceOf(accountAddress: string): Observable<BigNumber> {
+    return from(this.restoreContract.balanceOf(accountAddress)) as Observable<BigNumber>;
   }
 
   public getJusticeContract(): any {

@@ -13,6 +13,7 @@ module.exports = {
       path: false,
       os: false,
       stream: false,
+      buffer: false
     },
   }
 };

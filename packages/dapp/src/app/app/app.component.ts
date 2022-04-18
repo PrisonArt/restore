@@ -19,7 +19,8 @@ import {
   actionSettingsChangeAnimationsPageDisabled,
   actionSettingsChangeLanguage
 } from '../core/settings/settings.actions';
-import { setAccountAddress } from 'app/features/wallet/wallet.actions';
+import { selectAccountAddress, selectNetworkName } from 'app/features/wallet/reducers';
+
 
 @Component({
   selector: 'pr1s0nart-root',
@@ -36,8 +37,7 @@ export class AppComponent implements OnInit {
   languages = ['en'];
   navigation = [
     { link: 'about', label: 'pr1s0nart.menu.about' },
-    { link: 'nfts', label: 'pr1s0nart.menu.nfts' },
-    { link: 'connectwallet', label: 'pr1s0nart.menu.connectwallet' }
+    { link: 'nfts', label: 'pr1s0nart.menu.nfts' }
   ];
   navigationSideMenu = [
     ...this.navigation
@@ -46,6 +46,9 @@ export class AppComponent implements OnInit {
   stickyHeader$: Observable<boolean> | undefined;
   language$: Observable<string> | undefined;
   theme$: Observable<string> | undefined;
+
+  accountAddress$: Observable<string> | undefined;
+  networkName$: Observable<string>;
 
   constructor(
     private store: Store<AppState>,
@@ -70,6 +73,9 @@ export class AppComponent implements OnInit {
     this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
     this.language$ = this.store.pipe(select(selectSettingsLanguage));
     this.theme$ = this.store.pipe(select(selectEffectiveTheme));
+
+    this.accountAddress$ = this.store.pipe(select(selectAccountAddress));
+    this.networkName$ = this.store.pipe(select(selectNetworkName));
   }
 
   onLanguageSelect(event: MatSelectChange) {
@@ -79,7 +85,6 @@ export class AppComponent implements OnInit {
   }
 
   connectWallet() {
-    this.store.dispatch(setAccountAddress({ accountAddress: '0x0' }));
     this.walletService.connectWallet();
   }
 

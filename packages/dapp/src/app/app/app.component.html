@@ -40,7 +40,7 @@
           </span>
 
           <button (click)="connectWallet()">
-            <fa-icon icon="wallet"></fa-icon>
+            {{accountAddress$ | async}} {{networkName$ | async}}<fa-icon icon="wallet"></fa-icon>
           </button>
 
 
