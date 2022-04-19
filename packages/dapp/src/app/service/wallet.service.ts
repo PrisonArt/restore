@@ -8,6 +8,7 @@ import { logoutUser, setAccountAddress, setMinBidIncrementPercentage, setNetwork
 
 import networkMapping from './../../deployments.json';
 import { BigNumber, ethers } from 'ethers';
+import { NotificationService } from 'app/core/notifications/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class WalletService {
   private justiceContract: ethers.Contract;
   private restoreContract: ethers.Contract;
 
-  constructor(private store: Store) {
+  constructor(private store: Store,
+    private notificationService: NotificationService) {
     this.setupWeb3Modal();
 
     this.store.select(selectAccountAddress)
@@ -52,14 +54,29 @@ export class WalletService {
     return from(this.restoreContract.balanceOf(accountAddress)) as Observable<BigNumber>;
   }
 
-  // TODO: estimate gas
-  public bid(nftId: number, value: BigNumber): Observable<BigNumber> {
+  async bid(nftId: number, value: number) {
     const signer_ = this.provider.getSigner();
+    const justiceContractWithSigner = this.justiceContract.connect(signer_);
+    if (value !== 0) {
+      justiceContractWithSigner.createBid(nftId, { value: ethers.utils.parseEther(value.toString()) }).then(
+        (responseBid: any) => {
+          this.notificationService.success('Bid placed.');
+          console.log('Bid placed succesfully.', responseBid);
+        }
+      ).catch(
+        (error: any) => {
+          const prefixReasonStr = 'Error: VM Exception while processing transaction: reverted with reason string \'';
 
-    const signer = this.justiceContract.connect(signer_);
-    return from(signer.createBid(nftId, {
-      value,
-    })) as Observable<BigNumber>;
+          if (error.data.message.startsWith(prefixReasonStr)) {
+            const reasonStr = error.data.message.substring(prefixReasonStr.length, error.data.message.length - 1);
+            this.notificationService.error(`Error while placing bid: ${reasonStr}`);
+          } else {
+            this.notificationService.error(`Error while placing bid: ${error.data.message}`);
+          }
+          console.log('Error while placing bid: ', error.data.message);
+        }
+      );
+    }
   }
 
   public getJusticeContract(): any {

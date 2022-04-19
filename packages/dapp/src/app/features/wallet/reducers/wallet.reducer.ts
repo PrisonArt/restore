@@ -5,7 +5,7 @@ export const walletFeatureKey = 'wallet';
 
 export interface State {
   networkName: string;
-  setMinBidIncrementPercentage: number;
+  minBidIncrementPercentage: number;
   reservePrice: number;
   accountAddress: string;
   contractAllowance: number;
@@ -14,7 +14,7 @@ export interface State {
 
 export const initialState: State = {
   networkName: '',
-  setMinBidIncrementPercentage: 0,
+  minBidIncrementPercentage: 0,
   reservePrice: 0,
   accountAddress: '',
   contractAllowance: 0,

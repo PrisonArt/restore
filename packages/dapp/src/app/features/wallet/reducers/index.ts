@@ -23,6 +23,16 @@ export const selectNetworkName = createSelector(
   (state) => state.wallet.networkName
 );
 
+export const selectMinBidIncPercentage = createSelector(
+  selectWalletState,
+  (state) => state.wallet.minBidIncrementPercentage
+);
+
+export const selectReservePrice = createSelector(
+  selectWalletState,
+  (state) => state.wallet.reservePrice
+);
+
 export const selectAccountAddress = createSelector(
   selectWalletState,
     (state) => state.wallet.accountAddress

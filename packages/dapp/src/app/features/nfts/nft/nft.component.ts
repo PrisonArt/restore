@@ -6,14 +6,16 @@ import { ROUTE_ANIMATIONS_ELEMENTS, NotificationService } from '../../../core/co
 import { Auction, Bid, NFT } from '../nft.interface';
 import { NFTService } from 'app/service/nft.service';
 import * as fromNFT from '../reducers/';
+import * as fromWallet from '../../wallet/reducers/';
 import * as NFTActions from '../nft.actions';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort, Sort } from '@angular/material/sort';
 import BigNumber from 'bignumber.js';
-import { BigNumber as BigNumberEthers } from 'ethers';
-import { tap } from 'rxjs/operators';
+import { BigNumber as BigNumberEthers, utils } from 'ethers';
+import { catchError, tap } from 'rxjs/operators';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'pr1s0nart-app',
@@ -29,10 +31,21 @@ export class NFTComponent implements OnInit, OnDestroy {
   id: number;
   sub: any;
 
-  // FIXME get from contract
-  minBidIncPercentage = new BigNumber(5).div(100).plus(1);
-
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+  reservePrice = 0;
+
+  numberRegEx = /\-?\d*\.?\d{1,2}/;
+  form = this.fb.group({
+    amount: [0,
+      [
+        Validators.required,
+        Validators.pattern(this.numberRegEx),
+        Validators.min(this.reservePrice)]],
+  });
+
+  minBidIncPercentage$: Observable<number>
+  minBidIncPercentage: BigNumber;
+  reservePrice$: Observable<number>;
   nft$: Observable<NFT>;
   nft: NFT;
   auctions$: Observable<Auction[]>;
@@ -42,6 +55,7 @@ export class NFTComponent implements OnInit, OnDestroy {
   openseaUrl: string;
 
   constructor(public route: ActivatedRoute,
+    private fb: FormBuilder,
     private store: Store,
     public nftService: NFTService,
     public walletService: WalletService,
@@ -56,6 +70,15 @@ export class NFTComponent implements OnInit, OnDestroy {
     this.sub = this.route.params.subscribe(params => {
       this.id = params['id'] as number;
     })
+
+    this.minBidIncPercentage$ = this.store.pipe(select(fromWallet.selectMinBidIncPercentage));
+    this.minBidIncPercentage$.subscribe(data => {
+      this.minBidIncPercentage = new BigNumber(data).div(100).plus(1);;
+    });
+    this.reservePrice$ = this.store.pipe(select(fromWallet.selectReservePrice));
+    this.reservePrice$.subscribe(data => {
+      this.reservePrice = data;
+    });
 
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
@@ -74,12 +97,10 @@ export class NFTComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TODO: get bid amount from form, capture error and notify user
-  placeBid() {
-    this.walletService.bid(0, BigNumberEthers.from(12000000000)).pipe(
-      tap(() => {
-        this.notificationService.success('Bid placed');
-      })
-    )
+  createBid() {
+    const { fileArg, ...model } = this.form.value;
+    // FIXME: set this to the minimum bid increment
+    this.walletService.bid(this.id, model.amount);
+    this.form.reset({ amount: 0 });
   }
 }

@@ -28,17 +28,27 @@
   <div>Current Bid: {{auction.amount | eth}}</div>
   <div>Time left: {{ auction.endTime | dayjsdiff }} TODO: Timer</div>
   <div><br><br></div>
-  <form class="col-md-6">
+  <form [formGroup]="form" (ngSubmit)="createBid()" class="col-md-6">
     <div class="row">
       <div class="col-md-10">
         <mat-form-field >
           <mat-label>Min Bid {{minBidIncPercentage.times(auction.amount) | eth}} </mat-label>
-          <input type="text" matInput placeholder="{{minBidIncPercentage.times(auction.amount)}}">
+          <input type="text" matInput placeholder="{{minBidIncPercentage.times(auction.amount)}}"
+          formControlName="amount">
+          <!-- <mat-error *ngIf="form.get('amount').hasError('required')">
+            Amount is required
+          </mat-error> -->
+          <!-- <mat-error *ngIf="form.get('amount').hasError('min')">
+            Amount should be greater than {{minBidIncPercentage.times(auction.amount) | eth}}
+          </mat-error> -->
+          <!-- <mat-error *ngIf="form.get('amount').hasError('pattern')">
+            Amount should only have digits
+          </mat-error> -->
           <span matSuffix>Ξ &nbsp;</span>
         </mat-form-field>
       </div>
       <div class="col-md-1">
-        <button mat-raised-button color="accent" (click)="placeBid()">Place Bid</button>
+        <button mat-raised-button color="accent" [disabled]="!form.valid" (click)="createBid()">Place Bid</button>
       </div>
     </div>
   </form>
