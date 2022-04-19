@@ -1,8 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 
 export const setNetworkName = createAction('[Wallet] Set Network Name',  props<{ networkName: string }>());
-
 export const setAccountAddress = createAction('[Wallet] Set Account Address',  props<{ accountAddress: string }>());
+export const setMinBidIncrementPercentage = createAction('[Wallet] Set Min Bid Increment Percentage',  props<{ minBidIncrementPercentage: number }>());
+export const setReservePrice = createAction('[Wallet] Set Reserve Price',  props<{ reservePrice: number }>());
 export const logoutUser = createAction('[Wallet] Logout Request');
 
 export const loadUserBalance = createAction('[Wallet] Load User Balance', props<{ accountAddress: string }>());

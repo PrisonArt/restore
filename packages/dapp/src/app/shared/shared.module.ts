@@ -25,6 +25,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
+import { DayjsPipe } from './../app/pipes/dayjs.pipe';
+import { DayjsDiffPipe } from './../app/pipes/dayjsdiff.pipe';
+import { EtherPipe } from './../app/pipes/eth.pipe';
+import { FmtAddrPipe } from './../app/pipes/fmtaddr.pipe';
+
 import {
   FontAwesomeModule,
   FaIconLibrary
@@ -84,7 +89,11 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
   declarations: [
     BigInputComponent,
     BigInputActionComponent,
-    RtlSupportDirective
+    RtlSupportDirective,
+    DayjsPipe,
+    DayjsDiffPipe,
+    EtherPipe,
+    FmtAddrPipe
   ],
   exports: [
     CommonModule,
@@ -116,7 +125,12 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
 
     BigInputComponent,
     BigInputActionComponent,
-    RtlSupportDirective
+    RtlSupportDirective,
+
+    DayjsPipe,
+    DayjsDiffPipe,
+    EtherPipe,
+    FmtAddrPipe
   ]
 })
 export class SharedModule {

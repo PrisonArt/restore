@@ -75,6 +75,7 @@ if you receive "Not starting block ingestor (chain is defective)", drop the data
 sudo -u postgres psql
 drop database "graph-node";
 create database "graph-node";
+\q
 ```
 
 ### Create a graph on localhost
@@ -131,4 +132,3 @@ query MyQuery {
   }
 }
 ```
-

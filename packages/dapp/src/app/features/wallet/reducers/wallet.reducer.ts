@@ -5,6 +5,8 @@ export const walletFeatureKey = 'wallet';
 
 export interface State {
   networkName: string;
+  setMinBidIncrementPercentage: number;
+  reservePrice: number;
   accountAddress: string;
   contractAllowance: number;
   userBalance: number;
@@ -12,6 +14,8 @@ export interface State {
 
 export const initialState: State = {
   networkName: '',
+  setMinBidIncrementPercentage: 0,
+  reservePrice: 0,
   accountAddress: '',
   contractAllowance: 0,
   userBalance: 0
@@ -21,6 +25,8 @@ export const reducer = createReducer(
   initialState,
   on(WalletActions.setAccountAddress, (state, { accountAddress }) => ({ ...state, accountAddress })),
   on(WalletActions.setNetworkName, (state, { networkName }) => ({ ...state, networkName })),
+  on(WalletActions.setReservePrice, (state, { reservePrice }) => ({ ...state, reservePrice })),
+  on(WalletActions.setMinBidIncrementPercentage, (state, { minBidIncrementPercentage }) => ({ ...state, minBidIncrementPercentage })),
   on(WalletActions.logoutUser, (state) => ({...initialState})),
   on(WalletActions.loadContractAllowanceSuccess, (state, { contractAllowance }) =>
     ({ ...state, contractAllowance })

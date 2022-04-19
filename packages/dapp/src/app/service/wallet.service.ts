@@ -4,7 +4,7 @@ import { from, Observable, Subject } from 'rxjs';
 import { filter, take} from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { selectAccountAddress } from './../features/wallet/reducers/index';
-import { logoutUser, setNetworkName, setAccountAddress, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
+import { logoutUser, setAccountAddress, setMinBidIncrementPercentage, setNetworkName, setReservePrice, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
 
 import networkMapping from './../../deployments.json';
 import { BigNumber, ethers } from 'ethers';
@@ -109,6 +109,8 @@ export class WalletService {
       const justiceMapping = networkMappingForChain[0]['contracts']['Justice'];
       this.justiceContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi, this.provider);
       console.log(`Justice Contract Address ${this.justiceContract.address}`);
+      this.store.dispatch(setReservePrice({ reservePrice: await this.getReservePrice() }));
+      this.store.dispatch(setMinBidIncrementPercentage({ minBidIncrementPercentage: await this.getMinBidIncrementPercentage() }));
 
       const restoreMapping = networkMappingForChain[0]['contracts']['Restore'];
       this.restoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, this.provider);
@@ -126,5 +128,15 @@ export class WalletService {
       this.store.dispatch(loadContractAllowance({ accountAddress: address, contractAddress: this.justiceContract.address }));
       this.store.dispatch(loadUserBalance({ accountAddress: address }));
     });
+  }
+
+  private async getMinBidIncrementPercentage(): Promise<number> {
+    const minBidIncrementPercentage = await this.justiceContract.minBidIncrementPercentage();
+    return BigNumber.from(minBidIncrementPercentage).toNumber();
+  }
+
+  private async getReservePrice(): Promise<number> {
+    const reservePrice = await this.justiceContract.reservePrice();
+    return BigNumber.from(reservePrice).toNumber();
   }
 }

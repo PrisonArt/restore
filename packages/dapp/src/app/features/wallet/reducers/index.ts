@@ -28,13 +28,6 @@ export const selectAccountAddress = createSelector(
     (state) => state.wallet.accountAddress
 );
 
-export const selectAccountAddressShortened = createSelector(
-    selectAccountAddress,
-    (address) => (!address)
-          ? address
-          : address.substring(0, 5) + '...' + address.substring(address.length - 3)
-);
-
 export const selectAllowance = createSelector(
   selectWalletState,
   (state) => state.wallet.contractAllowance
