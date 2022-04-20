@@ -27,6 +27,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { DayjsPipe } from './../app/pipes/dayjs.pipe';
 import { DayjsDiffPipe } from './../app/pipes/dayjsdiff.pipe';
+import { DateInPastPipe } from './../app/pipes/dayinpast.pipe';
 import { EtherPipe } from './../app/pipes/eth.pipe';
 import { FmtAddrPipe } from './../app/pipes/fmtaddr.pipe';
 
@@ -92,6 +93,7 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
     RtlSupportDirective,
     DayjsPipe,
     DayjsDiffPipe,
+    DateInPastPipe,
     EtherPipe,
     FmtAddrPipe
   ],
@@ -129,6 +131,7 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
 
     DayjsPipe,
     DayjsDiffPipe,
+    DateInPastPipe,
     EtherPipe,
     FmtAddrPipe
   ]
