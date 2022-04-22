@@ -1,3 +1,4 @@
+import { setAccountAddress } from './../../wallet/wallet.actions';
 import { WalletService } from './../../../service/wallet.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -34,6 +35,7 @@ export class NFTComponent implements OnInit, OnDestroy {
   minBidSub: Subscription;
   reservePriceSub: Subscription;
   bidsSub: Subscription;
+  accountAddressSub: Subscription;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
@@ -44,6 +46,9 @@ export class NFTComponent implements OnInit, OnDestroy {
   minBidIncPercentage: number;
   reservePrice$: Observable<number>;
   reservePrice: number;
+  accountAddress$: Observable<string>;
+  accountAddress: string;
+
   nft$: Observable<NFT>;
   nft: NFT;
   auction$: Observable<Auction | null>;
@@ -78,23 +83,29 @@ export class NFTComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
-
     this.nftSub = this.nft$.subscribe(data => {
       this.nft = data;
     });
 
     this.store.dispatch(NFTActions.auctionsLoad());
+    this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
+    this.auctionAmount$ = this.store.pipe(select(fromNFT.selectAuctionAmountByNFT(this.id)));
+
     this.minBidIncPercentage$ = this.store.pipe(select(fromWallet.selectMinBidIncPercentage));
     this.minBidSub = this.minBidIncPercentage$.subscribe(data => {
       this.minBidIncPercentage = data;
     });
+
     this.reservePrice$ = this.store.pipe(select(fromWallet.selectReservePrice));
     this.reservePriceSub = this.reservePrice$.subscribe(data => {
       const reservePrice = utils.formatEther(data);
       this.reservePrice = new BigNumber(reservePrice).toNumber();
     });
-    this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
-    this.auctionAmount$ = this.store.pipe(select(fromNFT.selectAuctionAmountByNFT(this.id)));
+
+    this.accountAddress$ = this.store.pipe(select(fromWallet.selectAccountAddress));
+    this.accountAddressSub = this.accountAddress$.subscribe(data => {
+      this.accountAddress = data;
+    });
 
     this.minBidSub = combineLatest([this.auctionAmount$, this.minBidIncPercentage$, this.reservePrice$]).subscribe(([auctionAmount, , ]) => {
       let minBid = 0;
