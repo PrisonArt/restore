@@ -22,38 +22,50 @@
           </mat-card-actions>
       </mat-card>
   </div>
-  <div class="col-md-6" *ngFor="let auction of auctions$ | async">
+  <div class="col-md-6" *ngIf="auction$ | async as auction">
     <h2>Auction</h2>
     <div *ngIf="!(auction.endTime | dateInPast)">
       <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
       <div>Current Bid: {{auction.amount | eth}}</div>
       <div>Time left: {{ auction.endTime | dayjsdiff }} TODO: Timer</div>
       <div><br><br></div>
-      <form [formGroup]="form" (ngSubmit)="createBid()" class="col-md-6">
+      <form [formGroup]="formGroup" (ngSubmit)="createBid()" class="col-md-6">
         <div class="row">
           <div class="col-md-10">
-            <mat-form-field >
-              <mat-label>Min Bid {{minBidIncPercentage.times(auction.amount) | eth}} </mat-label>
-              <input type="text" matInput placeholder="{{minBidIncPercentage.times(auction.amount)}}"
+            <mat-form-field>
+              <mat-label>Min Bid {{minBid}} </mat-label>
+              <input type="text" matInput placeholder="{{minBid}}"
               formControlName="amount">
-              <!-- <mat-error *ngIf="form.get('amount').hasError('required')">
+              <mat-error *ngIf="formGroup.controls['amount'].hasError('required')">
                 Amount is required
-              </mat-error> -->
-              <!-- <mat-error *ngIf="form.get('amount').hasError('min')">
-                Amount should be greater than {{minBidIncPercentage.times(auction.amount) | eth}}
-              </mat-error> -->
-              <!-- <mat-error *ngIf="form.get('amount').hasError('pattern')">
+              </mat-error>
+              <mat-error *ngIf="formGroup.controls['amount'].hasError('min')">
+                Amount should be greater than {{minBid}}
+              </mat-error>
+              <mat-error *ngIf="formGroup.controls['amount'].hasError('pattern')">
                 Amount should only have digits
-              </mat-error> -->
+              </mat-error>
               <span matSuffix>Ξ &nbsp;</span>
             </mat-form-field>
           </div>
           <div class="col-md-1">
-            <button mat-raised-button color="accent" [disabled]="!form.valid" (click)="createBid()">Place Bid</button>
+            <button mat-raised-button color="accent" [disabled]="!formGroup.valid" (click)="createBid()">Place Bid</button>
           </div>
         </div>
       </form>
-      <div><br></div>
+    </div>
+    <div *ngIf="auction.endTime | dateInPast">
+      Auction Over
+      <div *ngIf="auction.settled">
+        {{ auction.winnerId | fmtaddr }} won {{ auction.amount | eth }}
+      </div>
+      <div *ngIf="!auction.settled">
+        Auction has not been settled yet
+      </div>
+    </div>
+
+    <!-- Bid Table-->
+    <div *ngIf="!(auction.endTime | dateInPast) || !auction.settled">
       <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-11">
         <!-- Bidder Column -->
         <ng-container matColumnDef="bidder">
@@ -74,16 +86,13 @@
         </ng-container>
 
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            No bids
+          </td>
+        </tr>
       </table>
-    </div>
-    <div *ngIf="auction.endTime | dateInPast">
-      Auction Over
-      <div *ngIf="auction.settled">
-        {{ auction.winnerId | fmtaddr }} won {{ auction.amount | eth }}
-      </div>
-      <div *ngIf="!auction.settled">
-        Auction has not been settled yet
-      </div>
     </div>
   </div>
 </div>

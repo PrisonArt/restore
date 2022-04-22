@@ -9,13 +9,12 @@ import * as fromNFT from '../reducers/';
 import * as fromWallet from '../../wallet/reducers/';
 import * as NFTActions from '../nft.actions';
 import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import BigNumber from 'bignumber.js';
-import { BigNumber as BigNumberEthers, utils } from 'ethers';
-import { catchError, tap } from 'rxjs/operators';
-import { FormBuilder, Validators } from '@angular/forms';
+import { utils } from 'ethers';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 @Component({
   selector: 'pr1s0nart-app',
@@ -29,33 +28,34 @@ export class NFTComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['bidder', 'amount', 'blockTimestamp'];
   id: number;
-  sub: any;
+
+  idSub: Subscription;
+  nftSub: Subscription;
+  minBidSub: Subscription;
+  reservePriceSub: Subscription;
+  bidsSub: Subscription;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-  reservePrice = 0;
 
+  formGroup: FormGroup;
   numberRegEx = /\-?\d*\.?\d{1,2}/;
-  form = this.fb.group({
-    amount: [0,
-      [
-        Validators.required,
-        Validators.pattern(this.numberRegEx),
-        Validators.min(this.reservePrice)]],
-  });
 
-  minBidIncPercentage$: Observable<number>
-  minBidIncPercentage: BigNumber;
+  minBidIncPercentage$: Observable<number>;
+  minBidIncPercentage: number;
   reservePrice$: Observable<number>;
+  reservePrice: number;
   nft$: Observable<NFT>;
   nft: NFT;
-  auctions$: Observable<Auction[]>;
+  auction$: Observable<Auction | null>;
+  auctionAmount$: Observable<BigNumber | null>;
+  minBid: number;
   baseArweaveURL = 'https://arweave.net/';
 
   metadataUrl: string;
   openseaUrl: string;
 
   constructor(public route: ActivatedRoute,
-    private fb: FormBuilder,
+    private formBuilder: FormBuilder,
     private store: Store,
     public nftService: NFTService,
     public walletService: WalletService,
@@ -63,44 +63,77 @@ export class NFTComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    // avoid memory leaks here by unsubscribing
+    this.idSub.unsubscribe();
+    this.nftSub.unsubscribe();
+    this.minBidSub.unsubscribe();
+    this.reservePriceSub.unsubscribe();
+    this.bidsSub.unsubscribe();
   }
 
   ngOnInit(): void {
-    this.sub = this.route.params.subscribe(params => {
+    this.idSub = this.route.params.subscribe(params => {
       this.id = params['id'] as number;
     })
 
-    this.minBidIncPercentage$ = this.store.pipe(select(fromWallet.selectMinBidIncPercentage));
-    this.minBidIncPercentage$.subscribe(data => {
-      this.minBidIncPercentage = new BigNumber(data).div(100).plus(1);;
-    });
-    this.reservePrice$ = this.store.pipe(select(fromWallet.selectReservePrice));
-    this.reservePrice$.subscribe(data => {
-      this.reservePrice = data;
-    });
-
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
-    this.nft$.subscribe(data => {
+
+    this.nftSub = this.nft$.subscribe(data => {
       this.nft = data;
     });
 
     this.store.dispatch(NFTActions.auctionsLoad());
-    this.auctions$ = this.store.pipe(select(fromNFT.selectAuctionsByNFT(this.id)));
+    this.minBidIncPercentage$ = this.store.pipe(select(fromWallet.selectMinBidIncPercentage));
+    this.minBidSub = this.minBidIncPercentage$.subscribe(data => {
+      this.minBidIncPercentage = data;
+    });
+    this.reservePrice$ = this.store.pipe(select(fromWallet.selectReservePrice));
+    this.reservePriceSub = this.reservePrice$.subscribe(data => {
+      const reservePrice = utils.formatEther(data);
+      this.reservePrice = new BigNumber(reservePrice).toNumber();
+    });
+    this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
+    this.auctionAmount$ = this.store.pipe(select(fromNFT.selectAuctionAmountByNFT(this.id)));
+
+    this.minBidSub = combineLatest([this.auctionAmount$, this.minBidIncPercentage$, this.reservePrice$]).subscribe(([auctionAmount, , ]) => {
+      let minBid = 0;
+      const minBidIncPercentageDec = new BigNumber(this.minBidIncPercentage).div(100).plus(1);
+      if (auctionAmount) {
+        if (new BigNumber(auctionAmount).toNumber() === 0) {
+          // FIXME: set this to the actual reserve price
+          minBid = 100000000000000000;// this.reservePrice;
+        } else {
+          minBid = minBidIncPercentageDec.times(auctionAmount).toNumber();
+        }
+      }
+      // format the min bid into Ether and create a number
+      const minBidEther = utils.formatEther(new BigNumber(minBid).toString());
+      this.minBid = parseFloat(minBidEther);
+    });
 
     this.store.dispatch(NFTActions.bidsLoad());
     this.bids$ = this.store.pipe(select(fromNFT.selectBidsByNFT(this.id)));
-    this.bids$.subscribe(data => {
+    this.bidsSub = this.bids$.subscribe(data => {
       this.bidDataSource.data = data;
       this.bidDataSource.sort = this.sort;
     });
+
+    this.formGroup = this.formBuilder.group({
+      amount: [this.minBid, [Validators.required, Validators.pattern(this.numberRegEx), this.minEthValidator()]],
+    })
+  }
+
+  minEthValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const bidLessThanMin = control.value < this.minBid;
+      return bidLessThanMin ? {min: {value: control.value}} : null;
+    };
   }
 
   createBid() {
-    const { fileArg, ...model } = this.form.value;
-    // FIXME: set this to the minimum bid increment
+    const { fileArg, ...model } = this.formGroup.value;
     this.walletService.bid(this.id, model.amount);
-    this.form.reset({ amount: 0 });
+    this.formGroup.reset({ amount: this.minBid });
   }
 }

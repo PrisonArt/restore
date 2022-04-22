@@ -7,7 +7,6 @@ import BigNumber from 'bignumber.js';
 export class DateInPastPipe implements PipeTransform {
   transform(dateTimeBN: BigNumber): boolean {
     const dateTime = dayjs(new BigNumber(dateTimeBN).toNumber()*1000);
-    console.log('dateTime:', dateTime.format('DD.MM.YYYY h:mm A'));
     const currentDate = dayjs();
     if (dateTime.isAfter(currentDate)) {
       return false;

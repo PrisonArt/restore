@@ -76,14 +76,27 @@ export const selectAuction = (id: number) =>
   createSelector(selectAllAuctions, (auctions) => auctions[id]);
 
 
-export const selectAuctionsByNFT = (nftId: number) => createSelector(
+export const selectAuctionByNFT = (nftId: number) => createSelector(
   selectAllAuctions,
  (auctions) => {
    if (nftId == null) {
-     return auctions;
+     return null;
    }
    // FIXME: strict equality is not working
-   return auctions.filter(auction => auction.nftId == nftId)
+   const auctionsForNFT = auctions.filter(auction => auction.nftId == nftId)
+   console.log('auctionsForNFT', auctionsForNFT);
+   return auctionsForNFT[0];
+  }
+);
+
+export const selectAuctionAmountByNFT = (nftId: number) => createSelector (
+  selectAuctionByNFT(nftId),
+  (auction) => {
+    if (!auction) {
+      return null;
+    } else {
+      return auction.amount
+    }
   }
 );
 
