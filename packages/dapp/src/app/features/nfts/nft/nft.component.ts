@@ -145,6 +145,5 @@ export class NFTComponent implements OnInit, OnDestroy {
   createBid() {
     const { fileArg, ...model } = this.formGroup.value;
     this.walletService.bid(this.id, model.amount);
-    this.formGroup.reset({ amount: this.minBid });
   }
 }
