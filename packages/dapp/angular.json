@@ -162,6 +162,6 @@
   "defaultProject": "pr1s0nart",
   "cli": {
     "analytics": false,
-    "packageManager": "pnpm"
+    "packageManager": "yarn"
   }
 }

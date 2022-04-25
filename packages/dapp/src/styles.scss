@@ -1,11 +1,23 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use '~@angular/material' as mat;
-
+@use '@angular/material' as mat;
 @import 'styles-variables';
+@import "styles/variables";
 
-@import '~bootstrap/scss/bootstrap-reboot';
-@import '~bootstrap/scss/bootstrap-grid';
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+// Import Bootstrap Reboot
+@import "~bootstrap/scss/root"; // Contains :root CSS variables used by other Bootstrap files
+@import "~bootstrap/scss/reboot";
+
+@import "~bootstrap/scss/containers"; // Add .container and .container-fluid classes
+@import "~bootstrap/scss/grid"; // Add the grid system
+@import "~bootstrap/scss/utilities"; // Configures the utility classes that should be generated
+@import "~bootstrap/scss/utilities/api"; // Generates the actual utility classes
+
+@import "styles/reset";
 @import 'styles-reset';
 
 @include mat.core();

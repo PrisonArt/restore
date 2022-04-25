@@ -1,5 +1,6 @@
 {
-  "name": "@project/subgraph",
+  "name": "subgraph",
+  "version": "1.0.0",
   "license": "UNLICENSED",
   "scripts": {
     "clean": "rimraf ./generated ./build subgraph.*.yaml",
@@ -13,7 +14,7 @@
     "deploy:mainnet": "graph deploy --product hosted-service --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ pr1s0nart/pr1s0nart-subgraph-mainnet ./subgraph.mainnet.yaml --access-token",
     "create:local": "graph create --node http://localhost:8020/ pr1s0nart/pr1s0nart-subgraph-localhost",
     "remove:local": "graph remove --node http://localhost:8020/ pr1s0nart/pr1s0nart-subgraph-localhost",
-    "deploy:local": "pnpm clean && pnpm prepare-yaml && pnpm codegen && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 pr1s0nart/pr1s0nart-subgraph-localhost ./subgraph.localhost.yaml",
+    "deploy:local": "yarn clean && yarn prepare-yaml && yarn codegen && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 pr1s0nart/pr1s0nart-subgraph-localhost ./subgraph.localhost.yaml",
     "lint": "eslint --color -c .eslintrc --ext .ts ."
   },
   "dependencies": {

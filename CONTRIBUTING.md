@@ -47,10 +47,10 @@ sudo apt-get install -y clang libpq-dev libssl-dev pkg-config
 git clone https://github.com/graphprotocol/graph-node
 ```
 
-6. Make sure yu have [pnpm](https://pnpm.io/installation) installed:
+1. Make sure yu have [yarn](https://classic.yarnpkg.com/lang/en/docs/install) installed:
 
 ```bash
-wget -qO- https://get.pnpm.io/install.sh | PNPM_VERSION=7.0.0-rc.3 sh -
+npm install --global yarn
 ```
 
 7. Make sure you have hardhat installed globally (using the same node version you will use for this project, we recommend Node v16):
@@ -70,10 +70,10 @@ git clone https://github.com/PrisonArt/restore.git
 cd restore
 ```
 
-2. Install the dependencies using pnpm:
+2. Install the dependencies using yarn:
 
 ```bash
-pnpm install
+yarn install
 ```
 
 ## Terminal Dancing
@@ -83,13 +83,13 @@ Now for all the fun stuff. You will be juggling many terminal windows by the end
 1. Test you hardhat setup and ensure that the contracts are working as intended:
 
 ```bash
-TS_NODE_TRANSPILE_ONLY=1 pnpm hardhat:compile
+TS_NODE_TRANSPILE_ONLY=1 yarn hardhat:compile
 
 # marvel at our tests
-pnpm hardhat:test
+yarn hardhat:test
 
 # run a local node 
-pnpm hardhat:localnode
+yarn hardhat:localnode
 ```
 
 2. Open a new terminal and start the IPFS daemon:
@@ -134,9 +134,9 @@ npx hardhat createauction --network localhost --token-id 0 --creator-addr 0x9117
 6. Open a new terminal and build the frontend application for your graph-node. In order to do this, you will need to be back in the subgraph package of this repo:
 
 ```bash
-cd ~/Pr1s0nArt/restore/packages/subgaph
-pnpm create:local
-pnpm deploy:local
+cd ~/Pr1s0nArt/restore/packages/subgraph
+yarn create:local
+yarn deploy:local
 ```
 
 You can navigate to http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost/graphql to see your graph query engine. Put the below query into the left-hand pane and then click the Play button at the top to see your NFT and the auction we just created:
@@ -186,7 +186,7 @@ query MyQuery {
 
 ```bash
 cd ~/Pr1s0nArt/restore
-pnpm dapp:start
+yarn dapp:start
 ```
 
 This should automatically open http://localhost:4200/ for you, where you can see the gallery and help us improve it.

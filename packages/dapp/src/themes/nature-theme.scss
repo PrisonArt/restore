@@ -1,4 +1,4 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 
 $pr1s0nart-nature-primary: mat.define-palette(mat.$brown-palette, 700, 300, 900);
 $pr1s0nart-nature-accent: mat.define-palette(mat.$deep-purple-palette, 300);

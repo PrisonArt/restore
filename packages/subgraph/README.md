@@ -47,7 +47,7 @@ Start HTTP and WebSocket JSON-RPC server at <http://127.0.0.1:8545/>
 Terminal 1:
 
 ```bash
-pnpm hardhat:localnode
+yarn hardhat:localnode
 ```
 
 ### Start the IPFS server
@@ -84,8 +84,8 @@ Terminal 4:
 
 ```bash
 cd packages/subgraph
-pnpm create:local
-pnpm deploy:local
+yarn create:local
+yarn deploy:local
 ```
 
 ### Query
