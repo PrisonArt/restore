@@ -42,7 +42,6 @@ export const normalizeNFT = (nft: any): NFT => {
 
   let dataString = '';
   if (nft.data !== '0x00000000') {
-    console.log('nft.data:', nft.data);
     dataString = parseBytes32String(nft.data);
   }
 

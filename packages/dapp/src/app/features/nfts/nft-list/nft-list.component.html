@@ -4,11 +4,11 @@
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. #5 or Metamod" #input>
   </mat-form-field>
   <div class="row">
-    <div *ngFor="let nft of nfts$ | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+    <div *ngFor="let nft of obs$ | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
       <mat-card>
         <mat-card-header>
           <mat-card-title>
-            {{nft.name}}
+            #{{nft.id}} {{nft.name}}
           </mat-card-title>
           <mat-card-subtitle rtl>
             <div *ngFor="let attr of nft.attributes" [ngClass]="routeAnimationsElements">
@@ -18,6 +18,16 @@
         </mat-card-header>
         <img mat-card-image src={{baseArweaveURL}}{{nft.imageHash}} alt={{nft.name}}>
         <mat-card-content>
+          <div *ngFor="let auction of auctions$ | async">
+            <div *ngIf="nft.id === auction.nftId">
+              <div *ngIf="!(auction.endTime | dateInPast)">
+                Currently Auctioning
+              </div>
+              <div *ngIf="auction.endTime | dateInPast">
+                Auction Ended
+              </div>
+            </div>
+          </div>
         </mat-card-content>
         <mat-card-actions>
           <a mat-raised-button color="accent" routerLink="{{nft.id}}">
@@ -32,6 +42,6 @@
     </div>
   </div>
   <div style=float:left;>
-    <mat-paginator [pageSizeOptions]="[3, 6, 9, 12]"></mat-paginator>
+    <mat-paginator [pageSize]="3" [pageSizeOptions]="[3, 6, 9, 12]"></mat-paginator>
   </div>
 </div>

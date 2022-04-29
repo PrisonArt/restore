@@ -22,10 +22,10 @@ export class NFTListComponent implements AfterViewInit {
   dataSource: MatTableDataSource<NFT> = new MatTableDataSource();
   nfts$: Observable<NFT[]>;
   auctions$: Observable<Auction[]>;
+  obs$: Observable<any>;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
   baseArweaveURL = 'https://arweave.net/';
-  baseOpenseaUrl = 'https://opensea.io/assets/0xf46f332d20a05bb1d13b640f8138ba4dcc8d945c/';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private store: Store,
@@ -35,21 +35,27 @@ export class NFTListComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.changeDetectorRef.detectChanges();
-    this.dataSource.paginator = this.paginator;
 
     this.store.dispatch(NFTActions.nftsLoad());
     this.nfts$ = this.store.pipe(select(fromNFT.selectAllNFTs));
     this.nfts$.subscribe(data => {
-      this.dataSource.data = data;
-    });
+      const sorted = data.sort((a, b) =>
+        b.id - a.id
+      );
 
+      this.dataSource.data = sorted;
+
+      this.dataSource.paginator = this.paginator;
+
+      this.dataSource.filterPredicate = (nft: NFT, filter: string): boolean =>
+        nft.id.toString().includes(filter)
+        || nft.name.toLowerCase().includes(filter)
+        || nft.description.toLowerCase().includes(filter)
+        || filterAttributes(nft.attributes, filter);
+    });
+    this.obs$ = this.dataSource.connect();
     this.store.dispatch(NFTActions.auctionsLoad());
     this.auctions$ = this.store.pipe(select(fromNFT.selectAllAuctions));
-
-    this.dataSource.filterPredicate = (np: NFT, filter: string): boolean =>
-      np.name.toLowerCase().includes(filter)
-      || np.description.toLowerCase().includes(filter)
-      || filterAttributes(np.attributes, filter);
   }
 
   applyFilter(event: Event) {
