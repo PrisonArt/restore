@@ -64,6 +64,13 @@
         Auction Over
         <div *ngIf="auction.settled">
           {{ auction.winnerId | fmtaddr }} won {{ auction.amount | eth }}
+          <div *ngIf="nft.isFrozen">
+            <div>In process of paying legal financial obligations. NFT will remain frozen until complete</div>
+          </div>
+          <div *ngIf="!nft.isFrozen">
+            <div>The legal financial obligations have been paid, the NFT is now available for transfer by the owner</div>
+            <div>LFO data: {{nft.data}}</div>
+          </div>
         </div>
         <div *ngIf="!auction.settled">
           Auction has not been settled yet

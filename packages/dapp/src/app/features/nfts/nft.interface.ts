@@ -4,16 +4,24 @@ export interface NFT {
   id: number;
   data: string;
   name: string;
-  tokenId?: string;
   description: string;
   imageHash?: string;
   metadataHash: string;
   animationURL: string;
   attributes?: Attribute[];
-  image?: string;
   external_url?: string;
   owner: string;
   isFrozen: boolean;
+}
+
+export interface NFTMetadata {
+  id: number;
+  name: string;
+  description: string;
+  imageHash: string;
+  animationURL: string;
+  attributes?: Attribute[];
+  external_url?: string;
 }
 
 export interface Attribute {

@@ -16,7 +16,16 @@ export const reducer = createReducer(
   initialState,
   on(NFTActions.nftsLoadSuccess, (state, { nfts }) => adapter.addMany(nfts, state)),
   on(NFTActions.nftLoadSuccess, (state, { nft }) => adapter.upsertOne(nft, state)),
-  on(NFTActions.nftLoadMetadataSuccess, (state, { nft }) => adapter.upsertOne(nft, state)),
+  on(NFTActions.nftLoadMetadataSuccess, (state, { nftMetadata }) =>  adapter.updateOne({
+    id: nftMetadata.id,
+    changes: {
+      name: nftMetadata.name,
+      description: nftMetadata.description,
+      imageHash: nftMetadata.imageHash,
+      animationURL: nftMetadata.animationURL,
+      attributes: nftMetadata.attributes
+    }
+  }, state)),
 );
 
 export function nftReducer(state: State | undefined, action: Action) {
