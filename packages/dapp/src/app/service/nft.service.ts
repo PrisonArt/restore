@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Attribute, Auction, Bid, NFT, NFTMetadata } from '../features/nfts/nft.interface';
+import { parseBytes32String } from 'ethers/lib/utils';
 
 export interface NFTResponse {
 	nfts: NFT[];
@@ -39,9 +40,11 @@ export const normalizeNFT = (nft: any): NFT => {
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
+  const dataString = parseBytes32String(nft.data);
+
   return {
     id: +nft.id,
-    data: nft.data,
+    data: dataString,
     name: '',
     description: '',
     imageHash: '',
