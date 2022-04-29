@@ -40,7 +40,11 @@ export const normalizeNFT = (nft: any): NFT => {
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
-  const dataString = parseBytes32String(nft.data);
+  let dataString = '';
+  if (nft.data !== '0x00000000') {
+    console.log('nft.data:', nft.data);
+    dataString = parseBytes32String(nft.data);
+  }
 
   return {
     id: +nft.id,

@@ -8,6 +8,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  tap,
 } from 'rxjs/operators';
 
 import {
@@ -22,6 +23,7 @@ import {
   bidsLoad,
   bidsLoadSuccess
 } from './nft.actions';
+import { NotificationService } from 'app/core/notifications/notification.service';
 
 
 @Injectable()
@@ -106,5 +108,13 @@ export class NFTEffects {
     )
   );
 
-  constructor(private nftService: NFTService, private actions$: Actions) {}
+  failure$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(nftFailure),
+      tap((action) => { this.notificationService.error(action.error) })
+    ),
+    { dispatch: false }
+  );
+
+  constructor(private nftService: NFTService, private notificationService: NotificationService, private actions$: Actions) {}
 }
