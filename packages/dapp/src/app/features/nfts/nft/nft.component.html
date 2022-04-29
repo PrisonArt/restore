@@ -30,7 +30,7 @@
       <div *ngIf="!(auction.endTime | dateInPast)">
         <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
         <div>Current Bid: {{auction.amount | eth}}</div>
-        <div>Time left: {{ auction.endTime | dayjsdiff }} TODO: Timer</div>
+        <div>Time left: {{ auction.endTime | dayjsdiff }}</div>
         <div><br><br></div>
         <form *ngIf="accountAddress" [formGroup]="formGroup" (ngSubmit)="createBid()" class="col-md-6">
           <div class="row">

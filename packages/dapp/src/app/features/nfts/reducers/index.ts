@@ -100,6 +100,17 @@ export const selectAuctionAmountByNFT = (nftId: number) => createSelector (
   }
 );
 
+export const selectAuctionEndTimeByNFT = (nftId: number) => createSelector (
+  selectAuctionByNFT(nftId),
+  (auction) => {
+    if (!auction) {
+      return null;
+    } else {
+      return auction.endTime
+    }
+  }
+);
+
 // Bids
 export interface BidsState {
   bids: fromBids.State; // entity
