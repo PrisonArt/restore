@@ -3,15 +3,15 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { Attribute, Auction, Bid, NFT } from '../features/nfts/nft.interface';
+import { Attribute, Auction, Bid, NFT, NFTMetadata } from '../features/nfts/nft.interface';
+import { parseBytes32String } from 'ethers/lib/utils';
 
 export interface NFTResponse {
 	nfts: NFT[];
   auctions: Auction[];
 }
 
-// FIXME: populate a NFTMetadata object and update the reducer function to update just the metadata values
-export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
+export const normalizeNFTMetadata = (nftId: string, res: any): NFTMetadata => {
   const attributes: Attribute[] = res['attributes'].map(
     (attribute: { [x: string]: any }) => (
       {
@@ -28,15 +28,10 @@ export const normalizeNFTDelete = (nftId: String, res: any): NFT => {
   console.log('animationURL:', animationURL);
   return {
     id: +nftId,
-    data: '',
     name: res['name'],
-    tokenId: '',
     description: res['description'],
     imageHash: imageHash,
     animationURL: animationURL,
-    owner: '',
-    metadataHash: '',
-    isFrozen: false,
     attributes: attributes
   }
 };
@@ -45,11 +40,15 @@ export const normalizeNFT = (nft: any): NFT => {
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
+  let dataString = '';
+  if (nft.data !== '0x00000000') {
+    dataString = parseBytes32String(nft.data);
+  }
+
   return {
     id: +nft.id,
-    data: nft.data,
+    data: dataString,
     name: '',
-    tokenId: nft.id,
     description: '',
     imageHash: '',
     animationURL: '',
@@ -202,10 +201,10 @@ bidsByAuctionGql = (auctionId: string) => `
     );
   }
 
-  getNFTMetadata(nftId: string, metadataHash: string): Observable<NFT> {
+  getNFTMetadata(nftId: string, metadataHash: string): Observable<NFTMetadata> {
     return this.http.get(`https://arweave.net/${metadataHash}.json`)
     .pipe(
-      map(res => normalizeNFTDelete(nftId, res)),
+      map(res => normalizeNFTMetadata(nftId, res)),
     );
   }
 

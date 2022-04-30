@@ -31,7 +31,8 @@ export class WalletEffects {
     this.actions$.pipe(
       ofType(WalletActions.loadUserBalanceFailure, WalletActions.loadContractAllowanceFailure),
       tap((action) => { this.notificationService.error(action.errorMessage) })
-    )
+    ),
+    { dispatch: false }
   );
 
   logout$ = createEffect(() =>

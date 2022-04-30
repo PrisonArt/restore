@@ -1,4 +1,4 @@
-import { setAccountAddress } from './../../wallet/wallet.actions';
+import { DateInPastPipe } from './../../../app/pipes/dayinpast.pipe';
 import { WalletService } from './../../../service/wallet.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -10,7 +10,7 @@ import * as fromNFT from '../reducers/';
 import * as fromWallet from '../../wallet/reducers/';
 import * as NFTActions from '../nft.actions';
 import { select, Store } from '@ngrx/store';
-import { combineLatest, Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subscription, takeWhile, timer } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import BigNumber from 'bignumber.js';
@@ -53,6 +53,8 @@ export class NFTComponent implements OnInit, OnDestroy {
   nft: NFT;
   auction$: Observable<Auction | null>;
   auctionAmount$: Observable<BigNumber | null>;
+  auctionEndTime$: Observable<BigNumber | null>;
+  countDown$: Observable<number>;
   minBid: number;
   baseArweaveURL = 'https://arweave.net/';
 
@@ -90,6 +92,16 @@ export class NFTComponent implements OnInit, OnDestroy {
     this.store.dispatch(NFTActions.auctionsLoad());
     this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
     this.auctionAmount$ = this.store.pipe(select(fromNFT.selectAuctionAmountByNFT(this.id)));
+    this.auctionEndTime$ = this.store.pipe(select(fromNFT.selectAuctionEndTimeByNFT(this.id)));
+    this.auctionEndTime$.subscribe(endTime => {
+      if (endTime) {
+        timer(0, 1000).pipe(
+          takeWhile(i => !(new DateInPastPipe().transform(endTime)))
+        ).subscribe(timerValue => {
+          // console.log(timerValue)
+        });
+      }
+    });
 
     this.minBidIncPercentage$ = this.store.pipe(select(fromWallet.selectMinBidIncPercentage));
     this.minBidSub = this.minBidIncPercentage$.subscribe(data => {
