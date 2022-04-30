@@ -11,8 +11,9 @@
 //
 // MODIFICATIONS:
 // Consumes modified `ERC721` contract. See notes in `ERC721.sol`.
+// Removed _burn  to lower gas costs on mints and transfers.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.7;
 
 import "./ERC721.sol";
 
@@ -56,23 +57,5 @@ abstract contract ERC721URIStorage is ERC721 {
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
         require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
-    }
-
-    /**
-     * @dev Destroys `tokenId`.
-     * The approval is cleared when the token is burned.
-     *
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     *
-     * Emits a {Transfer} event.
-     */
-    function _burn(uint256 tokenId) internal virtual override {
-        super._burn(tokenId);
-
-        if (bytes(_tokenURIs[tokenId]).length != 0) {
-            delete _tokenURIs[tokenId];
-        }
     }
 }

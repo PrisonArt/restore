@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.7;
 
 import { ReentrancyGuard } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import { IJustice } from './interfaces/IJustice.sol';
 import { IRestore } from './interfaces/IRestore.sol';
 import { IWETH } from './interfaces/IWETH.sol';
@@ -28,6 +29,7 @@ import { IWETH } from './interfaces/IWETH.sol';
                                                                                                                                                                            
 
 contract Justice is IJustice, ReentrancyGuard, Ownable {
+    using SafeERC20 for IERC20;
     // The Restore ERC721 token contract
     IRestore public restore;
 
@@ -84,7 +86,11 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * TODO: from where will we call this in the normal course of events?
      * https://github.com/nounsDAO/nouns-monorepo/blob/2cbe6c7bdfee258e646e8d9e84302375320abc72/packages/nouns-webapp/src/components/Bid/index.tsx#L74
      */
-    function settleAuction() external override nonReentrant {
+    function settleAuction() 
+        external 
+        override 
+        nonReentrant 
+    {
         _settleAuction();
     }
 
@@ -92,7 +98,12 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @notice Create a bid for a pr1s0n.art piece, with a given amount.
      * @dev This contract only accepts payment in ETH.
      */
-    function createBid(uint256 tokenId) external payable override nonReentrant {
+    function createBid(uint256 tokenId) 
+        external 
+        payable 
+        override 
+        nonReentrant 
+    {
         IJustice.Auction memory _auction = auction;
 
         require(_auction.tokenId == tokenId, 'Justice: Art not up for auction');
@@ -104,11 +115,6 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         );
 
         address payable lastBidder = _auction.bidder;
-
-        // Refund the last bidder, if applicable
-        if (lastBidder != address(0)) {
-            _safeTransferETHWithFallback(lastBidder, _auction.amount);
-        }
 
         auction.amount = msg.value;
         auction.bidder = payable(msg.sender);
@@ -124,13 +130,22 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         if (extended) {
             emit AuctionExtended(_auction.tokenId, _auction.endTime);
         }
+
+        // Refund the last bidder, if applicable
+        if (lastBidder != address(0)) {
+            _safeTransferETHWithFallback(lastBidder, _auction.amount);
+        }
     }
 
     /**
      * @notice Set the pr1s0nart payment address (handles exchange to USD + LFO payments).
      * @dev Only callable by the owner.
      */
-    function setPaymentAddress(address _newPayment) external override onlyOwner {
+    function setPaymentAddress(address _newPayment) 
+        external 
+        override 
+        onlyOwner 
+    {
         payment = _newPayment;
 
         emit PaymentAddressUpdated(_newPayment);
@@ -140,7 +155,11 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @notice Set the pr1s0nartFund address (handles onchain fund for operations)
      * @dev Only callable by the owner.
      */
-    function setFundAddress(address _newFund) external override onlyOwner {
+    function setFundAddress(address _newFund) 
+        external 
+        override 
+        onlyOwner 
+    {
         fund = _newFund;
 
         emit FundAddressUpdated(_newFund);
@@ -150,7 +169,11 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @notice Set the auction time buffer.
      * @dev Only callable by the owner.
      */
-    function setTimeBuffer(uint256 _timeBuffer) external override onlyOwner {
+    function setTimeBuffer(uint256 _timeBuffer) 
+        external 
+        override 
+        onlyOwner 
+    {
         timeBuffer = _timeBuffer;
 
         emit AuctionTimeBufferUpdated(_timeBuffer);
@@ -160,7 +183,11 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @notice Set the auction reserve price.
      * @dev Only callable by the owner.
      */
-    function setReservePrice(uint256 _reservePrice) external override onlyOwner {
+    function setReservePrice(uint256 _reservePrice) 
+        external 
+        override 
+        onlyOwner 
+    {
         reservePrice = _reservePrice;
 
         emit AuctionReservePriceUpdated(_reservePrice);
@@ -170,7 +197,11 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @notice Set the auction minimum bid increment percentage.
      * @dev Only callable by the owner.
      */
-    function setMinBidIncrementPercentage(uint8 _minBidIncrementPercentage) external override onlyOwner {
+    function setMinBidIncrementPercentage(uint8 _minBidIncrementPercentage) 
+        external 
+        override 
+        onlyOwner 
+    {
         minBidIncrementPercentage = _minBidIncrementPercentage;
 
         emit AuctionMinBidIncrementPercentageUpdated(_minBidIncrementPercentage);
@@ -187,7 +218,10 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      *              and the creator address if they have one and can receive crypto in addition to the LFO payments we cover.
      *              This is likely only the case if they are no longer incarcerated and have an ETH address.
      */
-    function createAuction(address creator, uint256 tokenId, uint8[3] memory split) public onlyOwner {
+    function createAuction(address creator, uint256 tokenId, uint8[3] memory split) 
+        external 
+        onlyOwner 
+    {
             require(restore.auctionable(tokenId) && address(restore) == restore.ownerOf(tokenId), 'Justice: token id is not auctionable');
             uint256 startTime = block.timestamp;
             uint256 endTime = startTime + duration;
@@ -210,7 +244,9 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @notice Settle an auction, freezing the tokenId to the buyer's address and sending the funds to pr1s0n.art for processing.
      * @dev If there are no bids, the art is transferred back to pr1s0n.art to be returned or burnt.
      */
-    function _settleAuction() internal {
+    function _settleAuction() 
+        internal 
+    {
         IJustice.Auction memory _auction = auction;
 
         require(_auction.startTime != 0, "Justice: Auction hasn't begun");
@@ -218,6 +254,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         require(block.timestamp >= _auction.endTime, "Justice: Auction hasn't completed");
 
         auction.settled = true;
+        emit AuctionSettled(_auction.tokenId, _auction.bidder, _auction.amount);
 
         if (_auction.bidder == address(0)) {
             emit NoBuyer(_auction.tokenId);
@@ -226,16 +263,14 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         }
 
         if (_auction.amount > 0) {
-            uint256 LFOShare = _auction.amount * (_auction.saleSplit[0] / 100 );
+            uint256 LFOShare = (_auction.saleSplit[0] * _auction.amount / 100 );
             _safeTransferETHWithFallback(payment, LFOShare);
-            uint256 PAShare = _auction.amount  * (_auction.saleSplit[1] / 100 );
+            uint256 PAShare = (_auction.saleSplit[1] * _auction.amount / 100 );
             _safeTransferETHWithFallback(fund, PAShare);
             // We do this to ensure effectively 100% of the sale proceeds get distributed and to guard against weird % edge cases
             uint256 creatorShare = _auction.amount - LFOShare - PAShare;
             _safeTransferETHWithFallback(_auction.creator, creatorShare);
         }
-
-        emit AuctionSettled(_auction.tokenId, _auction.bidder, _auction.amount);
     }
 
     /**
@@ -243,17 +278,22 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
      * @param recipient the address of the receiver
      * @param amount the total amount
      */
-    function _safeTransferETHWithFallback(address recipient, uint256 amount) internal {
+    function _safeTransferETHWithFallback(address recipient, uint256 amount) 
+        internal 
+    {
         if (!_safeTransferETH(recipient, amount)) {
             IWETH(weth).deposit{ value: amount }();
-            IERC20(weth).transfer(recipient, amount);
+            IERC20(weth).safeTransfer(recipient, amount);
         }
     }
 
     /**
      * @notice Transfer ETH and return the success status.
      */
-    function _safeTransferETH(address recipient, uint256 amount) internal returns (bool) {
+    function _safeTransferETH(address recipient, uint256 amount) 
+        internal 
+        returns (bool) 
+    {
         (bool success, ) = recipient.call{value: amount, gas: 30_000 }(new bytes(0));
         return success;
     }
