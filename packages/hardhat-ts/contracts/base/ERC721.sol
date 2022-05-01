@@ -16,8 +16,9 @@
 // transfer (mint) from `address(0)` to the `creator`. The second displays the
 // transfer from the `creator` to the `to` address. This enables correct
 // attribution on various NFT marketplaces.
+// removed `_burn` to prevent slither dead code warnings as burns add gas costs and we removed them.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.7;
 
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
@@ -234,8 +235,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
      *
      * Tokens can be managed by their owner or approved accounts via {approve} or {setApprovalForAll}.
      *
-     * Tokens start existing when they are minted (`_mint`),
-     * and stop existing when they are burned (`_burn`).
+     * Tokens start existing when they are minted (`_mint`).
      */
     function _exists(uint256 tokenId) internal view virtual returns (bool) {
         return _owners[tokenId] != address(0);
@@ -320,30 +320,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 
         emit Transfer(address(0), creator, tokenId);
         emit Transfer(creator, to, tokenId);
-    }
-
-    /**
-     * @dev Destroys `tokenId`.
-     * The approval is cleared when the token is burned.
-     *
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     *
-     * Emits a {Transfer} event.
-     */
-    function _burn(uint256 tokenId) internal virtual {
-        address owner = ERC721.ownerOf(tokenId);
-
-        _beforeTokenTransfer(owner, address(0), tokenId);
-
-        // Clear approvals
-        _approve(address(0), tokenId);
-
-        _balances[owner] -= 1;
-        delete _owners[tokenId];
-
-        emit Transfer(owner, address(0), tokenId);
     }
 
     /**

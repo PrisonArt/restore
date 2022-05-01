@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.7;
 
 import { ERC721Tradable } from "./base/ERC721Tradable.sol";
 import { IRestore } from "./interfaces/IRestore.sol";
@@ -47,7 +47,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @dev Link to Contract metadata https://docs.opensea.io/docs/contract-level-metadata
      * TODO: add contract metadata
     */
-    function contractURI() public pure returns (string memory) {
+    function contractURI() external pure returns (string memory) {
         return "https://arweave.net/";
     }
 
@@ -56,7 +56,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      *  @param value royalties value (between 0 and 10000)
     */
     function setRoyalties(address recipient, uint256 value) 
-        public 
+        external 
         onlyOwner
     {
         _setRoyalties(recipient, value);
@@ -70,19 +70,17 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @param uri full URI to token metadata
      */
     function mintForAuction(address creator, string memory uri)
-        public
+        external
         override
         onlyOwner
         returns (uint256 tokenId)
     {
         uint256 newTokenId = _tokenIdCounter.current();
         _safeMint(creator, address(this), newTokenId);
-        onERC721Received(creator, address(0), newTokenId, bytes("New token ready for auction"));
         _setTokenURI(newTokenId, uri);
         _tokenIdCounter.increment();
-
+        onERC721Received(creator, address(0), newTokenId, bytes("New token ready for auction"));
         emit ReadyForAuction(address(this), newTokenId, uri);
-
         return(newTokenId);
     }
 
@@ -93,11 +91,12 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * TODO: is it an issue that we store the receipt uri in bytes and the metadata uri above as a string?
      */
     function transferToBuyer(uint256 tokenId, bytes memory data)
-        public
+        external
+        override
         onlyOwner
     {
-        _safeTransfer(address(this), buyers[tokenId], tokenId, data);
         emit ArtTransferred(buyers[tokenId], tokenId, data);
+        _safeTransfer(address(this), buyers[tokenId], tokenId, data);
     }
 
     /**
@@ -106,7 +105,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @param tokenId index of the NFT bought in the auction
      */
     function freeze(address buyer, uint256 tokenId) 
-        public
+        external
         override
     {
         require(msg.sender == justice, "Restore: auctioned piece must be frozen by owner via Justice");
@@ -118,7 +117,10 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @notice called by the owner to make sure the checks in freeze and transferToBuyer pass correctly
      * @param _justice the address of the justice contract
      */
-    function setJustice(address _justice) public onlyOwner {
+    function setJustice(address _justice) 
+        external 
+        onlyOwner 
+    {
         justice =_justice;
     }
 
@@ -126,7 +128,12 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @notice called by Justice to ensure that this token exists and can be auctioned before creating an auction
      * @param tokenId the tokenId to be checked for auction
      */
-    function auctionable(uint256 tokenId) external view returns (bool) {
+    function auctionable(uint256 tokenId) 
+        external 
+        view 
+        override
+        returns (bool) 
+    {
         require(_exists(tokenId), "Restore: unknown token");
         return address(0) == buyers[tokenId];
     }
