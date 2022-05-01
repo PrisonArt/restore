@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
 import { Attribute, Auction, Bid, NFT, NFTMetadata } from '../features/nfts/nft.interface';
 import { parseBytes32String } from 'ethers/lib/utils';
 
@@ -195,7 +194,9 @@ bidsByAuctionGql = (auctionId: string) => `
   getNFT(nftId: string): Observable<NFT> {
     return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql(nftId.toString())})
     .pipe(
-      tap((res: any) => console.log(`nft: ${res.data.nft.id}`)),
+      tap((res: any) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+      }),
       map(res => res.data.nft),
       map(nft => normalizeNFT(nft))
     );
@@ -211,32 +212,34 @@ bidsByAuctionGql = (auctionId: string) => `
   getNFTs(): Observable<NFT[]> {
     return this.http.post<NFTResponse>(this.graphURL, { query: this.nftsGql })
     .pipe(
-      tap((res: any) => console.log(`# nfts: ${res.data.nfts.length}`)),
+      tap((res: any) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+      }),
       map(res => res.data.nfts),
-      map(nfts => nfts.map((nft: any) => normalizeNFT(nft)))
+      map(nfts => nfts.map((nft: any) => normalizeNFT(nft))),
     );
   }
 
   getAuctions(): Observable<Auction[]> {
     return this.http.post<NFTResponse>(this.graphURL, { query: this.auctionsGql })
     .pipe(
-      tap((res: any) => console.log(`# auctions: ${res.data.auctions.length}`)),
+      tap((res: any) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+      }),
       map(res => res.data.auctions),
-      map(auctions => auctions.map((auction: any) => normalizeAuction(auction)))
+      map(auctions => auctions.map((auction: any) => normalizeAuction(auction))),
     );
   }
 
   getBids(): Observable<Bid[]> {
     return this.http.post<NFTResponse>(this.graphURL, { query: this.bidsGql })
     .pipe(
-      tap((res: any) => console.log(`# bids: ${res.data.bids.length}`)),
+      tap((res: any) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+      }),
       map(res => res.data.bids),
       map(bids => bids.map((bid: any) => normalizeBid(bid)))
     );
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<any> {
-    return throwError(error);
   }
 
 }
