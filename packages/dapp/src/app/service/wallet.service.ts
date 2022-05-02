@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import Web3Modal from 'web3modal';
-import { from, Observable, Subject } from 'rxjs';
-import { filter, take} from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { selectAccountAddress } from './../features/wallet/reducers/index';
-import { logoutUser, setAccountAddress, setMinBidIncrementPercentage, setNetworkName, setReservePrice, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
+import { setAccountAddress, setMinBidIncrementPercentage, setNetworkName, setReservePrice, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
 
+import { environment as env } from '../../environments/environment';
 import networkMapping from './../../deployments.json';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, Contract, providers, ethers } from 'ethers';
 import { NotificationService } from 'app/core/notifications/notification.service';
 
 @Injectable({
@@ -18,21 +17,54 @@ export class WalletService {
   private provider: ethers.providers.Web3Provider;
   private web3Modal: Web3Modal;
 
-  private justiceContract: ethers.Contract;
-  private restoreContract: ethers.Contract;
+  private wsJusticeContract: ethers.Contract;
+  private wsRestoreContract: ethers.Contract;
+
+  private wsRpcUri: string;
+  private chainId: string;
+  private network: string;
 
   constructor(private store: Store,
     private notificationService: NotificationService) {
     this.setupWeb3Modal();
 
-    this.store.select(selectAccountAddress)
-      .pipe(
-        take(1),
-        filter(address => !!address)
-      )
-      .subscribe(_ => {
-        this.connectWallet();
+    this.wsRpcUri = env.wsRpcUri;
+    this.chainId = env.chainId;
+    this.network = env.network;
+
+    const networkMappingForChain =
+    networkMapping[this.chainId as keyof typeof networkMapping];
+    if (networkMappingForChain !== undefined) {
+      const wsProvider = this.getWsRpcProvider(this.wsRpcUri);
+
+      const justiceMapping = networkMappingForChain[0]['contracts']['Justice'];
+      this.wsJusticeContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi, wsProvider);
+      console.log(`Justice Contract Address ${this.wsJusticeContract.address}`);
+      this.getReservePrice().then(reservePrice => this.store.dispatch(setReservePrice({ reservePrice })))
+      this.getMinBidIncrementPercentage().then(minBidIncrementPercentage => this.store.dispatch(setMinBidIncrementPercentage({ minBidIncrementPercentage })))
+
+      const restoreMapping = networkMappingForChain[0]['contracts']['Restore'];
+      this.wsRestoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, wsProvider);
+      console.log(`Restore Contract Address ${this.wsRestoreContract.address}`);
+
+      // FIXME: Add minted event listener
+
+      this.wsJusticeContract.on('AuctionCreated', (tokenId, split, creator, startTime, endTime) => {
+        console.log('Auction created received: ', tokenId, split, creator, startTime, endTime);
       });
+      this.wsJusticeContract.on('AuctionBid', () => {
+        console.log('Auction bid received: ');
+      });
+      this.wsJusticeContract.on('AuctionExtended', () => {
+        console.log('Auction extended: ');
+      });
+      this.wsJusticeContract.on('AuctionSettled', () => {
+        console.log('Auction settled: ');
+      });
+      this.wsJusticeContract.on('OwnershipTransferred', () => {
+        console.log('Ownership transferred: ');
+      });
+    }
   }
 
   public async connectWallet() {
@@ -51,12 +83,12 @@ export class WalletService {
   }
 
   public getBalanceOf(accountAddress: string): Observable<BigNumber> {
-    return from(this.restoreContract.balanceOf(accountAddress)) as Observable<BigNumber>;
+    return from(this.wsRestoreContract.balanceOf(accountAddress)) as Observable<BigNumber>;
   }
 
   async bid(nftId: number, value: number) {
     const signer_ = this.provider.getSigner();
-    const justiceContractWithSigner = this.justiceContract.connect(signer_);
+    const justiceContractWithSigner = this.wsJusticeContract.connect(signer_);
     if (value !== 0) {
       justiceContractWithSigner.createBid(nftId, { value: ethers.utils.parseEther(value.toString()) }).then(
         (responseBid: any) => {
@@ -77,10 +109,6 @@ export class WalletService {
         }
       );
     }
-  }
-
-  public getJusticeContract(): any {
-    return this.justiceContract;
   }
 
   public clearProvider() {
@@ -112,28 +140,28 @@ export class WalletService {
   private async updateChain() {
     console.log('Update Chain');
 
-    const [chainIdStr, networkName] =await this.provider.getNetwork().then(network =>
-      [network.chainId.toString(), network.name] as const
+    // get the network the wallet is currently connected to
+    const [connectedNetworkName] =await this.provider.getNetwork().then(network =>
+      [network.name] as const
     );
-
-    const networkMappingForChain =
-    networkMapping[chainIdStr as keyof typeof networkMapping];
+    this.store.dispatch(setNetworkName({ networkName: connectedNetworkName }));
 
     // only update network name or address if the Justice contract has been deployed
-    if (networkMappingForChain !== undefined) {
-      this.store.dispatch(setNetworkName({ networkName }));
+    if (connectedNetworkName !== this.network) {
+      this.notificationService.error('Please connect your wallet to the correct network: ' + this.network);
+    }
+  }
 
-      const justiceMapping = networkMappingForChain[0]['contracts']['Justice'];
-      this.justiceContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi, this.provider);
-      console.log(`Justice Contract Address ${this.justiceContract.address}`);
-      this.store.dispatch(setReservePrice({ reservePrice: await this.getReservePrice() }));
-      this.store.dispatch(setMinBidIncrementPercentage({ minBidIncrementPercentage: await this.getMinBidIncrementPercentage() }));
-
-      const restoreMapping = networkMappingForChain[0]['contracts']['Restore'];
-      this.restoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, this.provider);
-      console.log(`Restore Contract Address ${this.restoreContract.address}`);
-    } else {
-      throw new Error('No contract found for this chain, please switch to Rinkeby or Mainnet');
+  private getWsRpcProvider(urlString: string) {
+    const url = new URL(urlString);
+    switch (url.protocol) {
+      case 'http:':
+      case 'https:':
+        return new providers.JsonRpcProvider(url.href);
+      case 'wss:':
+        return new providers.WebSocketProvider(url.href);
+      default:
+        throw new Error(`Network URL not valid: '${url.href}'`);
     }
   }
 
@@ -142,18 +170,18 @@ export class WalletService {
     this.provider.listAccounts().then(res => {
       const address = res[0];
       this.store.dispatch(setAccountAddress({ accountAddress: address }));
-      this.store.dispatch(loadContractAllowance({ accountAddress: address, contractAddress: this.justiceContract.address }));
+      this.store.dispatch(loadContractAllowance({ accountAddress: address, contractAddress: this.wsJusticeContract.address }));
       this.store.dispatch(loadUserBalance({ accountAddress: address }));
     });
   }
 
   private async getMinBidIncrementPercentage(): Promise<number> {
-    const minBidIncrementPercentage = await this.justiceContract.minBidIncrementPercentage();
+    const minBidIncrementPercentage = await this.wsJusticeContract.minBidIncrementPercentage();
     return BigNumber.from(minBidIncrementPercentage).toNumber();
   }
 
   private async getReservePrice(): Promise<number> {
-    const reservePrice = await this.justiceContract.reservePrice();
+    const reservePrice = await this.wsJusticeContract.reservePrice();
     return BigNumber.from(reservePrice).toNumber();
   }
 }

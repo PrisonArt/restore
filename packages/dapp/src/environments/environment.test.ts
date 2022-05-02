@@ -3,6 +3,10 @@ const packageJson = require('../../package.json');
 export const environment = {
   appName: 'Pr1s0nArt',
   envName: 'TEST',
+  chainId: '1337',
+  network: 'unknown',
+  graphURL: 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost',
+  wsRpcUri: 'http://localhost:8545',
   production: false,
   test: true,
   i18nPrefix: '',
