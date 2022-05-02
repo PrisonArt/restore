@@ -8,6 +8,7 @@ import { environment as env } from '../../environments/environment';
 import networkMapping from './../../deployments.json';
 import { BigNumber, Contract, providers, ethers } from 'ethers';
 import { NotificationService } from 'app/core/notifications/notification.service';
+import { auctionLoadByNFT, bidsLoadByNFT, nftLoad } from 'app/features/nfts/nft.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -47,22 +48,41 @@ export class WalletService {
       this.wsRestoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, wsProvider);
       console.log(`Restore Contract Address ${this.wsRestoreContract.address}`);
 
-      // FIXME: Add minted event listener
-
-      this.wsJusticeContract.on('AuctionCreated', (tokenId, split, creator, startTime, endTime) => {
-        console.log('Auction created received: ', tokenId, split, creator, startTime, endTime);
+      this.wsJusticeContract.on('AuctionCreated', (tokenId) => {
+        console.log('Auction created received: ', tokenId); // unit256
+        this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
+        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
-      this.wsJusticeContract.on('AuctionBid', () => {
-        console.log('Auction bid received: ');
+      this.wsJusticeContract.on('AuctionBid', (tokenId, sender, value, extended) => {
+        // TODO: if extended is true, mark auction extended
+        console.log('Auction bid received: ', tokenId, ' Extended: ', extended); // unit256
+        this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
+        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
-      this.wsJusticeContract.on('AuctionExtended', () => {
-        console.log('Auction extended: ');
+      this.wsJusticeContract.on('AuctionExtended', (tokenId) => {
+        // TODO: mark auction extended
+        console.log('Auction extended: ', tokenId); // unit256
+        this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
+        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
-      this.wsJusticeContract.on('AuctionSettled', () => {
-        console.log('Auction settled: ');
+      this.wsJusticeContract.on('AuctionSettled', (tokenId) => {
+        console.log('Auction settled: ', tokenId); // unit256
+        this.store.dispatch(nftLoad({ nftId: tokenId }));
+        this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
+        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
-      this.wsJusticeContract.on('OwnershipTransferred', () => {
-        console.log('Ownership transferred: ');
+      this.wsRestoreContract.on('ReadyForAuction', (to, tokenId) => {
+        console.log('ReadyForAuction: ', tokenId); // unit256
+        this.store.dispatch(nftLoad({ nftId: tokenId }));
+        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+      });
+      this.wsRestoreContract.on('ArtFrozen', (buyer, tokenId) => {
+        console.log('ArtFrozen: ', tokenId); // unit256
+        this.store.dispatch(nftLoad({ nftId: tokenId }));
+      });
+      this.wsRestoreContract.on('ArtTransferred', (buyer, tokenId) => {
+        console.log('ArtTransferred: ', tokenId); // unit256
+        this.store.dispatch(nftLoad({ nftId: tokenId }));
       });
     }
   }

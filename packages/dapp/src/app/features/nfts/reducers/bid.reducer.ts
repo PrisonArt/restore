@@ -15,6 +15,7 @@ export const initialState: State = adapter.getInitialState({});
 export const reducer = createReducer(
   initialState,
   on(BidActions.bidsLoadSuccess, (state, { bids }) => adapter.addMany(bids, state)),
+  on(BidActions.bidsLoadByNFTSuccess, (state, { bids }) => adapter.upsertMany(bids, state)),
   on(BidActions.bidLoadSuccess, (state, { bid }) => adapter.upsertOne(bid, state)),
 );
 
