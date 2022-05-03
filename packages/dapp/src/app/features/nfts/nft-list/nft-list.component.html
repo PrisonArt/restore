@@ -16,7 +16,7 @@
             </div>
           </mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image src={{baseArweaveURL}}{{nft.imageHash}} alt={{nft.name}}>
+        <img mat-card-image src={{nft.imageHash}} alt={{nft.name}}>
         <mat-card-content>
           <div *ngFor="let auction of auctions$ | async">
             <div *ngIf="nft.id === auction.nftId">

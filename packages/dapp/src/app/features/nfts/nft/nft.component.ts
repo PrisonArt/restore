@@ -56,7 +56,6 @@ export class NFTComponent implements OnInit, OnDestroy {
   auctionEndTime$: Observable<BigNumber | null>;
   countDown$: Observable<number>;
   minBid: number;
-  baseArweaveURL = 'https://arweave.net/';
 
   metadataUrl: string;
   openseaUrl: string;

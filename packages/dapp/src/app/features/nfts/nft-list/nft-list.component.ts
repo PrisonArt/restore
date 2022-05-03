@@ -25,7 +25,6 @@ export class NFTListComponent implements AfterViewInit {
   obs$: Observable<any>;
 
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-  baseArweaveURL = 'https://arweave.net/';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private store: Store,
