@@ -1,14 +1,9 @@
 {
-  "pr1s0nart.about.description": "Description 1",
-  "pr1s0nart.about.description2": "Pr1s0nArt NFT images and metadata are stored on the permaweb provided by Arweave.",
-  "pr1s0nart.about.description3": "Description 3",
-  "pr1s0nart.about.nfts": "View Gallery",
-  "pr1s0nart.menu.about": "About",
   "pr1s0nart.menu.nfts": "Gallery",
   "pr1s0nart.menu.connectwallet": "Connect Wallet",
   "pr1s0nart.menu.nft": "NFT",
-  "pr1s0nart.title.long": "Pr1s0n Art NFTs",
-  "pr1s0nart.title.short": "Pr1s0n Art NFTs",
+  "pr1s0nart.title.long": "Restore",
+  "pr1s0nart.title.short": "Restore",
   "pr1s0nart.notfound.title": "Error 404",
   "pr1s0nart.notfound.description": "The page you requested was not found."
 }
