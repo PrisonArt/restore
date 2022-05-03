@@ -31,7 +31,6 @@ export class NFTComponent implements OnInit, OnDestroy {
   id: number;
 
   idSub: Subscription;
-  nftSub: Subscription;
   minBidSub: Subscription;
   reservePriceSub: Subscription;
   bidsSub: Subscription;
@@ -49,8 +48,8 @@ export class NFTComponent implements OnInit, OnDestroy {
   accountAddress$: Observable<string>;
   accountAddress: string;
 
-  nft$: Observable<NFT>;
-  nft: NFT;
+  nft$: Observable<NFT | undefined>;
+  nft: NFT | undefined;
   auction$: Observable<Auction | null>;
   auctionAmount$: Observable<BigNumber | null>;
   auctionEndTime$: Observable<BigNumber | null>;
@@ -71,7 +70,6 @@ export class NFTComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // avoid memory leaks here by unsubscribing
     this.idSub.unsubscribe();
-    this.nftSub.unsubscribe();
     this.minBidSub.unsubscribe();
     this.reservePriceSub.unsubscribe();
     this.bidsSub.unsubscribe();
@@ -84,9 +82,6 @@ export class NFTComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
-    this.nftSub = this.nft$.subscribe(data => {
-      this.nft = data;
-    });
 
     this.store.dispatch(NFTActions.auctionsLoad());
     this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
@@ -126,6 +121,7 @@ export class NFTComponent implements OnInit, OnDestroy {
           // FIXME: set this to the actual reserve price
           minBid = 100000000000000000;// this.reservePrice;
         } else {
+          console.log("minBid updated");
           minBid = minBidIncPercentageDec.times(auctionAmount).toNumber();
         }
       }

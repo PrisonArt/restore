@@ -42,8 +42,7 @@ export const {
 } = fromNFTs.adapter.getSelectors(selectNFTEntitiesState);
 
 export const selectNFT = (id: number) =>
-  createSelector(selectAllNFTs, (nfts) => nfts[id]);
-
+  createSelector(selectNFTEntities, (nfts) => nfts[id]);
 
 // Auctions
 export interface AuctionsState {
@@ -73,8 +72,7 @@ export const {
 } = fromAuctions.adapter.getSelectors(selectAuctionEntitiesState);
 
 export const selectAuction = (id: number) =>
-  createSelector(selectAllAuctions, (auctions) => auctions[id]);
-
+  createSelector(selectAuctionEntities, (auctions) => auctions[id]);
 
 export const selectAuctionByNFT = (nftId: number) => createSelector(
   selectAllAuctions,
@@ -139,7 +137,7 @@ export const {
 } = fromBids.adapter.getSelectors(selectBidEntitiesState);
 
 export const selectBid = (id: number) =>
-  createSelector(selectAllBids, (bids) => bids[id]);
+  createSelector(selectBidEntities, (bids) => bids[id]);
 
 export const selectBidsByNFT = (nftId: number) => createSelector(
   selectAllBids,
