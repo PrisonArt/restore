@@ -1,5 +1,4 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import BigNumber from 'bignumber.js';
 import * as WalletActions from '../wallet.actions';
 
 export const walletFeatureKey = 'wallet';
