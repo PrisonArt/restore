@@ -83,7 +83,7 @@ export class NFTComponent implements OnInit, OnDestroy {
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
 
-    this.store.dispatch(NFTActions.auctionsLoad());
+    this.store.dispatch(NFTActions.auctionLoadByNFT({ nftId: this.id.toString() }));
     this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
     this.auctionAmount$ = this.store.pipe(select(fromNFT.selectAuctionAmountByNFT(this.id)));
     this.auctionEndTime$ = this.store.pipe(select(fromNFT.selectAuctionEndTimeByNFT(this.id)));
@@ -130,7 +130,7 @@ export class NFTComponent implements OnInit, OnDestroy {
       this.minBid = parseFloat(minBidEther);
     });
 
-    this.store.dispatch(NFTActions.bidsLoad());
+    this.store.dispatch(NFTActions.bidsLoadByNFT({ nftId: this.id.toString() }));
     this.bids$ = this.store.pipe(select(fromNFT.selectBidsByNFT(this.id)));
     this.bidsSub = this.bids$.subscribe(data => {
       this.bidDataSource.data = data;
