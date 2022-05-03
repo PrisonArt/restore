@@ -15,7 +15,7 @@ export const initialState: State = adapter.getInitialState({});
 export const reducer = createReducer(
   initialState,
   on(AuctionActions.auctionsLoadSuccess, (state, { auctions }) => adapter.addMany(auctions, state)),
-  on(AuctionActions.auctionLoadByNFTSuccess, (state, { auction }) => adapter.upsertOne(auction, state)),
+  on(AuctionActions.auctionsLoadByNFTSuccess, (state, { auctions }) => adapter.upsertMany(auctions, state)),
 );
 
 export function auctionReducer(state: State | undefined, action: Action) {

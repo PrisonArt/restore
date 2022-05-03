@@ -83,7 +83,7 @@ export class NFTComponent implements OnInit, OnDestroy {
     this.store.dispatch(NFTActions.nftLoad({ nftId: this.id.toString() }));
     this.nft$ = this.store.pipe(select(fromNFT.selectNFT(this.id)));
 
-    this.store.dispatch(NFTActions.auctionLoadByNFT({ nftId: this.id.toString() }));
+    this.store.dispatch(NFTActions.auctionsLoadByNFT({ nftId: this.id.toString() }));
     this.auction$ = this.store.pipe(select(fromNFT.selectAuctionByNFT(this.id)));
     this.auctionAmount$ = this.store.pipe(select(fromNFT.selectAuctionAmountByNFT(this.id)));
     this.auctionEndTime$ = this.store.pipe(select(fromNFT.selectAuctionEndTimeByNFT(this.id)));

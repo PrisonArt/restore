@@ -223,7 +223,7 @@ bidsByNFTGql = (nftId: string) => `
 `;
 
   getNFT(nftId: string): Observable<NFT> {
-    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql(nftId.toString())})
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.nftGql(nftId)})
     .pipe(
       tap((res: any) => {
         if (res.errors) throw new Error(res.errors[0].message);
@@ -262,15 +262,14 @@ bidsByNFTGql = (nftId: string) => `
     );
   }
 
-  getAuctionByNFT(nftId: string): Observable<Auction> {
-    return this.http.post<NFTResponse>(this.graphURL, { query: this.auctionsByNFTGql(nftId.toString()) })
+  getAuctionsByNFT(nftId: string): Observable<Auction[]> {
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.auctionsByNFTGql(nftId) })
     .pipe(
       tap((res: any) => {
         if (res.errors) throw new Error(res.errors[0].message);
       }),
       map(res => res.data.auctions),
       map(auctions => auctions.map((auction: any) => normalizeAuction(auction))),
-      map(auctions => auctions[0])
     );
   }
 
@@ -286,7 +285,7 @@ bidsByNFTGql = (nftId: string) => `
   }
 
   getBidsByNFT(nftId: string): Observable<Bid[]> {
-    return this.http.post<NFTResponse>(this.graphURL, { query: this.bidsByNFTGql(nftId.toString()) })
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.bidsByNFTGql(nftId) })
     .pipe(
       tap((res: any) => {
         if (res.errors) throw new Error(res.errors[0].message);

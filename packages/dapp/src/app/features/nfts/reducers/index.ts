@@ -82,7 +82,6 @@ export const selectAuctionByNFT = (nftId: number) => createSelector(
    }
    // FIXME: strict equality is not working
    const auctionsForNFT = auctions.filter(auction => auction.nftId == nftId)
-   console.log('auctionsForNFT', auctionsForNFT);
    return auctionsForNFT[0];
   }
 );

@@ -20,9 +20,9 @@ export const auctionsLoad = createAction('[NFT] Load Auctions');
 export const auctionsLoadSuccess = createAction('[NFT] Load Auctions Success', props<{ auctions: Auction[] }>());
 export const auctionsLoadFailure = createAction('[NFT] Load Auctions Failure', props<{ error: Error }>());
 
-export const auctionLoadByNFT = createAction('[NFT] Load Auction By NFT', props<{ nftId: string }>());
-export const auctionLoadByNFTSuccess = createAction('[NFT] Load Auction By NFT Success', props<{ auction: Auction }>());
-export const auctionLoadByNFTFailure = createAction('[NFT] Load Auction By NFT Failure', props<{ error: any }>());
+export const auctionsLoadByNFT = createAction('[NFT] Load Auctions By NFT', props<{ nftId: string }>());
+export const auctionsLoadByNFTSuccess = createAction('[NFT] Load Auctions By NFT Success', props<{ auctions: Auction[] }>());
+export const auctionsLoadByNFTFailure = createAction('[NFT] Load Auctions By NFT Failure', props<{ error: any }>());
 
 export const bidsLoad = createAction('[NFT] Load Bids');
 export const bidsLoadSuccess = createAction('[NFT] Load Bids Success', props<{ bids: Bid[] }>());

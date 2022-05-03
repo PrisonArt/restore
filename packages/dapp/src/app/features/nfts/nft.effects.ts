@@ -26,9 +26,9 @@ import {
   nftLoadMetadataFailure,
   auctionsLoadFailure,
   bidsLoadFailure,
-  auctionLoadByNFT,
-  auctionLoadByNFTSuccess,
-  auctionLoadByNFTFailure,
+  auctionsLoadByNFT,
+  auctionsLoadByNFTSuccess,
+  auctionsLoadByNFTFailure,
   bidsLoadByNFT,
   bidsLoadByNFTSuccess,
   bidsLoadByNFTFailure
@@ -109,11 +109,11 @@ export class NFTEffects {
 
   loadAuctionByNFT$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(auctionLoadByNFT),
+      ofType(auctionsLoadByNFT),
       switchMap((action) =>
-        this.nftService.getAuctionByNFT(action.nftId).pipe(
-          map((auction) => auctionLoadByNFTSuccess({ auction })),
-          catchError((error) => of(auctionLoadByNFTFailure({ error })))
+        this.nftService.getAuctionsByNFT(action.nftId).pipe(
+          map((auctions) => auctionsLoadByNFTSuccess({ auctions })),
+          catchError((error) => of(auctionsLoadByNFTFailure({ error })))
         )
       )
     )
