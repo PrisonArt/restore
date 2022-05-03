@@ -55,7 +55,8 @@ export class WalletService {
       });
       this.wsJusticeContract.on('AuctionBid', (tokenId, sender, value, extended) => {
         console.log('Auction bid received: ', tokenId, ' Extended: ', extended); // unit256
-        this.notificationService.info('Auction extended');
+
+        if (extended) this.notificationService.info('Auction extended');
         this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
         this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
