@@ -1,7 +1,7 @@
 const packageJson = require('../../package.json');
 
 export const environment = {
-  appName: 'Pr1s0nArt',
+  appName: 'Restore',
   envName: 'TEST',
   chainId: '1337',
   network: 'unknown',
