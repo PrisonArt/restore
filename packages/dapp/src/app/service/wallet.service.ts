@@ -54,14 +54,14 @@ export class WalletService {
         this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
       this.wsJusticeContract.on('AuctionBid', (tokenId, sender, value, extended) => {
-        // TODO: if extended is true, mark auction extended
         console.log('Auction bid received: ', tokenId, ' Extended: ', extended); // unit256
+        this.notificationService.info('Auction extended');
         this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
         this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
       this.wsJusticeContract.on('AuctionExtended', (tokenId) => {
-        // TODO: mark auction extended
         console.log('Auction extended: ', tokenId); // unit256
+        this.notificationService.info('Auction extended');
         this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
         this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
@@ -74,7 +74,6 @@ export class WalletService {
       this.wsRestoreContract.on('ReadyForAuction', (to, tokenId) => {
         console.log('ReadyForAuction: ', tokenId); // unit256
         this.store.dispatch(nftLoad({ nftId: tokenId }));
-        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
       });
       this.wsRestoreContract.on('ArtFrozen', (buyer, tokenId) => {
         console.log('ArtFrozen: ', tokenId); // unit256
@@ -83,6 +82,7 @@ export class WalletService {
       this.wsRestoreContract.on('ArtTransferred', (buyer, tokenId) => {
         console.log('ArtTransferred: ', tokenId); // unit256
         this.store.dispatch(nftLoad({ nftId: tokenId }));
+        this.store.dispatch(auctionLoadByNFT({ nftId: tokenId }));
       });
     }
   }

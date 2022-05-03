@@ -42,7 +42,9 @@ export const normalizeNFT = (nft: any): NFT => {
 
   let dataString = '';
   if (nft.data !== '0x00000000') {
+    console.log('nft.data:', nft.data);
     dataString = parseBytes32String(nft.data);
+    console.log('dataString:', dataString);
   }
 
   return {
@@ -176,7 +178,7 @@ nftGql = (nftId: string) => `
 
 auctionsByNFTGql = (nftId: string) => `
 {
-  auctions (nft: "${nftId}") {
+  auctions (where: {nft: "${nftId}"}) {
     id
     startTime
     endTime
@@ -201,7 +203,7 @@ auctionsByNFTGql = (nftId: string) => `
 
 bidsByNFTGql = (nftId: string) => `
 {
-  bids(nft: "${nftId}") {
+  bids(where: {nft: "${nftId}"}) {
     id
     amount
     blockNumber
