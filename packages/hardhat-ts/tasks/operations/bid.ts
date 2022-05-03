@@ -5,7 +5,7 @@ import { TASK_BID } from '../task-names';
 // hh bid --network localhost|rinkeby|mainnet --token-id 0 --amount 1000
 task(TASK_BID, 'Mints a token with token metadata uri, then creates an auction with the token')
   .addParam('tokenId', 'tokenId', null, types.int)
-  .addParam('amount', 'bid amount', null, types.int)
+  .addParam('amount', 'bid amount', null, types.string)
   .setAction(async ({ tokenId, amount }, hre) => {
 
     const { deployments, ethers } = hre;

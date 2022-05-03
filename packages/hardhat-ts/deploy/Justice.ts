@@ -31,7 +31,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   console.log('fund address:', fund);
 
   const TIME_BUFFER = 15 * 60;
-  const RESERVE_PRICE = 2;
+  const RESERVE_PRICE = '100000000000000000';
   const MIN_INCREMENT_BID_PERCENTAGE = 5;
   const DURATION = 60 * 60 * 24;
 

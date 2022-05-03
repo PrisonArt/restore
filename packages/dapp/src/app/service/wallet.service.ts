@@ -201,8 +201,8 @@ export class WalletService {
     return BigNumber.from(minBidIncrementPercentage).toNumber();
   }
 
-  private async getReservePrice(): Promise<number> {
+  private async getReservePrice(): Promise<string> {
     const reservePrice = await this.wsJusticeContract.reservePrice();
-    return BigNumber.from(reservePrice).toNumber();
+    return BigNumber.from(reservePrice).toString();
   }
 }

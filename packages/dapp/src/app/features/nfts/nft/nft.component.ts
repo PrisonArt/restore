@@ -43,8 +43,8 @@ export class NFTComponent implements OnInit, OnDestroy {
 
   minBidIncPercentage$: Observable<number>;
   minBidIncPercentage: number;
-  reservePrice$: Observable<number>;
-  reservePrice: number;
+  reservePrice$: Observable<string>;
+  reservePrice: string;
   accountAddress$: Observable<string>;
   accountAddress: string;
 
@@ -104,8 +104,7 @@ export class NFTComponent implements OnInit, OnDestroy {
 
     this.reservePrice$ = this.store.pipe(select(fromWallet.selectReservePrice));
     this.reservePriceSub = this.reservePrice$.subscribe(data => {
-      const reservePrice = utils.formatEther(data);
-      this.reservePrice = new BigNumber(reservePrice).toNumber();
+      this.reservePrice = data;
     });
 
     this.accountAddress$ = this.store.pipe(select(fromWallet.selectAccountAddress));
@@ -114,15 +113,14 @@ export class NFTComponent implements OnInit, OnDestroy {
     });
 
     this.minBidSub = combineLatest([this.auctionAmount$, this.minBidIncPercentage$, this.reservePrice$]).subscribe(([auctionAmount, , ]) => {
-      let minBid = 0;
+      let minBid = "0";
       const minBidIncPercentageDec = new BigNumber(this.minBidIncPercentage).div(100).plus(1);
       if (auctionAmount) {
         if (new BigNumber(auctionAmount).toNumber() === 0) {
-          // FIXME: set this to the actual reserve price
-          minBid = 100000000000000000;// this.reservePrice;
+          minBid = this.reservePrice;
         } else {
           console.log("minBid updated");
-          minBid = minBidIncPercentageDec.times(auctionAmount).toNumber();
+          minBid = minBidIncPercentageDec.times(auctionAmount).toString();
         }
       }
       // format the min bid into Ether and create a number

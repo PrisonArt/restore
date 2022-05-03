@@ -1,4 +1,5 @@
 import { Action, createReducer, on } from '@ngrx/store';
+import BigNumber from 'bignumber.js';
 import * as WalletActions from '../wallet.actions';
 
 export const walletFeatureKey = 'wallet';
@@ -6,7 +7,7 @@ export const walletFeatureKey = 'wallet';
 export interface State {
   networkName: string;
   minBidIncrementPercentage: number;
-  reservePrice: number;
+  reservePrice: string;
   accountAddress: string;
   contractAllowance: number;
   userBalance: number;
@@ -15,7 +16,7 @@ export interface State {
 export const initialState: State = {
   networkName: '',
   minBidIncrementPercentage: 0,
-  reservePrice: 0,
+  reservePrice: '0',
   accountAddress: '',
   contractAllowance: 0,
   userBalance: 0
