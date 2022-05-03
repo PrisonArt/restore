@@ -30,12 +30,10 @@
 @import 'styles-reset.scss-theme';
 @import './app/app/app.component.scss-theme';
 @import './app/shared/big-input/big-input/big-input.component.scss-theme';
-@import './app/features/about/about/about.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
   @include pr1s0nart-styles-reset-theme($theme);
   @include pr1s0nart-app-component-theme($theme);
-  @include pr1s0nart-about-component-theme($theme);
 }
 
 .default-theme {

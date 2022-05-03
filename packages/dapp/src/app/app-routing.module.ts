@@ -5,13 +5,8 @@ import { NotfoundComponent } from './app/notfound/notfound.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'about',
+    redirectTo: 'nfts',
     pathMatch: 'full'
-  },
-  {
-    path: 'about',
-    loadChildren: () =>
-      import('./features/about/about.module').then((m) => m.AboutModule)
   },
   {
     path: 'nfts',

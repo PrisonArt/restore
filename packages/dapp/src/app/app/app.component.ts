@@ -36,7 +36,6 @@ export class AppComponent implements OnInit {
   logo = 'assets/logo.png';
   languages = ['en'];
   navigation = [
-    { link: 'about', label: 'pr1s0nart.menu.about' },
     { link: 'nfts', label: 'pr1s0nart.menu.nfts' }
   ];
   navigationSideMenu = [
