@@ -113,13 +113,13 @@ export class NFTComponent implements OnInit, OnDestroy {
     });
 
     this.minBidSub = combineLatest([this.auctionAmount$, this.minBidIncPercentage$, this.reservePrice$]).subscribe(([auctionAmount, , ]) => {
-      let minBid = "0";
+      let minBid = '0';
       const minBidIncPercentageDec = new BigNumber(this.minBidIncPercentage).div(100).plus(1);
       if (auctionAmount) {
         if (new BigNumber(auctionAmount).toNumber() === 0) {
           minBid = this.reservePrice;
         } else {
-          console.log("minBid updated");
+          console.log('minBid updated');
           minBid = minBidIncPercentageDec.times(auctionAmount).toString();
         }
       }
