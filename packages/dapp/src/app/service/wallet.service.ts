@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import { from, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { setAccountAddress, setMinBidIncrementPercentage, setNetworkName, setReservePrice, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
@@ -24,14 +25,16 @@ export class WalletService {
   private wsRpcUri: string;
   private chainId: string;
   private network: string;
+  private infuraProjectId: string;
 
   constructor(private store: Store,
     private notificationService: NotificationService) {
-    this.setupWeb3Modal();
-
     this.wsRpcUri = env.wsRpcUri;
     this.chainId = env.chainId;
     this.network = env.network;
+    this.infuraProjectId = env.infuraProjectId;
+
+    this.setupWeb3Modal();
 
     const networkMappingForChain =
     networkMapping[this.chainId as keyof typeof networkMapping];
@@ -137,7 +140,14 @@ export class WalletService {
   }
 
   private setupWeb3Modal(): void {
-    const providerOptions = {};
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          infuraId: this.infuraProjectId,
+        },
+      },
+    };
 
     this.web3Modal = new Web3Modal({
       network: 'mainnet',
