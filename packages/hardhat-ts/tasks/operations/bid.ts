@@ -2,7 +2,7 @@ import { task, types } from 'hardhat/config';
 import { ContractTransaction } from 'ethers';
 import { Justice } from '../../typechain';
 import { TASK_BID } from '../task-names';
-// hh bid --network localhost|rinkeby|mainnet --token-id 0 --amount 1000
+// hh bid --network localhost|rinkeby|mainnet --token-id 0 --amount 100000000000000000
 task(TASK_BID, 'Mints a token with token metadata uri, then creates an auction with the token')
   .addParam('tokenId', 'tokenId', null, types.int)
   .addParam('amount', 'bid amount', null, types.string)
