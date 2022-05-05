@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { Attribute, Auction, Bid, NFT, NFTMetadata } from '../features/nfts/nft.interface';
-import { parseBytes32String } from 'ethers/lib/utils';
+import { ethers } from 'ethers';
 
 export interface NFTResponse {
 	nfts: NFT[];
@@ -42,9 +42,7 @@ export const normalizeNFT = (nft: any): NFT => {
 
   let dataString = '';
   if (nft.data !== '0x00000000') {
-    console.log('nft.data:', nft.data);
-    dataString = parseBytes32String(nft.data);
-    console.log('dataString:', dataString);
+    dataString = ethers.utils.toUtf8String(ethers.utils.arrayify(nft.data));
   }
 
   return {

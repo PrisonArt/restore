@@ -364,8 +364,8 @@ describe('Justice', () => {
 
       await justice.connect(deployer).settleAuction();
 
-      const text = 'LFO paid in full';
-      const data = ethers.utils.formatBytes32String(text);
+      const text = 'ar://8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM';
+      const data = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(text));
 
       await expect(
         restore.connect(deployer).transferToBuyer(tokenId, data)
