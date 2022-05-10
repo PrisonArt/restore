@@ -21,10 +21,8 @@ export const normalizeNFTMetadata = (nftId: string, res: any): NFTMetadata => {
   );
   const baseArweaveURL = 'https://arweave.net/';
   const imageHash = baseArweaveURL + res['image'].substring(5);
+  const animationURL = baseArweaveURL + res['animation_url'].substring(5);
 
-  // FIXME: The standard Arweave URL redirects to a arweave subdomain, causing a CORS error
-  // const animationURL = baseArweaveURL + res['animation_url'].substring(5) + '.mp4';
-  const animationURL = 'https://2sbpw3pbmyuzng3pnenk7tr4s4mpnin7e2i2am2twdv6alzj.arweave.net/1IL7beFmKZabb2k-ar848lxj2ob8mkaAzU7_Dr4C8p0.mp4'
   console.log('animationURL:', animationURL);
   return {
     id: +nftId,
@@ -232,7 +230,7 @@ bidsByNFTGql = (nftId: string) => `
   }
 
   getNFTMetadata(nftId: string, metadataHash: string): Observable<NFTMetadata> {
-    return this.http.get(`https://arweave.net/${metadataHash}.json`)
+    return this.http.get(`https://arweave.net/${metadataHash}`)
     .pipe(
       map(res => normalizeNFTMetadata(nftId, res)),
     );

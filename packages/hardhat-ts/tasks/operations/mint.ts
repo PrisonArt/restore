@@ -2,7 +2,7 @@ import { task, types } from 'hardhat/config';
 import { ContractReceipt, ContractTransaction } from 'ethers';
 import { Restore } from '../../typechain';
 import { TASK_MINT } from '../task-names';
-// hh mint --network localhost|rinkeby|mainnet --metadata-uri ar://eID4sKkQL9klqC3-0TShafiQgDbzDgMIq1hRBMG13Vs
+// hh mint --network localhost|rinkeby|mainnet --metadata-uri ar://pQNhvc1FP4-1vQ1LVCuNi385sy_9G-HKaj-jGz1Or68
 task(TASK_MINT, 'Mints a token with token metadata uri')
   .addParam('metadataUri', 'The token URI', null, types.string)
   .setAction(async ({ metadataUri }, hre) => {

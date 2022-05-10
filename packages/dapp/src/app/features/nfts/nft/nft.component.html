@@ -12,9 +12,8 @@
                 </div>
               </mat-card-subtitle>
           </mat-card-header>
-          FIXME: {{nft.animationURL}}
             <video mat-card-image height="500" controls preload="none">
-                <source src="https://2sbpw3pbmyuzng3pnenk7tr4s4mpnin7e2i2am2twdv6alzj.arweave.net/1IL7beFmKZabb2k-ar848lxj2ob8mkaAzU7_Dr4C8p0.mp4" type="video/mp4">
+                    <source *ngIf="nft.animationURL" src="{{nft.animationURL}}" type="video/mp4">
             </video>
           <mat-card-content>
             <div [innerText]="nft.description"></div>
@@ -28,6 +27,10 @@
 
     <!-- Auction -->
     <div *ngIf="auction$ | async as auction">
+      {{auction.endTime}}
+      <div *ngIf="auctionEndTime$ | async as auctionEndTime">
+        auctionEndTime${{auctionEndTime}}
+      </div>
       <div *ngIf="!(auction.endTime | dateInPast)">
         <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
         <div>Current Bid: {{auction.amount | eth}}</div>

@@ -64,18 +64,18 @@ ipfs daemon
 
 Terminal 3:
 
-```bash
-cd ../graph-node
-cargo run -p graph-node --release -- --postgres-url postgresql://postgres:password@localhost:5432/graph-node --ethereum-rpc localhost:http://127.0.0.1:8545 --ipfs 127.0.0.1:5001
-```
-
-if you receive "Not starting block ingestor (chain is defective)", drop the database, then re-run graph command
+Delete graph-node database after restarting the local node or you'll receive "Not starting block ingestor (chain is defective)"
 
 ```bash
 sudo -u postgres psql
 drop database "graph-node";
 create database "graph-node";
 \q
+```
+
+```bash
+cd ../graph-node
+cargo run -p graph-node --release -- --postgres-url postgresql://postgres:password@localhost:5432/graph-node --ethereum-rpc localhost:http://127.0.0.1:8545 --ipfs 127.0.0.1:5001
 ```
 
 ### Create a graph on localhost
