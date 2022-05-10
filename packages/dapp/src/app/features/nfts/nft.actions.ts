@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 
-import { Auction, Bid, NFT, NFTMetadata } from './nft.interface';
+import { Auction, Bid, LFOData, NFT, NFTMetadata } from './nft.interface';
 
 export const nftsLoad = createAction('[NFT] Load NFTs');
 export const nftsLoadSuccess = createAction('[NFT] Load NFTs Success', props<{ nfts: NFT[] }>());
@@ -13,6 +13,10 @@ export const nftLoadFailure = createAction('[NFT] Load NFT Failure', props<{ err
 export const nftLoadMetadata = createAction('[NFT] Load NFT Metadata', props<{ nftId: string, metadataHash: string }>());
 export const nftLoadMetadataSuccess = createAction('[NFT] Load NFT Metadata Success', props<{ nftMetadata: NFTMetadata }>());
 export const nftLoadMetadataFailure = createAction('[NFT] Load NFT Metadata Failure', props<{ error: any }>());
+
+export const nftLoadLFOData = createAction('[NFT] Load NFT LFO Data', props<{ nftId: string, lfoDataHash: string }>());
+export const nftLoadLFODataSuccess = createAction('[NFT] Load NFT LFO Data Success', props<{ lfoData: LFOData }>());
+export const nftLoadLFODataFailure = createAction('[NFT] Load NFT LFO Data Failure', props<{ error: any }>());
 
 export const nftSelect = createAction('[View NFT Page] Select NFT', props<{ _id: number }>());
 

@@ -31,7 +31,9 @@ import {
   auctionsLoadByNFTFailure,
   bidsLoadByNFT,
   bidsLoadByNFTSuccess,
-  bidsLoadByNFTFailure
+  bidsLoadByNFTFailure,
+  nftLoadLFODataSuccess,
+  nftLoadLFODataFailure
 } from './nft.actions';
 import { NotificationService } from 'app/core/notifications/notification.service';
 
@@ -59,6 +61,20 @@ export class NFTEffects {
           map((nft) => nftLoadSuccess({ nft })),
           catchError((error) => of(nftLoadFailure({ error })))
         )
+      )
+    )
+  );
+
+  loadNFTLFOData$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(nftLoadSuccess),
+      switchMap((action) =>
+        this.nftService
+          .getLFOData(action.nft.id.toString(), action.nft.lfoDataHash)
+          .pipe(
+            map((lfoData) => nftLoadLFODataSuccess({ lfoData })),
+            catchError((error) => of(nftLoadLFODataFailure({ error })))
+          )
       )
     )
   );

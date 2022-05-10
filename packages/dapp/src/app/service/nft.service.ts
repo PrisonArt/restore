@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
-import { Attribute, Auction, Bid, NFT, NFTMetadata } from '../features/nfts/nft.interface';
+import { Attribute, Auction, Bid, LFO, LFOData, NFT, NFTMetadata } from '../features/nfts/nft.interface';
 import { ethers } from 'ethers';
 
 export interface NFTResponse {
@@ -34,25 +34,46 @@ export const normalizeNFTMetadata = (nftId: string, res: any): NFTMetadata => {
   }
 };
 
+export const normalizeLFOData = (nftId: string, res: any): LFOData => {
+  const baseArweaveURL = 'https://arweave.net/';
+  const lfos: LFO[] = res['lfos'].map(
+    (lfo: { [x: string]: any }) => (
+      {
+        payee: lfo['payee'],
+        paidDate: lfo['paidDate'],
+        amountPaid: lfo['amountPaid'],
+        imageHash: baseArweaveURL + lfo['receiptImage'].substring(5),
+      }
+    )
+  );
+
+  return {
+    id: +nftId,
+    lfos: lfos
+  }
+};
+
+
 export const normalizeNFT = (nft: any): NFT => {
   // trim the leading five characters of nft.metadataURI
   const metadataHash = nft.metadataURI.substring(5);
 
-  let dataString = '';
+  let lfoDataHash = '';
   if (nft.data !== '0x00000000') {
-    dataString = ethers.utils.toUtf8String(ethers.utils.arrayify(nft.data));
+    lfoDataHash = ethers.utils.toUtf8String(ethers.utils.arrayify(nft.data)).substring(5);
   }
 
   return {
     id: +nft.id,
-    data: dataString,
+    lfoDataHash: lfoDataHash,
     name: '',
     description: '',
     imageHash: '',
     animationURL: '',
     owner: nft.owner.id,
     metadataHash: metadataHash,
-    isFrozen: nft.isFrozen
+    isFrozen: nft.isFrozen,
+    lfos: []
   }
 };
 
@@ -233,6 +254,14 @@ bidsByNFTGql = (nftId: string) => `
     return this.http.get(`https://arweave.net/${metadataHash}`)
     .pipe(
       map(res => normalizeNFTMetadata(nftId, res)),
+    );
+  }
+
+  getLFOData(nftId: string, lfoDataHash: string): Observable<LFOData> {
+    if (!lfoDataHash) return of({id: +nftId, lfos: []});
+    return this.http.get(`https://arweave.net/${lfoDataHash}`)
+    .pipe(
+      map(res => normalizeLFOData(nftId, res)),
     );
   }
 

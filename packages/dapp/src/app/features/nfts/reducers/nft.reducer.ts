@@ -26,6 +26,12 @@ export const reducer = createReducer(
       attributes: nftMetadata.attributes
     }
   }, state)),
+  on(NFTActions.nftLoadLFODataSuccess, (state, { lfoData }) =>  adapter.updateOne({
+    id: lfoData.id,
+    changes: {
+      lfos: lfoData.lfos
+    }
+  }, state)),
 );
 
 export function nftReducer(state: State | undefined, action: Action) {

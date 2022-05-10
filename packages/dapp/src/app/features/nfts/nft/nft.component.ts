@@ -28,6 +28,7 @@ export class NFTComponent implements OnInit, OnDestroy {
   bidDataSource: MatTableDataSource<Bid> = new MatTableDataSource();
 
   displayedColumns: string[] = ['bidder', 'amount', 'blockTimestamp'];
+  displayedLFOColumns: string[] = ['payee', 'paidDate', 'amountPaid', 'imageHash'];
   id: number;
 
   idSub: Subscription;

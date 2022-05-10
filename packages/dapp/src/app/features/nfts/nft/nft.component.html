@@ -73,7 +73,30 @@
           </div>
           <div *ngIf="!nft.isFrozen">
             <div>The legal financial obligations have been paid, the NFT is now available for transfer by the owner</div>
-            <div>LFO data: {{nft.data}}</div>
+            <table mat-table [dataSource]="nft.lfos">>
+              <ng-container matColumnDef="payee">
+                <th mat-header-cell *matHeaderCellDef> Payee </th>
+                <td mat-cell *matCellDef="let lfo"> {{lfo.payee}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="paidDate">
+                <th mat-header-cell *matHeaderCellDef> Date </th>
+                <td mat-cell *matCellDef="let lfo"> {{lfo.paidDate}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="amountPaid">
+                <th mat-header-cell *matHeaderCellDef> Amount </th>
+                <td mat-cell *matCellDef="let lfo"> {{lfo.amountPaid}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="imageHash">
+                <th mat-header-cell *matHeaderCellDef> Image Hash </th>
+                <td mat-cell *matCellDef="let lfo"><img src="{{lfo.imageHash}}"></td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedLFOColumns"></tr>
+              <tr mat-row *matRowDef="let myRowData; columns: displayedLFOColumns"></tr>
+            </table>
           </div>
         </div>
         <div *ngIf="!auction.settled">

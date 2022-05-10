@@ -2,13 +2,14 @@ import BigNumber from 'bignumber.js';
 /* eslint-disable @typescript-eslint/naming-convention */
 export interface NFT {
   id: number;
-  data: string;
+  lfoDataHash: string;
   name: string;
   description: string;
   imageHash?: string;
   metadataHash: string;
   animationURL: string;
   attributes?: Attribute[];
+  lfos: LFO[];
   external_url?: string;
   owner: string;
   isFrozen: boolean;
@@ -24,9 +25,21 @@ export interface NFTMetadata {
   external_url?: string;
 }
 
+export interface LFOData {
+  id: number;
+  lfos: LFO[];
+}
+
 export interface Attribute {
   traitType: string;
   value: string;
+}
+
+export interface LFO {
+  payee: string;
+  paidDate: string;
+  amountPaid: number;
+  imageHash: string;
 }
 
 export interface Bid {
