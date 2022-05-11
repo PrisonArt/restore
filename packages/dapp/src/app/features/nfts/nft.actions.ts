@@ -40,6 +40,9 @@ export const bidLoad = createAction('[NFT] Load Bid', props<{ bidId: string }>()
 export const bidLoadSuccess = createAction('[NFT] Load Bid Success', props<{ bid: Bid }>());
 export const bidLoadFailure = createAction('[NFT] Load Bid Failure', props<{ error: any }>());
 
+export const bidLoadENSSuccess = createAction('[NFT] Load Bid ENS Success', props<{ bidId: string, bidderENS: string }>());
+export const bidLoadENSFailure = createAction('[NFT] Load Bid ENS Failure', props<{ error: any }>());
+
 export const initializeConnection = createAction('[WebSocket] Initialize connection');
 export const initializeConnectionSuccess = createAction('[WebSocket] Initialize connection Success');
 

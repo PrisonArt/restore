@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { setAccountAddress, setMinBidIncrementPercentage, setNetworkName, setReservePrice, loadContractAllowance, loadUserBalance } from './../features/wallet/wallet.actions';
 
@@ -215,4 +215,17 @@ export class WalletService {
     const reservePrice = await this.wsJusticeContract.reservePrice();
     return BigNumber.from(reservePrice).toString();
   }
+
+  getENS(address: string): Observable<string> {
+    if (!this.provider) {
+      return of(address);
+    }
+    try {
+      return from(this.provider.lookupAddress(address)) as Observable<string>;
+    } catch (e) {
+      console.log('getENS error:', e);
+      return of(address);
+    }
+  }
+
 }

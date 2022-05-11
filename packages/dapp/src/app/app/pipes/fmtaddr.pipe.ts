@@ -6,6 +6,10 @@ export class FmtAddrPipe implements PipeTransform {
       if (!value) {
         return '';
       }
+      // if value doesn't begin in 0x, it's an ENS
+      if (!value.startsWith('0x')) {
+        return value;
+      }
       return (
         value.substring(0, 4) +
         '...' +
