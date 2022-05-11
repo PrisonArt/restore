@@ -23,7 +23,6 @@ export const normalizeNFTMetadata = (nftId: string, res: any): NFTMetadata => {
   const imageHash = baseArweaveURL + res['image'].substring(5);
   const animationURL = baseArweaveURL + res['animation_url'].substring(5);
 
-  console.log('animationURL:', animationURL);
   return {
     id: +nftId,
     name: res['name'],

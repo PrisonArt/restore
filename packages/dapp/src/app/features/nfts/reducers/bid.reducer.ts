@@ -17,15 +17,14 @@ export const reducer = createReducer(
   on(BidActions.bidsLoadSuccess, (state, { bids }) => adapter.addMany(bids, state)),
   on(BidActions.bidsLoadByNFTSuccess, (state, { bids }) => adapter.upsertMany(bids, state)),
   on(BidActions.bidLoadSuccess, (state, { bid }) => adapter.upsertOne(bid, state)),
-  on(BidActions.bidLoadENSSuccess, (state, { bidId, bidderENS }) => {
-    console.log('bidLoadENSSuccess', bidId, bidderENS);
-    return adapter.updateOne({
+  on(BidActions.bidLoadENSSuccess, (state, { bidId, bidderENS }) =>
+    adapter.updateOne({
       id: bidId,
       changes: {
         bidder: bidderENS
       }
-    }, state);
-  }),
+    }, state)
+  ),
 );
 
 export function bidReducer(state: State | undefined, action: Action) {

@@ -139,6 +139,18 @@ export class WalletService {
     this.web3Modal.clearCachedProvider();
   }
 
+  getENS(address: string): Observable<string> {
+    if (!this.provider) {
+      return of(address);
+    }
+    try {
+      return from(this.provider.lookupAddress(address)) as Observable<string>;
+    } catch (e) {
+      console.log('getENS error:', e);
+      return of(address);
+    }
+  }
+
   private setupWeb3Modal(): void {
     const providerOptions = {
       walletconnect: {
@@ -215,17 +227,4 @@ export class WalletService {
     const reservePrice = await this.wsJusticeContract.reservePrice();
     return BigNumber.from(reservePrice).toString();
   }
-
-  getENS(address: string): Observable<string> {
-    if (!this.provider) {
-      return of(address);
-    }
-    try {
-      return from(this.provider.lookupAddress(address)) as Observable<string>;
-    } catch (e) {
-      console.log('getENS error:', e);
-      return of(address);
-    }
-  }
-
 }

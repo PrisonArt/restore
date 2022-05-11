@@ -120,7 +120,6 @@ export class NFTComponent implements OnInit, OnDestroy {
         if (new BigNumber(auctionAmount).toNumber() === 0) {
           minBid = this.reservePrice;
         } else {
-          console.log('minBid updated');
           minBid = minBidIncPercentageDec.times(auctionAmount).toString();
         }
       }
