@@ -1,5 +1,7 @@
-<div class="row" *ngIf="nft$ | async as nft">
-  <div class="col-md-6 col-lg-4 mx-auto">
+<div class="row justify-content-md-center" *ngIf="nft$ | async as nft">
+  <div class="col-lg-1 col-xl-2">
+  </div>
+  <div class="col-12 col-md-auto col-md-10 col-lg-5 col-xl-4">
       <mat-card>
           <mat-card-header>
               <mat-card-title>
@@ -22,15 +24,11 @@
           </mat-card-actions>
       </mat-card>
   </div>
-  <div class="col-md-6" >
+  <div class="col-12 col-md-auto col-md-10 col-lg-5 col-xl-4" >
     <h2>Auction</h2>
 
     <!-- Auction -->
     <div *ngIf="auction$ | async as auction">
-      {{auction.endTime}}
-      <div *ngIf="auctionEndTime$ | async as auctionEndTime">
-        auctionEndTime${{auctionEndTime}}
-      </div>
       <div *ngIf="!(auction.endTime | dateInPast)">
         <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
         <div>Current Bid: {{auction.amount | eth}}</div>
@@ -65,7 +63,7 @@
         </div>
       </div>
       <div *ngIf="auction.endTime | dateInPast">
-        Auction Over
+        Auction Ended {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}
         <div *ngIf="auction.settled">
           {{ auction.winnerId | fmtaddr }} won {{ auction.amount | eth }}
           <div *ngIf="nft.isFrozen">
@@ -146,5 +144,7 @@
     </div>
     <!-- No Auction End-->
 
+  </div>
+  <div class="col-lg-1 col-xl-2">
   </div>
 </div>
