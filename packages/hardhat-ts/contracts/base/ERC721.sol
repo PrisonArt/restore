@@ -18,7 +18,7 @@
 // attribution on various NFT marketplaces.
 // removed `_burn` to prevent slither dead code warnings as burns add gas costs and we removed them.
 
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 import { ReentrancyGuard } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
@@ -83,8 +83,6 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
     /**
      * @notice Settle the current auction.
      * @dev This function can only be called when the contract is paused.
-     * TODO: from where will we call this in the normal course of events?
-     * https://github.com/nounsDAO/nouns-monorepo/blob/2cbe6c7bdfee258e646e8d9e84302375320abc72/packages/nouns-webapp/src/components/Bid/index.tsx#L74
      */
     function settleAuction() 
         external 
@@ -209,8 +207,6 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
 
     /**
      * @notice Create an auction.
-     * @dev Store the auction details in the `auction` state variable and emit an AuctionCreated event.
-     * If the mint reverts, dragons are unleashed. To remedy this, catch the revert and pause this contract.
      * @param creator the address of the creator so we can pass it to the payment splitter once the auction is settled.
      * @param tokenId the index of the art piece to be auctioned off
      * @param split a fixed-sized array of max 3 members which determines how sale proceeds are split between pr1s0nartPayment
@@ -242,7 +238,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
 
     /**
      * @notice Settle an auction, freezing the tokenId to the buyer's address and sending the funds to pr1s0n.art for processing.
-     * @dev If there are no bids, the art is transferred back to pr1s0n.art to be returned or burnt.
+     * @dev If there are no bids, the art is transferred back to pr1s0n.art
      */
     function _settleAuction() 
         internal 

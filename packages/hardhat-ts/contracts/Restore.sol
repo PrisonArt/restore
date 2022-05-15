@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 import { ERC721Tradable } from "./base/ERC721Tradable.sol";
 import { IRestore } from "./interfaces/IRestore.sol";

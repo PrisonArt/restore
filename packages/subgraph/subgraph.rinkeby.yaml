@@ -6,8 +6,9 @@ dataSources:
     name: Justice
     network: rinkeby
     source:
-      address: "0x3D22C4aC0dcc7a043a22ED7F245259648BC0b16c"
+      address: "0x42EaB57E43b4175a81c77eb93fbEE4591e6Dd2e5"
       abi: Justice
+      startBlock: 10680484
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -36,8 +37,9 @@ dataSources:
     name: Restore
     network: rinkeby
     source:
-      address: "0x9e3647eF0F85402110f9A54f99B32a00B66a4Fca"
+      address: "0xB4aF09df21389743bddD77404895dAAccdc4e58B"
       abi: Restore
+      startBlock: 10680484
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

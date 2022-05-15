@@ -13,7 +13,7 @@
 // Consumes modified `ERC721` contract. See notes in `ERC721.sol`.
 // Removed _burn  to lower gas costs on mints and transfers.
 
-pragma solidity ^0.8.7;
+pragma solidity 0.8.7;
 
 import "./ERC721.sol";
 
