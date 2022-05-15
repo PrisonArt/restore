@@ -8,10 +8,10 @@ const packageJson = require('../../package.json');
 export const environment = {
   appName: 'Restore',
   envName: 'DEV',
-  chainId: '4',
-  network: 'rinkeby',
-  graphURL: 'https://api.studio.thegraph.com/query/24825/pr1s0nart-rinkeby/0.0.1', // FIXME
-  wsRpcUri: 'https://rinkeby.infura.io/v3/a02a728083ce4ac2bc2a6a30d8b730f4', // FIXME
+  chainId: '1337',
+  network: 'unknown',
+  graphURL: 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost',
+  wsRpcUri: 'http://localhost:8545',
   infuraProjectId: 'a02a728083ce4ac2bc2a6a30d8b730f4',
   production: false,
   test: false,

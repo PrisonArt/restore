@@ -5,7 +5,7 @@ export const environment = {
   envName: 'PROD',
   chainId: '4',
   network: 'rinkeby',
-  graphURL: 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost', // FIXME
+  graphURL: 'https://api.studio.thegraph.com/query/24825/pr1s0nart-rinkeby/0.0.1', // FIXME
   wsRpcUri: 'https://rinkeby.infura.io/v3/a02a728083ce4ac2bc2a6a30d8b730f4', // FIXME
   infuraProjectId: 'a02a728083ce4ac2bc2a6a30d8b730f4',
   production: true,

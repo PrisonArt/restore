@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { Attribute, Auction, Bid, LFO, LFOData, NFT, NFTMetadata } from '../features/nfts/nft.interface';
 import { ethers } from 'ethers';
+import { environment as env } from '../../environments/environment';
 
 export interface NFTResponse {
 	nfts: NFT[];
@@ -113,7 +114,7 @@ export const normalizeBid = (bid: any): Bid => (
 export class NFTService {
 
   // FIXME: use localhost, rinkeby, or mainnet url
-  graphURL = 'http://localhost:8000/subgraphs/name/pr1s0nart/pr1s0nart-subgraph-localhost';
+  graphURL = env.graphURL;
 
 nftsGql = `
 {
