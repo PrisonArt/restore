@@ -10,7 +10,7 @@ We have our own custom contracts, our own subgraph, all our tests and tasks are 
 
 Both of us use **linux** distros, and both of us are running **Node v16**, using [nvm](https://github.com/nvm-sh/nvm). It's likely that you can get this all working on a Mac without too much trouble. We can't speak for Windows users: good luck to you.
 
-Let's start at the beginning. That way, if you run into a problem, you'll know about it early on. The biggest thing to get going is TheGraph. **NOTE: To build graph-node with cargo, 8GB RAM are required**. As you can tell, there are some intricacies to running a graph node locally and quite a few dependencies. Let's see if you can get it all set up:
+Let's start at the beginning. That way, if you run into a problem, you'll know about it early on. The biggest thing to get going is TheGraph. **NOTE: To build graph-node with cargo, 8GB RAM are required**. Let's see if you can get it all set up:
 
 1. Install Rust:
 
@@ -20,7 +20,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 2. Make sure you hav [postgres installed](https://www.postgresql.org/download/). Most modern Linux distros come with it pre-installed. Running Ubuntu 20.04 LTS I did not need to do anything further.
 
-3. Install [IPFS](https://docs.ipfs.io/install/command-line/#official-distributions) from your home directory:
+3. Install [IPFS](https://docs.ipfs.io/install/command-line/#official-distributions) from your home directory. These instructions are for Linux users only. Follow the link on "IPFS" to get instructions for other OS:
 
 ```bash
 wget https://dist.ipfs.io/go-ipfs/v0.12.0/go-ipfs_v0.12.0_linux-amd64.tar.gz
@@ -32,8 +32,6 @@ sudo bash install.sh
 ipfs --version
 
 ```
-
-(These instructions are for Linux users only. Follow the link on "IPFS" to get instructions for other OS)
 
 4. Install further dependencies if you're on Ubuntu:
 
@@ -50,7 +48,7 @@ git clone https://github.com/graphprotocol/graph-node
 1. Make sure yu have [yarn](https://classic.yarnpkg.com/lang/en/docs/install) installed:
 
 ```bash
-npm install --global yarn
+npm i -g yarn
 ```
 
 7. Make sure you have hardhat installed globally (using the same node version you will use for this project, we recommend Node v16):
