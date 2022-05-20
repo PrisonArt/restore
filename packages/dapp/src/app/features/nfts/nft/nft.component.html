@@ -3,21 +3,14 @@
   </div>
   <div class="col-12 col-md-auto col-md-10 col-lg-5 col-xl-4">
       <mat-card>
-          <mat-card-header>
-              <mat-card-title>
-                  {{nft.name}}
-              </mat-card-title>
-              <mat-card-subtitle rtl>
-                <div *ngFor="let attr of nft.attributes" class="col-md-6 col-lg-4"
-                [ngClass]="routeAnimationsElements">
-                <span><code><b>{{attr.traitType}}:</b> {{attr.value}}</code></span><br>
-                </div>
-              </mat-card-subtitle>
-          </mat-card-header>
-            <video mat-card-image height="500" controls preload="none">
-                    <source *ngIf="nft.animationURL" src="{{nft.animationURL}}" type="video/mp4">
-            </video>
+          <video mat-card-image height="500" controls preload="none">
+            <source *ngIf="nft.animationURL" src="{{nft.animationURL}}" type="video/mp4">
+          </video>
           <mat-card-content>
+            <div *ngFor="let attr of nft.attributes" [ngClass]="routeAnimationsElements">
+              <div><b>{{attr.traitType}}:</b> {{attr.value}}</div>
+            </div>
+            <div><br/></div>
             <div [innerText]="nft.description"></div>
           </mat-card-content>
           <mat-card-actions>
@@ -25,10 +18,10 @@
       </mat-card>
   </div>
   <div class="col-12 col-md-auto col-md-10 col-lg-5 col-xl-4" >
-    <h2>Auction</h2>
-
+    <h1>{{nft.name}}</h1>
     <!-- Auction -->
     <div *ngIf="auction$ | async as auction">
+      <h2>Auction</h2>
       <div *ngIf="!(auction.endTime | dateInPast)">
         <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
         <div>Current Bid: {{auction.amount | eth}}</div>
