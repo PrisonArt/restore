@@ -5,36 +5,34 @@
   </mat-form-field>
   <div class="row">
     <div *ngFor="let nft of obs$ | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+      <a routerLink="{{nft.id}}" class="removeUnderline">
       <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            #{{nft.id}} {{nft.name}}
-          </mat-card-title>
-          <mat-card-subtitle rtl>
-            <div *ngFor="let attr of nft.attributes" [ngClass]="routeAnimationsElements">
-              <span><code><b>{{attr.traitType}}:</b> {{attr.value}}</code></span>
-            </div>
-          </mat-card-subtitle>
-        </mat-card-header>
         <img mat-card-image src={{nft.imageHash}} alt={{nft.name}}>
         <mat-card-content>
           <div *ngFor="let auction of auctions$ | async">
             <div *ngIf="nft.id === auction.nftId">
-              <div *ngIf="!(auction.endTime | dateInPast)">
-                Currently Auctioning
-              </div>
-              <div *ngIf="auction.endTime | dateInPast">
-                Auction Ended
+              <div class="row">
+                <div class="col-6">
+                  <b>{{nft.name}}</b>
+                </div>
+                <!-- Auctioning -->
+                <div *ngIf="!(auction.endTime | dateInPast)" class="col-6 text-end">
+                  <b>Min Bid</b><br/>
+                  {{auction.amount | eth}}<br/>
+                  <fa-icon icon="clock"></fa-icon>{{auction.endTime | dayjsdiff}} left
+                </div>
+                <!-- Auction Ended -->
+                <div *ngIf="auction.endTime | dateInPast" class="col-6 text-end">
+                    Sold<br/>
+                    <b>{{auction.amount | eth}}</b><br/>
+                    {{auction.endTime | dayjs:'DD.MM.YYYY'}}<br/>
+                </div>
               </div>
             </div>
           </div>
         </mat-card-content>
-        <mat-card-actions>
-          <a mat-raised-button color="accent" routerLink="{{nft.id}}">
-            <fa-icon icon="rocket"></fa-icon>Detail
-          </a>
-        </mat-card-actions>
       </mat-card>
+      </a>
     </div>
   </div>
   <div style=float:left;>
