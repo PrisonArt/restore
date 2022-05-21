@@ -52,41 +52,62 @@ export class WalletService {
       console.log(`Restore Contract Address ${this.wsRestoreContract.address}`);
 
       this.wsJusticeContract.on('AuctionCreated', (tokenId) => {
-        console.log('Auction created received: ', tokenId); // unit256
-        this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        console.log('Auction created received: ', tokenId); // uint256
+        // wait for one second before loading the auction
+        setTimeout(() => {
+          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
+          this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        }, 1000);
       });
       this.wsJusticeContract.on('AuctionBid', (tokenId, sender, value, extended) => {
-        console.log('Auction bid received: ', tokenId, ' Extended: ', extended); // unit256
+        console.log('Auction bid received: ', tokenId, ' Extended: ', extended); // uint256
 
         if (extended) this.notificationService.info('Auction extended');
-        this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        // wait for one second before loading the bids
+        setTimeout(() => {
+          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
+          this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        }, 1000);
       });
       this.wsJusticeContract.on('AuctionExtended', (tokenId) => {
-        console.log('Auction extended: ', tokenId); // unit256
+        console.log('Auction extended: ', tokenId); // uint256
         this.notificationService.info('Auction extended');
-        this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        // wait for one second before loading the auction
+        setTimeout(() => {
+          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
+          this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        }, 1000);
       });
       this.wsJusticeContract.on('AuctionSettled', (tokenId) => {
-        console.log('Auction settled: ', tokenId); // unit256
-        this.store.dispatch(nftLoad({ nftId: tokenId }));
-        this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-        this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        console.log('Auction settled: ', tokenId); // uint256
+        // wait for one second before loading the nft
+        setTimeout(() => {
+          this.store.dispatch(nftLoad({ nftId: tokenId }));
+          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
+          this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
+        }, 1000);
       });
       this.wsRestoreContract.on('ReadyForAuction', (to, tokenId) => {
-        console.log('ReadyForAuction: ', tokenId); // unit256
-        this.store.dispatch(nftLoad({ nftId: tokenId }));
+        console.log('ReadyForAuction: ', tokenId); // uint256
+        // wait for one second before loading the nft
+        setTimeout(() => {
+          this.store.dispatch(nftLoad({ nftId: tokenId }));
+        }, 1000);
       });
       this.wsRestoreContract.on('ArtFrozen', (buyer, tokenId) => {
-        console.log('ArtFrozen: ', tokenId); // unit256
-        this.store.dispatch(nftLoad({ nftId: tokenId }));
+        console.log('ArtFrozen: ', tokenId); // uint256
+        // wait for one second before loading the nft
+        setTimeout(() => {
+          this.store.dispatch(nftLoad({ nftId: tokenId }));
+        }, 1000);
       });
       this.wsRestoreContract.on('ArtTransferred', (buyer, tokenId) => {
-        console.log('ArtTransferred: ', tokenId); // unit256
-        this.store.dispatch(nftLoad({ nftId: tokenId }));
-        this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
+        console.log('ArtTransferred: ', tokenId); // uint256
+        // wait for one second before loading the nft
+        setTimeout(() => {
+          this.store.dispatch(nftLoad({ nftId: tokenId }));
+          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
+        }, 1000);
       });
     }
   }
