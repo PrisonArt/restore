@@ -4,3 +4,4 @@ export const TASK_CREATEAUCTION = 'createauction';
 export const TASK_BID = 'bid';
 export const TASK_SETTLE = 'settle';
 export const TASK_TRANSFERBUYER = 'transferbuyer';
+export const TASK_SETROYALTIES = 'setroyalties';

@@ -2,6 +2,7 @@ import { config as dotEnvConfig } from 'dotenv';
 dotEnvConfig();
 
 import { HardhatUserConfig, HttpNetworkHDAccountsConfig } from 'hardhat/types';
+import "@nomiclabs/hardhat-etherscan";
 import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-solhint';
 import '@typechain/hardhat';
@@ -16,6 +17,7 @@ import './tasks/operations/createauction';
 import './tasks/operations/bid';
 import './tasks/operations/settle';
 import './tasks/operations/transferbuyer';
+import './tasks/operations/setroyalties';
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY || '';
 const MAINNET_DEPLOYER_PRIVATE_KEY =
@@ -74,6 +76,9 @@ const config: HardhatUserConfig = {
             url: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
             accounts: [MAINNET_DEPLOYER_PRIVATE_KEY],
         }
+    },
+    etherscan: {
+        apiKey: ETHERSCAN_API_KEY,
     },
     gasReporter: {
         enabled: process.env.REPORT_GAS ? true : false,
