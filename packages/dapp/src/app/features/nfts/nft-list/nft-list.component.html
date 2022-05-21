@@ -17,7 +17,7 @@
                 </div>
                 <!-- Auctioning -->
                 <div *ngIf="!(auction.endTime | dateInPast)" class="col-6 text-end">
-                  <b>Min Bid</b><br/>
+                  <b>Current Bid</b><br/>
                   {{auction.amount | eth}}<br/>
                   <fa-icon icon="clock"></fa-icon>{{auction.endTime | dayjsdiff}} left
                 </div>
