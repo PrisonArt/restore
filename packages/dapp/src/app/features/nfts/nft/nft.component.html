@@ -25,7 +25,7 @@
       <div *ngIf="!(auction.endTime | dateInPast)">
         <div class="auctionTime">
           <div class="currentBid">
-            <h3>Current Bid:</h3><br> 
+            <h3>Current Bid:</h3><br>
             <p>{{auction.amount | eth}}</p>
           </div>
           <div class="timeLeft">
@@ -77,9 +77,9 @@
           <div class="frozen">
             <span>{{ auction.winnerId | fmtaddr }} bought this NFT for {{ auction.amount | eth }}</span>
             <div *ngIf="nft.isFrozen">
-              <div>PRISON ART 501(c)3, an NPO registered in Florida, is now paying 
-                the legal financial obligations of the artist. The NFT will remain frozen until that is complete, 
-                at which stage the NFT will be transferred to {{ auction.winnerId | fmtaddr }}, along with proof 
+              <div>PRISON ART 501(c)3, an NPO registered in Florida, is now paying
+                the legal financial obligations of the artist. The NFT will remain frozen until that is complete,
+                at which stage the NFT will be transferred to {{ auction.winnerId | fmtaddr }}, along with proof
                 of payment and impact.</div>
             </div>
           </div>
@@ -104,11 +104,11 @@
               </ng-container>
 
               <ng-container matColumnDef="imageHash">
-                <th mat-header-cell *matHeaderCellDef> Image Hash </th>
+                <th mat-header-cell *matHeaderCellDef> Image </th>
                 <td mat-cell *matCellDef="let lfo" class="receipt">
                   <a href="{{lfo.imageHash}}" target="_blank" rel="noreferrer">
                     <img src="{{lfo.imageHash}}">
-                  </a>  
+                  </a>
                 </td>
               </ng-container>
 
@@ -125,7 +125,7 @@
 
       <!-- Bid Table-->
       <div>
-        <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-12">          
+        <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-12">
           <!-- Bidder Column -->
           <ng-container matColumnDef="bidder">
             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
