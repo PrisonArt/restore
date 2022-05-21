@@ -24,14 +24,24 @@
       <h2>Participate</h2>
       <div *ngIf="!(auction.endTime | dateInPast)">
         <div class="auctionTime">
-          <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
-          <div>Current Bid: {{auction.amount | eth}}</div>
-          <div>Time left: {{ auction.endTime | dayjsdiff }}</div>
+          <div class="currentBid">
+            <h3>Current Bid:</h3><br> 
+            <p>{{auction.amount | eth}}</p>
+          </div>
+          <div class="timeLeft">
+            <h3>Time left:</h3><br>
+            <p>{{ auction.endTime | dayjsdiff }}</p>
+          </div>
+          <div class="clear"></div>
+          <div class="runningTime">
+            Auction Duration:<br>
+            {{ auction.startTime | dayjs:'h:mmA, DD.MM' }} to {{ auction.endTime | dayjs:'h:mmA, DD.MM' }}
+          </div>
         </div>
         <div><br><br></div>
-        <form *ngIf="accountAddress" [formGroup]="formGroup" (ngSubmit)="createBid()" class="col-md-6">
+        <form *ngIf="accountAddress" [formGroup]="formGroup" (ngSubmit)="createBid()" class="col-md-12">
           <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-8">
               <mat-form-field>
                 <mat-label>Min Bid {{minBid}} </mat-label>
                 <input type="text" matInput placeholder="{{minBid}}"
@@ -48,8 +58,8 @@
                 <span matSuffix>Ξ &nbsp;</span>
               </mat-form-field>
             </div>
-            <div class="col-md-1">
-              <button mat-raised-button color="accent" [disabled]="!formGroup.valid">Place Bid</button>
+            <div class="col-md-2">
+              <button mat-raised-button class="bidButton" [disabled]="!formGroup.valid">Place Bid</button>
             </div>
           </div>
         </form>

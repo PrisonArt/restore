@@ -18,6 +18,43 @@ h1, h2 {
     border-radius: 5px;
     padding: 40px;
     font-size: 2.5rem;
+    .runningTime {
+        font-size: 1.5rem;
+        border-top: 1px solid #eee;
+        margin-top: 20px;
+        padding-top: 10px;
+    }
+}
+
+.currentBid {
+    float: left;
+    width: 48%;
+    border-right: 1px solid #eee;
+    padding-right: 10px;
+    p {
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+}
+
+.timeLeft {
+    float: left;
+    width: 48%;
+    padding-left: 10px;
+    p {
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+}
+
+.clear {
+    display: block;
+    clear: both;
+}
+
+.bidButton {
+    color: #fff;
+    background-color: #000;
 }
 
 .notSettled {
@@ -82,5 +119,25 @@ h1, h2 {
     table {
         width: 90%;
         margin: 0 auto;
+    }
+
+    .currentBid, .timeLeft {
+        width: 100%;
+        float: none;
+    }
+
+    .currentBid {
+        border-bottom: 1px solid #eee;
+        border-right: none;
+        margin-bottom: 10px;
+        padding-right: 0;
+    }
+
+    .timeLeft {
+        padding-left: 0;
+    }
+
+    .runningTime {
+        display: none;
     }
 }
