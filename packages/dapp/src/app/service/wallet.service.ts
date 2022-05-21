@@ -114,10 +114,17 @@ export class WalletService {
     const signer_ = this.provider.getSigner();
     const justiceContractWithSigner = this.wsJusticeContract.connect(signer_);
     if (value !== 0) {
-      justiceContractWithSigner.createBid(nftId, { value: ethers.utils.parseEther(value.toString()) }).then(
+      const gasLimit = await justiceContractWithSigner.estimateGas.createBid(nftId, {
+        value: ethers.utils.parseEther(value.toString()),
+      });
+
+      justiceContractWithSigner.createBid(nftId, {
+          value: ethers.utils.parseEther(value.toString()),
+          gasLimit: gasLimit.add(10_000), // A 10,000 gas pad is used to avoid 'Out of gas' errors
+        }).then(
         (responseBid: any) => {
-          this.notificationService.success('Bid placed.');
-          console.log('Bid placed succesfully.', responseBid);
+          this.notificationService.success('Bid currently mining.');
+          console.log('Bid currently mining.', responseBid);
         }
       ).catch(
         (error: any) => {
