@@ -126,7 +126,9 @@ export class NFTComponent implements OnInit, OnDestroy {
       // format the min bid into Ether and create a number
       const minBidEther = utils.formatEther(new BigNumber(minBid).toString());
       this.minBid = parseFloat(minBidEther);
-      this.formGroup.controls['amount'].updateValueAndValidity();
+      if (this.formGroup) {
+        this.formGroup.controls['amount'].updateValueAndValidity();
+      }
     });
 
     this.store.dispatch(NFTActions.bidsLoadByNFT({ nftId: this.id.toString() }));
