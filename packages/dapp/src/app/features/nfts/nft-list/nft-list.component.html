@@ -1,10 +1,10 @@
 <div class="container">
-  <mat-form-field appearance="standard">
+  <mat-form-field class="hide" appearance="standard">
     <mat-label>Filter</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. #5 or Metamod" #input>
   </mat-form-field>
   <div class="row">
-    <div *ngFor="let nft of obs$ | async" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+    <div *ngFor="let nft of obs$ | async" class="col-md-6 col-lg-4 center" [ngClass]="routeAnimationsElements">
       <a routerLink="{{nft.id}}" class="removeUnderline">
       <mat-card>
         <img mat-card-image src={{nft.imageHash}} alt={{nft.name}}>
@@ -35,7 +35,7 @@
       </a>
     </div>
   </div>
-  <div style=float:left;>
+  <div class="hide" style=float:left;>
     <mat-paginator [pageSize]="3" [pageSizeOptions]="[3, 6, 9, 12]"></mat-paginator>
   </div>
 </div>

@@ -20,16 +20,28 @@
   <div class="col-12 col-md-auto col-md-10 col-lg-5 col-xl-4" >
     <h1>{{nft.name}}</h1>
     <!-- Auction -->
-    <div *ngIf="auction$ | async as auction">
-      <h2>Auction</h2>
+    <div *ngIf="auction$ | async as auction" class="auctionBox">
+      <h2>Participate</h2>
       <div *ngIf="!(auction.endTime | dateInPast)">
-        <div>{{ auction.startTime | dayjs:'DD.MM.YYYY h:mm A' }} - {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}</div>
-        <div>Current Bid: {{auction.amount | eth}}</div>
-        <div>Time left: {{ auction.endTime | dayjsdiff }}</div>
+        <div class="auctionTime">
+          <div class="currentBid">
+            <h3>Current Bid:</h3><br> 
+            <p>{{auction.amount | eth}}</p>
+          </div>
+          <div class="timeLeft">
+            <h3>Time left:</h3><br>
+            <p>{{ auction.endTime | dayjsdiff }}</p>
+          </div>
+          <div class="clear"></div>
+          <div class="runningTime">
+            Auction Duration:<br>
+            {{ auction.startTime | dayjs:'h:mmA, DD.MM' }} to {{ auction.endTime | dayjs:'h:mmA, DD.MM' }}
+          </div>
+        </div>
         <div><br><br></div>
-        <form *ngIf="accountAddress" [formGroup]="formGroup" (ngSubmit)="createBid()" class="col-md-6">
+        <form *ngIf="accountAddress" [formGroup]="formGroup" (ngSubmit)="createBid()" class="col-md-12">
           <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-8">
               <mat-form-field>
                 <mat-label>Min Bid {{minBid}} </mat-label>
                 <input type="text" matInput placeholder="{{minBid}}"
@@ -46,8 +58,8 @@
                 <span matSuffix>Ξ &nbsp;</span>
               </mat-form-field>
             </div>
-            <div class="col-md-1">
-              <button mat-raised-button color="accent" [disabled]="!formGroup.valid">Place Bid</button>
+            <div class="col-md-2">
+              <button mat-raised-button class="bidButton" [disabled]="!formGroup.valid">Place Bid</button>
             </div>
           </div>
         </form>
@@ -56,15 +68,26 @@
         </div>
       </div>
       <div *ngIf="auction.endTime | dateInPast">
-        Auction Ended {{ auction.endTime | dayjs:'DD.MM.YYYY h:mm A' }}
+        <div class="auctionTime">
+          Auction Ended <br>
+          {{ auction.endTime | dayjs:'h:mm A' }}<br>
+          {{ auction.endTime | dayjs:'DD.MM.YYYY' }}
+        </div>
         <div *ngIf="auction.settled">
-          {{ auction.winnerId | fmtaddr }} won {{ auction.amount | eth }}
-          <div *ngIf="nft.isFrozen">
-            <div>In process of paying legal financial obligations. NFT will remain frozen until complete</div>
+          <div class="frozen">
+            <span>{{ auction.winnerId | fmtaddr }} bought this NFT for {{ auction.amount | eth }}</span>
+            <div *ngIf="nft.isFrozen">
+              <div>PRISON ART 501(c)3, an NPO registered in Florida, is now paying 
+                the legal financial obligations of the artist. The NFT will remain frozen until that is complete, 
+                at which stage the NFT will be transferred to {{ auction.winnerId | fmtaddr }}, along with proof 
+                of payment and impact.</div>
+            </div>
           </div>
           <div *ngIf="!nft.isFrozen">
-            <div>The legal financial obligations have been paid, the NFT is now available for transfer by the owner</div>
-            <table mat-table [dataSource]="nft.lfos">>
+            <div class="paid">
+              The legal financial obligations have been paid, and the NFT transferred to the owner, along with proof of receipt and impact.
+            </div>
+            <table class="payment" mat-table [dataSource]="nft.lfos">
               <ng-container matColumnDef="payee">
                 <th mat-header-cell *matHeaderCellDef> Payee </th>
                 <td mat-cell *matCellDef="let lfo"> {{lfo.payee}} </td>
@@ -72,17 +95,21 @@
 
               <ng-container matColumnDef="paidDate">
                 <th mat-header-cell *matHeaderCellDef> Date </th>
-                <td mat-cell *matCellDef="let lfo"> {{lfo.paidDate}} </td>
+                <td mat-cell *matCellDef="let lfo"> {{lfo.paidDate| date:'dd.MM.yyyy':'UTC'}} </td>
               </ng-container>
 
               <ng-container matColumnDef="amountPaid">
                 <th mat-header-cell *matHeaderCellDef> Amount </th>
-                <td mat-cell *matCellDef="let lfo"> {{lfo.amountPaid}} </td>
+                <td mat-cell *matCellDef="let lfo" class="payDetails"> {{lfo.amountPaid}} </td>
               </ng-container>
 
               <ng-container matColumnDef="imageHash">
                 <th mat-header-cell *matHeaderCellDef> Image Hash </th>
-                <td mat-cell *matCellDef="let lfo"><img src="{{lfo.imageHash}}"></td>
+                <td mat-cell *matCellDef="let lfo" class="receipt">
+                  <a href="{{lfo.imageHash}}" target="_blank" rel="noreferrer">
+                    <img src="{{lfo.imageHash}}">
+                  </a>  
+                </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedLFOColumns"></tr>
@@ -90,7 +117,7 @@
             </table>
           </div>
         </div>
-        <div *ngIf="!auction.settled">
+        <div *ngIf="!auction.settled" class="notSettled">
           Auction has not been settled yet
         </div>
       </div>
@@ -98,7 +125,7 @@
 
       <!-- Bid Table-->
       <div>
-        <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-11">
+        <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-12">          
           <!-- Bidder Column -->
           <ng-container matColumnDef="bidder">
             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>

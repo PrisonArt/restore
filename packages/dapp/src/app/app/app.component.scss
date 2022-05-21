@@ -17,6 +17,12 @@ mat-sidenav-container {
 
     .nav-button {
       margin: 0 10px 0 0;
+      color: #fff;
+      background-color: #000;
+    }
+
+    .wallet-button {
+      border-radius: 5px;
     }
 
     fa-icon {
@@ -84,7 +90,6 @@ mat-sidenav-container {
       text-align: center;
 
       .row {
-        padding: 10px 0;
 
         .links {
           a {
@@ -94,6 +99,7 @@ mat-sidenav-container {
 
             &:hover {
               text-decoration: none;
+              color: #000;
             }
 
             fa-icon {
