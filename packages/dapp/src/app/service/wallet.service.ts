@@ -7,7 +7,7 @@ import { setAccountAddress, setMinBidIncrementPercentage, setNetworkName, setRes
 
 import { environment as env } from '../../environments/environment';
 import networkMapping from './../../deployments.json';
-import { BigNumber, providers, ethers } from 'ethers';
+import { BigNumber, providers, ethers, ContractTransaction } from 'ethers';
 import { NotificationService } from 'app/core/notifications/notification.service';
 import { auctionsLoadByNFT, bidsLoadByNFT, nftLoad } from 'app/features/nfts/nft.actions';
 
@@ -143,9 +143,12 @@ export class WalletService {
           value: ethers.utils.parseEther(value.toString()),
           gasLimit: gasLimit.add(10_000), // A 10,000 gas pad is used to avoid 'Out of gas' errors
         }).then(
-        (responseBid: any) => {
-          this.notificationService.success('Bid currently mining.');
+        (responseBid: ContractTransaction) => {
           console.log('Bid currently mining.', responseBid);
+          responseBid.wait().then(() => {
+            this.notificationService.success('Successful Bid');
+            console.log('Successful Bid');
+          });
         }
       ).catch(
         (error: any) => {
