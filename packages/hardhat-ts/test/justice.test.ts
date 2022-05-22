@@ -309,7 +309,6 @@ describe('Justice', () => {
     });
 
     it('should not allow anyone other than the owner to settle an auction', async () => {
-      // TODO: could just protect this route with onlyOwner to save people who try to call it some gas?
       const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);

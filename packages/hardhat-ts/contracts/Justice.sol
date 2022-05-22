@@ -12,18 +12,18 @@ import { IWETH } from './interfaces/IWETH.sol';
 /**
  * @title Justice
  *
- * Justice - a contract that creates unique NFTs to be auctioned off, using the Restore the ERC721 Contract.
+ * Justice - a contract that creates unique NFTs to be auctioned off, using the Restore ERC721 Contract.
  *
- * Adapted from the wonderful people at Nounders DAO.
+ * Adapted from the wonderful Nounders.
  * https://github.com/nounsDAO/nouns-monorepo/blob/2cbe6c7bdfee258e646e8d9e84302375320abc72/packages/nouns-contracts/contracts/NounsAuctionHouse.sol
  *
- * Once auctioned, this contract does not immediatedly transfer the art, but 'freezes' it, while ensuring that the owner of the system,
- * which is multisig owned by Pr1s0n Art Inc - a 501(c)3 registered in Florida - can only ever transfer them to the winning bidder.
+ * Once auctioned, this contract does not immediatedly transfer the art, but 'freezes' it, while ensuring that the steward of the system,
+ * which is multisig maintained by Pr1s0n Art Inc - a 501(c)3 registered in Florida - can only ever transfer them to the winning bidder.
  * Pr1s0n Art takes the funds raised from the sale, exchanges them into USD, pays the Legal Financial Obligations of the people who
- * made the art and then reattaches the receipts as the `data` in `transferToBuyer`, which uses the `safeTransferFrom` method in the
+ * made the art and then reattaches the receipts as the `data` in `transferToBuyer`, which uses the `safeTransfer` method in the
  * ERC721 standard.
  *
- * This means you receive not just the art, but the full story - aesthetic, economic and sociopolitical - of a human being's journey
+ * This means you receive not just the art, but the full story - aesthetic, economic, and sociopolitical - of a human being's journey
  * home. This contract enacts restorative justice because, unless we are all involved with justice, we will never realise it fully.
  */
                                                                                                                                                                            
