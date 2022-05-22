@@ -27,7 +27,13 @@ import { IWETH } from './interfaces/IWETH.sol';
  * home. This contract enacts restorative justice because, unless we are all involved with justice, we will never realise it fully.
  */
                                                                                                                                                                            
-
+//      ██╗██╗   ██╗███████╗████████╗   ██╗███████╗
+//      ██║██║   ██║██╔════╝╚══██╔══╝   ██║██╔════╝
+//      ██║██║   ██║███████╗   ██║█████╗██║███████╗
+// ██   ██║██║   ██║╚════██║   ██║╚════╝██║╚════██║
+// ╚█████╔╝╚██████╔╝███████║   ██║      ██║███████║
+//  ╚════╝  ╚═════╝ ╚══════╝   ╚═╝      ╚═╝╚══════╝
+                                                
 contract Justice is IJustice, ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
     // The Restore ERC721 token contract
