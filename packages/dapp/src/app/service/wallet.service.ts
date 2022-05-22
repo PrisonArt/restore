@@ -152,15 +152,21 @@ export class WalletService {
         }
       ).catch(
         (error: any) => {
+          console.log('Error while placing bid: ', error);
+
           const prefixReasonStr = 'Error: VM Exception while processing transaction: reverted with reason string \'';
 
-          if (error.data.message.startsWith(prefixReasonStr)) {
-            const reasonStr = error.data.message.substring(prefixReasonStr.length, error.data.message.length - 1);
-            this.notificationService.error(`Error while placing bid: ${reasonStr}`);
+          if (error.message) {
+            if (error.message.startsWith(prefixReasonStr)) {
+              const reasonStr = error.data.message.substring(prefixReasonStr.length, error.message.length - 1);
+              this.notificationService.error(`Error while placing bid: ${reasonStr}`);
+            } else {
+              this.notificationService.error(`Error while placing bid: ${error.message}`);
+            }
           } else {
-            this.notificationService.error(`Error while placing bid: ${error.data.message}`);
+            this.notificationService.error(`Error while placing bid`);
           }
-          console.log('Error while placing bid: ', error.data.message);
+
         }
       );
     }
