@@ -9,26 +9,27 @@
       <mat-card>
         <img mat-card-image src={{nft.imageHash}} alt={{nft.name}}>
         <mat-card-content>
-          <div *ngFor="let auction of auctions$ | async">
-            <div *ngIf="nft.id === auction.nftId">
-              <div class="row">
-                <div class="col-6">
-                  <b>{{nft.name}}</b>
-                </div>
-                <!-- Auctioning -->
-                <div *ngIf="!(auction.endTime | dateInPast)" class="col-6 text-end">
-                  <b>Current Bid</b><br/>
-                  {{auction.amount | eth}}<br/>
-                  <fa-icon icon="clock"></fa-icon> {{auction.endTime | dayjsdiff}} left
-                </div>
-                <!-- Auction Ended -->
-                <div *ngIf="auction.endTime | dateInPast" class="col-6 text-end">
-                    Sold<br/>
-                    <b>{{auction.amount | eth}}</b><br/>
-                    {{auction.endTime | dayjs:'DD.MM.YYYY'}}<br/>
-                </div>
-              </div>
+          <div class="row">
+            <div class="col-6">
+              <b>{{nft.name}}</b>
             </div>
+            <div *ngIf="(auctions$ | async)?.length==0" class="col-6 text-end">
+              <b>Auction Not Started</b>
+            </div>
+            <ng-container *ngFor="let auction of auctions$ | async">
+              <!-- Auctioning -->
+              <div *ngIf="(nft.id === auction.nftId) && !(auction.endTime | dateInPast)" class="col-6 text-end">
+                <b>Current Bid</b><br/>
+                {{auction.amount | eth}}<br/>
+                <fa-icon icon="clock"></fa-icon> {{auction.endTime | dayjsdiff}} left
+              </div>
+              <!-- Auction Ended -->
+              <div *ngIf="(nft.id === auction.nftId) && (auction.endTime | dateInPast)" class="col-6 text-end">
+                  Sold<br/>
+                  <b>{{auction.amount | eth}}</b><br/>
+                  {{auction.endTime | dayjs:'DD.MM.YYYY'}}<br/>
+              </div>
+            </ng-container>
           </div>
         </mat-card-content>
       </mat-card>
