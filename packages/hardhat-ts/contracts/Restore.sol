@@ -6,28 +6,12 @@ import { IRestore } from "./interfaces/IRestore.sol";
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 
-//           _____                    _____                    _____                _____                   _______                   _____                    _____          
-//          /\    \                  /\    \                  /\    \              /\    \                 /::\    \                 /\    \                  /\    \         
-//         /::\    \                /::\    \                /::\    \            /::\    \               /::::\    \               /::\    \                /::\    \        
-//        /::::\    \              /::::\    \              /::::\    \           \:::\    \             /::::::\    \             /::::\    \              /::::\    \       
-//       /::::::\    \            /::::::\    \            /::::::\    \           \:::\    \           /::::::::\    \           /::::::\    \            /::::::\    \      
-//      /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \           \:::\    \         /:::/~~\:::\    \         /:::/\:::\    \          /:::/\:::\    \     
-//     /:::/__\:::\    \        /:::/__\:::\    \        /:::/__\:::\    \           \:::\    \       /:::/    \:::\    \       /:::/__\:::\    \        /:::/__\:::\    \    
-//    /::::\   \:::\    \      /::::\   \:::\    \       \:::\   \:::\    \          /::::\    \     /:::/    / \:::\    \     /::::\   \:::\    \      /::::\   \:::\    \   
-//   /::::::\   \:::\    \    /::::::\   \:::\    \    ___\:::\   \:::\    \        /::::::\    \   /:::/____/   \:::\____\   /::::::\   \:::\    \    /::::::\   \:::\    \  
-//  /:::/\:::\   \:::\____\  /:::/\:::\   \:::\    \  /\   \:::\   \:::\    \      /:::/\:::\    \ |:::|    |     |:::|    | /:::/\:::\   \:::\____\  /:::/\:::\   \:::\    \ 
-// /:::/  \:::\   \:::|    |/:::/__\:::\   \:::\____\/::\   \:::\   \:::\____\    /:::/  \:::\____\|:::|____|     |:::|    |/:::/  \:::\   \:::|    |/:::/__\:::\   \:::\____\
-// \::/   |::::\  /:::|____|\:::\   \:::\   \::/    /\:::\   \:::\   \::/    /   /:::/    \::/    / \:::\    \   /:::/    / \::/   |::::\  /:::|____|\:::\   \:::\   \::/    /
-//  \/____|:::::\/:::/    /  \:::\   \:::\   \/____/  \:::\   \:::\   \/____/   /:::/    / \/____/   \:::\    \ /:::/    /   \/____|:::::\/:::/    /  \:::\   \:::\   \/____/ 
-//        |:::::::::/    /    \:::\   \:::\    \       \:::\   \:::\    \      /:::/    /             \:::\    /:::/    /          |:::::::::/    /    \:::\   \:::\    \     
-//        |::|\::::/    /      \:::\   \:::\____\       \:::\   \:::\____\    /:::/    /               \:::\__/:::/    /           |::|\::::/    /      \:::\   \:::\____\    
-//        |::| \::/____/        \:::\   \::/    /        \:::\  /:::/    /    \::/    /                 \::::::::/    /            |::| \::/____/        \:::\   \::/    /    
-//        |::|  ~|               \:::\   \/____/          \:::\/:::/    /      \/____/                   \::::::/    /             |::|  ~|               \:::\   \/____/     
-//        |::|   |                \:::\    \               \::::::/    /                                  \::::/    /              |::|   |                \:::\    \         
-//        \::|   |                 \:::\____\               \::::/    /                                    \::/____/               \::|   |                 \:::\____\        
-//         \:|   |                  \::/    /                \::/    /                                      ~~                      \:|   |                  \::/    /        
-//          \|___|                   \/____/                  \/____/                                                                \|___|                   \/____/         
-
+// ██████╗ ███████╗    ███████╗████████╗ ██████╗ ██████╗ ███████╗
+// ██╔══██╗██╔════╝    ██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██╔════╝
+// ██████╔╝█████╗█████╗███████╗   ██║   ██║   ██║██████╔╝█████╗  
+// ██╔══██╗██╔══╝╚════╝╚════██║   ██║   ██║   ██║██╔══██╗██╔══╝  
+// ██║  ██║███████╗    ███████║   ██║   ╚██████╔╝██║  ██║███████╗
+// ╚═╝  ╚═╝╚══════╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
 contract Restore is ERC721Tradable, Ownable, IRestore {
     using Counters for Counters.Counter;
@@ -44,11 +28,10 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
     ) ERC721Tradable('Restore', 'REST', _proxyRegistryAddress) {}
 
     /**
-     * @dev Link to Contract metadata https://docs.opensea.io/docs/contract-level-metadata
-     * TODO: add contract metadata
+     * @dev Link to contract metadata
     */
     function contractURI() external pure returns (string memory) {
-        return "https://arweave.net/";
+        return "https://arweave.net/narUwpyGF-ydUu49nO5iwnN4ZHrCO6FtZVbdnIs4k7U";
     }
 
     /** @notice Set the royalties for the whole contract. Our intention is to set it to 10% in perpetuity.
@@ -88,7 +71,6 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @notice sends 'frozen' NFT to the winning bidder by attaching the receipt. Protected only to ensure no random
      *         data is uploaded on the transfer.
      * @param data URI to receipt metadata that will be added to the NFT
-     * TODO: is it an issue that we store the receipt uri in bytes and the metadata uri above as a string?
      */
     function transferToBuyer(uint256 tokenId, bytes memory data)
         external
