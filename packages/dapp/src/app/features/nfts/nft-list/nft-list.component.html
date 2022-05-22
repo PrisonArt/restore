@@ -13,9 +13,6 @@
             <div class="col-6">
               <b>{{nft.name}}</b>
             </div>
-            <div *ngIf="(auctions$ | async)?.length==0" class="col-6 text-end">
-              <b>Auction Not Started</b>
-            </div>
             <ng-container *ngFor="let auction of auctions$ | async">
               <!-- Auctioning -->
               <div *ngIf="(nft.id === auction.nftId) && !(auction.endTime | dateInPast)" class="col-6 text-end">
