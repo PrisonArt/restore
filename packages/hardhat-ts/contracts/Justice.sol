@@ -178,6 +178,20 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
     }
 
     /**
+     * @notice Set the duration for auctions.
+     * @dev Only callable by the owner.
+     */
+    function setDuration(uint256 _duration) 
+        external 
+        override 
+        onlyOwner 
+    {
+        duration = _duration;
+
+        emit AuctionDurationUpdated(_duration);
+    }
+
+    /**
      * @notice Set the auction reserve price.
      * @dev Only callable by the owner.
      */
