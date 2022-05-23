@@ -2,11 +2,12 @@ import { task, types } from 'hardhat/config';
 import { ContractTransaction } from 'ethers';
 import { Justice } from '../../typechain';
 import { TASK_BID } from '../task-names';
-// hh bid --network localhost|rinkeby|mainnet --token-id 0 --amount 100000000000000000
+// hh bid --network localhost|rinkeby|mainnet --token-id 0 --auction-id 0 --amount 100000000000000000
 task(TASK_BID, 'Mints a token with token metadata uri, then creates an auction with the token')
   .addParam('tokenId', 'tokenId', null, types.int)
+  .addParam('auctionId', 'the auction being bid on', null, types.int)
   .addParam('amount', 'bid amount', null, types.string)
-  .setAction(async ({ tokenId, amount }, hre) => {
+  .setAction(async ({ tokenId, auctionId, amount }, hre) => {
 
     const { deployments, ethers } = hre;
 
@@ -22,9 +23,11 @@ task(TASK_BID, 'Mints a token with token metadata uri, then creates an auction w
     const justiceContract: Justice = new ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
 
     const createBidTx: ContractTransaction = await justiceContract.connect(deployer)
-      .createBid(tokenId, {
-        value: amount
-      });
+      .createBid(
+        tokenId,
+        auctionId,
+        { value: amount}
+      );
 
     process.exit(0)
   });

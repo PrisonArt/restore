@@ -2,6 +2,7 @@
 pragma solidity 0.8.7;
 
 import { ReentrancyGuard } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import { Counters } from '@openzeppelin/contracts/utils/Counters.sol';
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
@@ -36,6 +37,7 @@ import { IWETH } from './interfaces/IWETH.sol';
                                                 
 contract Justice is IJustice, ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
+    using Counters for Counters.Counter;
     // The Restore ERC721 token contract
     IRestore public restore;
 
@@ -63,6 +65,16 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
     // The address of the pr1s0nart onchain fund for operations
     address fund;
 
+    // Contains auction data mapped by an auctionId
+    // This increases gas costs to create and settle auction, but we bear those and
+    // this allows us to potentially run multiple auctions simultaneously.
+    // Without this, settleAuction() only settles the most recent auction, leaving
+    // any unsettled previous auctions in a stuck state forever
+    mapping(uint256 => Auction) public auctions;
+
+    // tracker for the auctionId, current represents the current auction
+    Counters.Counter public auctionIdTracker;
+
     /**
      * @notice Set up the Justice Auction House and prepopulate initial values
      */
@@ -87,28 +99,16 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
     }
 
     /**
-     * @notice Settle the current auction.
-     * @dev This function can only be called when the contract is paused.
-     */
-    function settleAuction() 
-        external 
-        override 
-        nonReentrant 
-    {
-        _settleAuction();
-    }
-
-    /**
      * @notice Create a bid for a pr1s0n.art piece, with a given amount.
      * @dev This contract only accepts payment in ETH.
      */
-    function createBid(uint256 tokenId) 
+    function createBid(uint256 tokenId, uint256 auctionId) 
         external 
         payable 
-        override 
+        override
         nonReentrant 
     {
-        IJustice.Auction memory _auction = auction;
+        IJustice.Auction storage _auction = auctions[auctionId];
 
         require(_auction.tokenId == tokenId, 'Justice: Art not up for auction');
         require(block.timestamp < _auction.endTime, 'Justice: Auction expired');
@@ -119,14 +119,15 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
         );
 
         address payable lastBidder = _auction.bidder;
+        uint256 refundAmount = _auction.amount;
 
-        auction.amount = msg.value;
-        auction.bidder = payable(msg.sender);
+        _auction.amount = msg.value;
+        _auction.bidder = payable(msg.sender);
 
         // Extend the auction if the bid was received within `timeBuffer` of the auction end time
         bool extended = _auction.endTime - block.timestamp < timeBuffer;
         if (extended) {
-            auction.endTime = _auction.endTime = block.timestamp + timeBuffer;
+            _auction.endTime = block.timestamp + timeBuffer;
         }
 
         emit AuctionBid(_auction.tokenId, msg.sender, msg.value, extended);
@@ -137,7 +138,7 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
 
         // Refund the last bidder, if applicable
         if (lastBidder != address(0)) {
-            _safeTransferETHWithFallback(lastBidder, _auction.amount);
+            _safeTransferETHWithFallback(lastBidder, refundAmount);
         }
     }
 
@@ -242,7 +243,10 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
             uint256 startTime = block.timestamp;
             uint256 endTime = startTime + duration;
 
-            auction = Auction({
+            uint256 auctionId_ = auctionIdTracker.current();
+            auctionIdTracker.increment();
+
+            auctions[auctionId_] = Auction({
                 saleSplit: split,
                 creator: creator,
                 tokenId: tokenId,
@@ -253,17 +257,28 @@ contract Justice is IJustice, ReentrancyGuard, Ownable {
                 settled: false
             });
 
-            emit AuctionCreated(tokenId, split, creator, startTime, endTime);
+            emit AuctionCreated(tokenId, split, creator, startTime, endTime, auctionId_);
+    }
+
+    /**
+     * @notice Settle the current auction.
+     */
+    function settleAuction(uint256 auctionId) 
+        external 
+        override 
+        nonReentrant 
+    {
+        _settleAuction(auctionId);
     }
 
     /**
      * @notice Settle an auction, freezing the tokenId to the buyer's address and sending the funds to pr1s0n.art for processing.
      * @dev If there are no bids, the art is transferred back to pr1s0n.art
      */
-    function _settleAuction() 
+    function _settleAuction(uint256 auctionId) 
         internal 
     {
-        IJustice.Auction memory _auction = auction;
+        IJustice.Auction memory _auction = auctions[auctionId];
 
         require(_auction.startTime != 0, "Justice: Auction hasn't begun");
         require(!_auction.settled, 'Justice: Auction has already been settled');

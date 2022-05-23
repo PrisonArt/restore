@@ -23,7 +23,7 @@ interface IJustice {
         bool settled;
     }
 
-    event AuctionCreated(uint256 indexed tokenId, uint8[3] saleSplit, address creator, uint256 startTime, uint256 endTime);
+    event AuctionCreated(uint256 indexed tokenId, uint8[3] saleSplit, address creator, uint256 startTime, uint256 endTime, uint256 auctionId);
 
     event AuctionBid(uint256 indexed tokenId, address sender, uint256 value, bool extended);
 
@@ -45,9 +45,9 @@ interface IJustice {
 
     event AuctionMinBidIncrementPercentageUpdated(uint256 minBidIncrementPercentage);
 
-    function settleAuction() external;
+    function settleAuction(uint256 auctionId) external;
 
-    function createBid(uint256 tokenId) external payable;
+    function createBid(uint256 tokenId, uint256 auctionId) external payable;
 
     function setPaymentAddress(address newPayment) external;
 

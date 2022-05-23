@@ -1,10 +1,11 @@
-import { task } from 'hardhat/config';
+import { task, types } from 'hardhat/config';
 import { ContractReceipt, ContractTransaction } from 'ethers';
 import { Justice } from '../../typechain';
 import { TASK_SETTLE } from '../task-names';
-// hh settle --network localhost|rinkeby|mainnet
+// hh settle --network localhost|rinkeby|mainnet --auction-id 0
 task(TASK_SETTLE, 'Settles the Auction, and if not sold, returns token to PrisonArt')
-  .setAction(async ({ }, hre) => {
+  .addParam('auctionId', 'the id for the auction to be settled', null, types.int)
+  .setAction(async ({ auctionId }, hre) => {
 
     const { deployments, ethers } = hre;
 
@@ -20,7 +21,7 @@ task(TASK_SETTLE, 'Settles the Auction, and if not sold, returns token to Prison
     const justiceContract: Justice = new ethers.Contract(justiceDeployment.address, justiceDeployment.abi, deployer) as Justice;
 
     const settleTx: ContractTransaction = await justiceContract.connect(deployer)
-      .settleAuction();
+      .settleAuction(auctionId);
 
     // wait for the transaction to be mined
     const settleReceipt: ContractReceipt = await settleTx.wait();

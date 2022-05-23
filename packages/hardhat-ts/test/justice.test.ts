@@ -73,7 +73,7 @@ describe('Justice', () => {
 
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit]);
 
-      const auction = await justice.auction();
+      const auction = await justice.auctions(0);
       
       expect(auction.creator).to.be.equal(pr1s0nart.address);
       expect(auction.tokenId.toNumber()).to.be.equal(0);
@@ -120,7 +120,7 @@ describe('Justice', () => {
 
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit]);
 
-      const auction = await justice.auction();
+      const auction = await justice.auctions(0);
       
       expect(auction.creator).to.be.equal(pr1s0nart.address);
       expect(auction.tokenId.toNumber()).to.be.equal(tokenId);
@@ -137,33 +137,34 @@ describe('Justice', () => {
   describe('bidding', function () {
     it('should revert if a user creates a bid for an inactive auction', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const auctionId = ethers.BigNumber.from(2);
       
-      const tx = justice.connect(bidderA).createBid(tokenId.add(1), {
-        value: RESERVE_PRICE,
-      });
+      const tx = justice.connect(bidderA).createBid(tokenId.add(1), auctionId, { value: RESERVE_PRICE });
 
       await expect(tx).to.be.revertedWith('Justice: Art not up for auction');
     });
 
     it('should revert if a user creates a bid for an expired auction', async () => {
       const tokenId = ethers.BigNumber.from(0);
+      const auctionId = ethers.BigNumber.from(2);
 
       await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
 
-      const tx = justice.connect(bidderA).createBid(tokenId, {
-        value: RESERVE_PRICE,
-      });
+      const tx = justice.connect(bidderA).createBid(tokenId, auctionId, { value: RESERVE_PRICE });
 
       await expect(tx).to.be.revertedWith('Justice: Auction expired');
     });
 
     it('should revert if a user creates a bid with an amount below the reserve price', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      const tx = justice.connect(bidderA).createBid(tokenId, {
+      const tx = justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE - 1,
       });
 
@@ -171,15 +172,18 @@ describe('Justice', () => {
     });
 
     it('should revert if a user creates a bid less than the min bid increment percentage', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      await justice.connect(bidderA).createBid(tokenId, {
+      await justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE * 50,
       });
-      const tx = justice.connect(bidderB).createBid(tokenId, {
+      const tx = justice.connect(bidderB).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE * 51,
       });
 
@@ -189,17 +193,20 @@ describe('Justice', () => {
     });
 
     it('should refund the previous bidder when the following user creates a bid', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      await justice.connect(bidderA).createBid(tokenId, {
+      await justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE,
       });
 
       const bidderAPostBidBalance = await bidderA.getBalance();
-      await justice.connect(bidderB).createBid(tokenId, {
+      await justice.connect(bidderB).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE * 2,
       });
       const bidderAPostRefundBalance = await bidderA.getBalance();
@@ -208,22 +215,25 @@ describe('Justice', () => {
     });
 
     it('should cap the maximum bid griefing cost at 30K gas + the cost to wrap and transfer WETH', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
       const maliciousBidderFactory = new MaliciousBidderFactory(bidderA);
       const maliciousBidder = await maliciousBidderFactory.deploy();
 
       const maliciousBid = await maliciousBidder
         .connect(bidderA)
-        .bid(justice.address, tokenId, {
+        .bid(justice.address, tokenId, auctionId, {
           value: RESERVE_PRICE,
         });
       await maliciousBid.wait();
 
-      const tx = await justice.connect(bidderB).createBid(tokenId, {
+      const tx = await justice.connect(bidderB).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE * 2,
         gasLimit: 1_000_000,
       });
@@ -234,12 +244,15 @@ describe('Justice', () => {
     });
 
     it('should emit an `AuctionBid` event on a successful bid', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      const tx = justice.connect(bidderA).createBid(tokenId, {
+      const tx = justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE,
       });
 
@@ -250,16 +263,19 @@ describe('Justice', () => {
   });
   describe('extend auction', function () {
     it('should emit an `AuctionExtended` event if the auction end time is within the time buffer', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction1 = await justice.auctionIdTracker();
+      const auctionId = auction1.toNumber() - 1;
 
-      const auction = await justice.auction();
+      const auction = await justice.auctions(auctionId);
 
       await ethers.provider.send('evm_setNextBlockTimestamp', [auction.endTime.sub(60 * 5).toNumber()]); // Subtract 5 mins from current end time
 
-      const tx = justice.connect(bidderA).createBid(tokenId, {
+      const tx = justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE,
       });
 
@@ -270,26 +286,32 @@ describe('Justice', () => {
   });
   describe('settle auction', function () {
     it('should revert if auction settlement is attempted while the auction is still active', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      await justice.connect(bidderA).createBid(tokenId, {
+      await justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE,
       });
-      const tx = justice.connect(bidderA).settleAuction();
+      const tx = justice.connect(bidderA).settleAuction(auctionId);
 
       await expect(tx).to.be.revertedWith('Auction hasn\'t completed');
     });
 
     it('should emit `AuctionSettled` event if all conditions are met', async () => {
-      const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      await justice.connect(bidderA).createBid(tokenId, {
+      await justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE,
       });
 
@@ -297,7 +319,7 @@ describe('Justice', () => {
       const setJusticeReceipt = await setJusticeTx.wait();
 
       await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
-      const tx = await justice.connect(deployer).settleAuction();
+      const tx = await justice.connect(deployer).settleAuction(auctionId);
 
       const receipt = await tx.wait();
 
@@ -307,22 +329,6 @@ describe('Justice', () => {
       expect(settledEvent?.args?.winner).to.equal(bidderA.address);
       expect(settledEvent?.args?.amount).to.equal(RESERVE_PRICE);
     });
-
-    it('should not allow anyone other than the owner to settle an auction', async () => {
-      const tokenId = ethers.BigNumber.from(0);
-      const tokenURI = 'https://eth.iwahi.com/1df0';
-      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
-      await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
-
-      await justice.connect(bidderA).createBid(tokenId, {
-        value: RESERVE_PRICE,
-      });
-
-      await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
-      await expect(
-        justice.connect(bidderA).settleAuction()
-      ).to.be.revertedWith('Restore: auctioned piece must be frozen by owner via Justice');
-    })
   });
   describe('transfer art', function () {
     it('the art should remain with Restore on auction settlement if no bids are received and allow a new auction to be created later', async () => {
@@ -332,13 +338,15 @@ describe('Justice', () => {
       const tokenId = tokenBalance.toNumber() - 1;
 
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
       const setJusticeTx = await restore.connect(deployer).setJustice(justice.address);
       const setJusticeReceipt = await setJusticeTx.wait();
 
       await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
 
-      const tx = await justice.connect(deployer).settleAuction();
+      const tx = await justice.connect(deployer).settleAuction(auctionId);
 
       const receipt = await tx.wait();
 
@@ -358,19 +366,21 @@ describe('Justice', () => {
       // create a new auction at a later time after settling with no buyer
       await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add another 25 hours
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [80, 10, 10]);
+      const newAuction = await justice.auctionIdTracker();
+      const newAuctionId = newAuction.toNumber() - 1;
 
-      const auction = await justice.auction();
+      const auction2 = await justice.auctions(newAuctionId);
       
-      expect(auction.creator).to.be.equal(pr1s0nart.address);
-      expect(auction.tokenId.toNumber()).to.be.equal(0);
-      expect(auction.amount.toNumber()).to.be.equal(0);
-      expect(auction.startTime.toNumber()).to.be.greaterThan(0);
+      expect(auction2.creator).to.be.equal(pr1s0nart.address);
+      expect(auction2.tokenId.toNumber()).to.be.equal(0);
+      expect(auction2.amount.toNumber()).to.be.equal(0);
+      expect(auction2.startTime.toNumber()).to.be.greaterThan(0);
 
-      const endCalc = auction.startTime.toNumber() + DURATION;
+      const endCalc = auction2.startTime.toNumber() + DURATION;
 
-      expect(auction.endTime.toNumber()).to.be.equal(endCalc);
-      expect(auction.bidder).to.be.equal(ZERO_ADDRESS);
-      expect(auction.settled).to.be.false;
+      expect(auction2.endTime.toNumber()).to.be.equal(endCalc);
+      expect(auction2.bidder).to.be.equal(ZERO_ADDRESS);
+      expect(auction2.settled).to.be.false;
     });
 
     it('e2e: should transfer the art to the buyer after auction setllement, when pr1s0nart attaches receipt of payment', async() => {
@@ -384,14 +394,16 @@ describe('Justice', () => {
       const setJusticeReceipt = await setJusticeTx.wait();
 
       await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [70, 10, 20]);
+      const auction = await justice.auctionIdTracker();
+      const auctionId = auction.toNumber() - 1;
 
-      await justice.connect(bidderA).createBid(tokenId, {
+      await justice.connect(bidderA).createBid(tokenId, auctionId, {
         value: RESERVE_PRICE,
       });
 
       await ethers.provider.send('evm_increaseTime', [60 * 60 * 25]); // Add 25 hours
 
-      await justice.connect(deployer).settleAuction();
+      await justice.connect(deployer).settleAuction(auctionId);
 
       const text = 'ar://8_NZWr4K9d6N8k4TDbMzLAkW6cNQnSQMLeoShc8komM';
       const data = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(text));
