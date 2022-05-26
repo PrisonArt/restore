@@ -43,7 +43,7 @@ export interface LFO {
 }
 
 export interface Bid {
-  id: number;
+  id: string;
   auctionId: number;
   nftId: number;
   bidder: string;

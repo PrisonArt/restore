@@ -97,7 +97,7 @@ export const normalizeAuction = (auction: any): Auction => {
 
 export const normalizeBid = (bid: any): Bid => (
   {
-    id: +bid.id,
+    id: bid.id,
     auctionId: +bid.auction.id,
     nftId: +bid.nft.id,
     bidder: bid.bidder.id,
