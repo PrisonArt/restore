@@ -12,6 +12,7 @@ export const environment = {
   network: 'rinkeby',
   graphURL: 'https://api.studio.thegraph.com/query/24825/pr1s0nart-rinkeby/0.0.1', // FIXME
   wsRpcUri: 'https://rinkeby.infura.io/v3/a02a728083ce4ac2bc2a6a30d8b730f4', // FIXME
+  etherscanURL: 'https://rinkeby.etherscan.io',
   infuraProjectId: 'a02a728083ce4ac2bc2a6a30d8b730f4',
   production: false,
   test: false,
