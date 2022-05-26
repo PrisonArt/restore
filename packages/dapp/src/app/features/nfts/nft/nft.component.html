@@ -86,7 +86,7 @@
           <div *ngIf="!nft.isFrozen">
             <div class="paid">
               <div>The legal financial obligations have been paid, and the NFT transferred to the owner, along with proof of receipt and impact.</div>
-              <div><a href="{{etherscanURL}}/tx/0xa77f9048b08ab4190f38fe8ea8ac86d3649dc9c5508014ed0cc3a88b5ce120fc#eventlog" target="_blank">Proof of Transfer <fa-icon icon="arrow-up-right-from-square"></fa-icon></a></div>
+              <div><a href="{{etherscanURL}}/tx/{{nft.transferTx}}#eventlog" target="_blank">Proof of Transfer <fa-icon icon="arrow-up-right-from-square"></fa-icon></a></div>
             </div>
             <table class="payment" mat-table [dataSource]="nft.lfos">
               <ng-container matColumnDef="payee">

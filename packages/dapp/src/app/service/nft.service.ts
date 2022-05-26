@@ -73,7 +73,8 @@ export const normalizeNFT = (nft: any): NFT => {
     owner: nft.owner.id,
     metadataHash: metadataHash,
     isFrozen: nft.isFrozen,
-    lfos: []
+    lfos: [],
+    transferTx: nft.transferTx
   }
 };
 

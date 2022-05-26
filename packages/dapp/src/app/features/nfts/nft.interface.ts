@@ -13,6 +13,7 @@ export interface NFT {
   external_url?: string;
   owner: string;
   isFrozen: boolean;
+  transferTx: string;
 }
 
 export interface NFTMetadata {
