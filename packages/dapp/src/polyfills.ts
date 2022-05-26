@@ -59,6 +59,7 @@
  */
 import 'zone.js';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 (window as any).process = { env: { DEBUG: undefined }, };
 (window as any).global = window;
 global.Buffer = global.Buffer || require('buffer').Buffer;
