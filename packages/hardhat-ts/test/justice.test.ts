@@ -85,9 +85,6 @@ describe('Justice', () => {
       expect(auction.endTime.toNumber()).to.be.equal(endCalc);
       expect(auction.bidder).to.be.equal(ZERO_ADDRESS);
       expect(auction.settled).to.be.false;
-
-      // TODO: figure out what is going on with the split array and how to set and access it properly here.
-      // console.log(auction);
     });
 
     it('can\'t create an auction for a non-existent token', async () => {
@@ -103,6 +100,39 @@ describe('Justice', () => {
       ).to.be.revertedWith('Restore: unknown token');
 
     });
+
+    it('should allow prison art to update all auction variables', async () => {
+      const tokenURI = 'https://eth.iwahi.com/1df0';
+      await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);
+      const tokenBalance = await restore.balanceOf(restore.address);
+      const tokenId = tokenBalance.toNumber() - 1;
+
+      const paymentSplit = ethers.BigNumber.from(70);
+      const fundSplit = ethers.BigNumber.from(10);
+      const creatorSplit = ethers.BigNumber.from(20);
+
+      await justice.connect(deployer).setPaymentAddress(bidderA.address);
+      await justice.connect(deployer).setFundAddress(bidderB.address);
+      await justice.connect(deployer).setMinBidIncrementPercentage(10);
+      await justice.connect(deployer).setReservePrice(1);
+      await justice.connect(deployer).setDuration(3600);
+      await justice.connect(deployer).setTimeBuffer(15);
+
+      await justice.connect(deployer).createAuction(pr1s0nart.address, tokenId, [paymentSplit, fundSplit, creatorSplit]);
+
+      const auction = await justice.auction();
+      
+      expect(auction.creator).to.be.equal(pr1s0nart.address);
+      expect(auction.tokenId.toNumber()).to.be.equal(tokenId);
+      expect(auction.amount.toNumber()).to.be.equal(0);
+      expect(auction.startTime.toNumber()).to.be.greaterThan(0);
+
+      const endCalc = auction.startTime.toNumber() + 3600;
+
+      expect(auction.endTime.toNumber()).to.be.equal(endCalc);
+      expect(auction.bidder).to.be.equal(ZERO_ADDRESS);
+      expect(auction.settled).to.be.false;
+    })
   });
   describe('bidding', function () {
     it('should revert if a user creates a bid for an inactive auction', async () => {
@@ -279,7 +309,6 @@ describe('Justice', () => {
     });
 
     it('should not allow anyone other than the owner to settle an auction', async () => {
-      // TODO: could just protect this route with onlyOwner to save people who try to call it some gas?
       const tokenId = ethers.BigNumber.from(0);
       const tokenURI = 'https://eth.iwahi.com/1df0';
       await restore.connect(deployer).mintForAuction(deployer.address, tokenURI);

@@ -37,6 +37,8 @@ interface IJustice {
 
     event FundAddressUpdated(address newFund);
 
+    event AuctionDurationUpdated(uint256 newDuration);
+
     event AuctionTimeBufferUpdated(uint256 timeBuffer);
 
     event AuctionReservePriceUpdated(uint256 reservePrice);
@@ -50,6 +52,8 @@ interface IJustice {
     function setPaymentAddress(address newPayment) external;
 
     function setFundAddress(address newFund) external;
+
+    function setDuration(uint256 duration) external;
 
     function setTimeBuffer(uint256 timeBuffer) external;
 
