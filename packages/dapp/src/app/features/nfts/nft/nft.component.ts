@@ -16,6 +16,7 @@ import { MatSort } from '@angular/material/sort';
 import BigNumber from 'bignumber.js';
 import { utils } from 'ethers';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { environment as env } from '../../../../environments/environment';
 
 @Component({
   selector: 'pr1s0nart-app',
@@ -59,6 +60,8 @@ export class NFTComponent implements OnInit, OnDestroy {
 
   metadataUrl: string;
   openseaUrl: string;
+
+  etherscanURL = env.etherscanURL;
 
   constructor(public route: ActivatedRoute,
     private formBuilder: FormBuilder,

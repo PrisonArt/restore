@@ -36,6 +36,7 @@ import {
   FaIconLibrary
 } from '@fortawesome/angular-fontawesome';
 import {
+  faArrowUpRightFromSquare,
   faPlus,
   faEdit,
   faTrash,
@@ -139,6 +140,7 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
 export class SharedModule {
   constructor(faIconLibrary: FaIconLibrary) {
     faIconLibrary.addIcons(
+      faArrowUpRightFromSquare,
       faGithub,
       faMediumM,
       faPlus,

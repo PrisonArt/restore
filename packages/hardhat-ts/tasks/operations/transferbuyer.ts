@@ -28,6 +28,7 @@ task(TASK_TRANSFERBUYER, 'Transfers the token to the buyer')
 
     // wait for the transaction to be mined
     const transferToBuyerReceipt: ContractReceipt = await transferToBuyerTx.wait();
+    console.log(transferToBuyerReceipt.transactionHash);
 
     process.exit(0)
   });

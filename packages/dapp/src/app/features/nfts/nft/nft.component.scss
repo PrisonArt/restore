@@ -84,11 +84,15 @@ h1, h2 {
     border-radius: 5px;
     padding: 10px;
     margin: 20px 0;
+
+    a {
+      text-decoration: none;
+    }
 }
 
 .payment {
     td, th {
-       border-right: 1px solid #eee; 
+       border-right: 1px solid #eee;
        padding: 4px;
     }
 

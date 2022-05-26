@@ -16,6 +16,9 @@ type NFT @entity {
 
   "The owner of the NFT"
   owner: Account!
+
+  "The hash of the transfer transaction"
+  transferTx: String!
 }
 
 type Bid @entity {
