@@ -135,41 +135,35 @@ export class WalletService {
   async bid(nftId: number, value: number) {
     const signer_ = this.provider.getSigner();
     const justiceContractWithSigner = this.wsJusticeContract.connect(signer_);
+    let gasLimit: BigNumber | void = BigNumber.from(0);
+
     if (value !== 0) {
-      const gasLimit = await justiceContractWithSigner.estimateGas.createBid(nftId, {
+      gasLimit = await justiceContractWithSigner.estimateGas.createBid(nftId, {
         value: ethers.utils.parseEther(value.toString()),
-      });
-
-      justiceContractWithSigner.createBid(nftId, {
-          value: ethers.utils.parseEther(value.toString()),
-          gasLimit: gasLimit.add(10_000), // A 10,000 gas pad is used to avoid 'Out of gas' errors
-        }).then(
-        (responseBid: ContractTransaction) => {
-          console.log('Bid currently mining.', responseBid);
-          responseBid.wait().then(() => {
-            this.notificationService.success('Successful Bid');
-            console.log('Successful Bid');
-          });
-        }
-      ).catch(
+      }).catch(
         (error: any) => {
-          console.log('Error while placing bid: ', error);
-
-          const prefixReasonStr = 'Error: VM Exception while processing transaction: reverted with reason string \'';
-
-          if (error.message) {
-            if (error.message.startsWith(prefixReasonStr)) {
-              const reasonStr = error.data.message.substring(prefixReasonStr.length, error.message.length - 1);
-              this.notificationService.error(`Error while placing bid: ${reasonStr}`);
-            } else {
-              this.notificationService.error(`Error while placing bid: ${error.message}`);
-            }
-          } else {
-            this.notificationService.error('Error while placing bid');
-          }
-
+          this.notificationService.error('Error while estimating gas on bid: ' + this.getVMExceptionMessage(error));
         }
       );
+
+      if (gasLimit !== undefined) {
+        justiceContractWithSigner.createBid(nftId, {
+            value: ethers.utils.parseEther(value.toString()),
+            gasLimit: gasLimit.add(10_000), // A 10,000 gas pad is used to avoid 'Out of gas' errors
+          }).then(
+          (responseBid: ContractTransaction) => {
+            console.log('Bid currently mining.', responseBid);
+            responseBid.wait().then(() => {
+              this.notificationService.success('Successful Bid');
+              console.log('Successful Bid');
+            });
+          }
+        ).catch(
+          (error: any) => {
+            this.notificationService.error('Error while placing bid: ' + this.getEthJSErrorMessage(error));
+          }
+        );
+      }
     }
   }
 
@@ -186,6 +180,39 @@ export class WalletService {
     } catch (e) {
       console.log('getENS error:', e);
       return of(address);
+    }
+  }
+
+  private getEthJSErrorMessage(error: any): string {
+    if (error.hasOwnProperty('message')) {
+      const prefixStr = '[ethjs-query] while formatting outputs from RPC \'';
+      if (error.message.startsWith(prefixStr)) {
+        const errAsString = error.message.substring(prefixStr.length, error.message.length - 1);
+        const obj = JSON.parse(errAsString);
+        return this.parseVMReason(obj.value.data.message);
+      } else {
+        return this.parseVMReason(error.message);
+      }
+    } else {
+      return '';
+    }
+  }
+
+  private getVMExceptionMessage(error: any): string {
+    if (error.hasOwnProperty('data') && error.data.hasOwnProperty('message')) {
+      return this.parseVMReason(error.data.message);
+    } else {
+      return '';
+    }
+  }
+
+  private parseVMReason(message: string): string {
+    const prefixStr = 'Error: VM Exception while processing transaction: reverted with reason string \'';
+    if (message.startsWith(prefixStr)) {
+      const reasonStr = message.substring(prefixStr.length, message.length - 1);
+      return reasonStr;
+    } else {
+      return message;
     }
   }
 
