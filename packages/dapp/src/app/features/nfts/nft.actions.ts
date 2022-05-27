@@ -28,6 +28,8 @@ export const auctionsLoadByNFT = createAction('[NFT] Load Auctions By NFT', prop
 export const auctionsLoadByNFTSuccess = createAction('[NFT] Load Auctions By NFT Success', props<{ auctions: Auction[] }>());
 export const auctionsLoadByNFTFailure = createAction('[NFT] Load Auctions By NFT Failure', props<{ error: any }>());
 
+export const auctionsLoadByNFTBidValue = createAction('[NFT] Load Auctions By NFT Bid Value', props<{ nftId: string, value: string }>());
+
 export const bidsLoad = createAction('[NFT] Load Bids');
 export const bidsLoadSuccess = createAction('[NFT] Load Bids Success', props<{ bids: Bid[] }>());
 export const bidsLoadFailure = createAction('[NFT] Load Bids Failure', props<{ error: any }>());
@@ -35,6 +37,8 @@ export const bidsLoadFailure = createAction('[NFT] Load Bids Failure', props<{ e
 export const bidsLoadByNFT = createAction('[NFT] Load Bids By NFT', props<{ nftId: string }>());
 export const bidsLoadByNFTSuccess = createAction('[NFT] Load Bids By NFT Success', props<{ bids: Bid[] }>());
 export const bidsLoadByNFTFailure = createAction('[NFT] Load Bids By NFT Failure', props<{ error: any }>());
+
+export const bidsLoadByNFTBidValue = createAction('[NFT] Load Bids By NFT Bid Value', props<{ nftId: string, value: string }>());
 
 export const bidLoad = createAction('[NFT] Load Bid', props<{ bidId: string }>());
 export const bidLoadSuccess = createAction('[NFT] Load Bid Success', props<{ bid: Bid }>());

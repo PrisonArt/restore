@@ -29,7 +29,9 @@ import {
   nftLoadLFODataSuccess,
   nftLoadLFODataFailure,
   bidLoadENSFailure,
-  bidLoadENSSuccess
+  bidLoadENSSuccess,
+  bidsLoadByNFTBidValue,
+  auctionsLoadByNFTBidValue
 } from './nft.actions';
 import { NotificationService } from 'app/core/notifications/notification.service';
 import { WalletService } from 'app/service/wallet.service';
@@ -135,6 +137,18 @@ export class NFTEffects {
     )
   );
 
+  loadAuctionByNFTBidValue$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(auctionsLoadByNFTBidValue),
+      switchMap(action =>
+        this.nftService.getAuctionsByNFTBidValue(action.nftId, action.value).pipe(
+          map(auctions => auctionsLoadByNFTSuccess({ auctions })),
+          catchError(error => of(auctionsLoadByNFTFailure({ error })))
+        )
+      )
+    )
+  );
+
   loadBids$ = createEffect(() =>
     this.actions$.pipe(
       ofType(bidsLoad),
@@ -152,6 +166,18 @@ export class NFTEffects {
       ofType(bidsLoadByNFT),
       switchMap(action =>
         this.nftService.getBidsByNFT(action.nftId).pipe(
+          map(bids => bidsLoadByNFTSuccess({ bids })),
+          catchError(error => of(bidsLoadByNFTFailure({ error })))
+        )
+      )
+    )
+  );
+
+  loadBidsByNFTBidValue$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(bidsLoadByNFTBidValue),
+      switchMap(action =>
+        this.nftService.getBidsByNFTBidValue(action.nftId, action.value).pipe(
           map(bids => bidsLoadByNFTSuccess({ bids })),
           catchError(error => of(bidsLoadByNFTFailure({ error })))
         )

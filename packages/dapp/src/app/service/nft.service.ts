@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, retry, tap } from 'rxjs/operators';
 import { Attribute, Auction, Bid, LFO, LFOData, NFT, NFTMetadata } from '../features/nfts/nft.interface';
 import { ethers } from 'ethers';
 import { environment as env } from '../../environments/environment';
@@ -301,6 +301,21 @@ bidsByNFTGql = (nftId: string) => `
     );
   }
 
+  getAuctionsByNFTBidValue(nftId: string, value: string): Observable<Auction[]> {
+    return this.http.post<NFTResponse>(this.graphURL, { query: this.auctionsByNFTGql(nftId) })
+    .pipe(
+      map((res: any) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+        const auction = res.data.auctions.find((a: { amount: { toString: () => string; }; }) => a.amount.toString() === value);
+        if (!auction) {
+          throw new Error('Updated auction not found. Querying subgraph again');
+        }
+        return res.data.auctions.map((auctionRaw: any) => normalizeAuction(auctionRaw));
+      }),
+      retry({ count: 5, delay: 5000 }), // Retry up to 5 times every 5 seconds
+    );
+  }
+
   getBids(): Observable<Bid[]> {
     return this.http.post<NFTResponse>(this.graphURL, { query: this.bidsGql })
     .pipe(
@@ -323,4 +338,20 @@ bidsByNFTGql = (nftId: string) => `
     );
   }
 
+  getBidsByNFTBidValue(nftId: string, value: string): Observable<Bid[]> {
+    const obs =  this.http.post<NFTResponse>(this.graphURL, { query: this.bidsByNFTGql(nftId) })
+    .pipe(
+      map((res: any) => {
+        if (res.errors) throw new Error(res.errors[0].message);
+        const bid = res.data.bids.find((b: { amount: { toString: () => string; }; }) => b.amount.toString() === value);
+        if (!bid) {
+          throw new Error('New bid not found. Querying subgraph again');
+        }
+        return res.data.bids.map((bidRaw: any) => normalizeBid(bidRaw));
+      }),
+      retry({ count: 5, delay: 5000 }), // Retry up to 5 times every 5 seconds
+    );
+
+    return obs;
+  }
 }

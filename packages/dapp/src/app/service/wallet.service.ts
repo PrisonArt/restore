@@ -9,7 +9,7 @@ import { environment as env } from '../../environments/environment';
 import networkMapping from './../../deployments.json';
 import { BigNumber, providers, ethers, ContractTransaction } from 'ethers';
 import { NotificationService } from 'app/core/notifications/notification.service';
-import { auctionsLoadByNFT, bidsLoadByNFT, nftLoad } from 'app/features/nfts/nft.actions';
+import { auctionsLoadByNFT, auctionsLoadByNFTBidValue, bidsLoadByNFT, bidsLoadByNFTBidValue, nftLoad } from 'app/features/nfts/nft.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -54,61 +54,51 @@ export class WalletService {
 
       this.wsJusticeContract.on('AuctionCreated', (tokenId) => {
         console.log('Auction created received: ', tokenId); // uint256
-        // wait for one second before loading the auction
+        // wait for five seconds before loading the auction
         setTimeout(() => {
           this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
           this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
-        }, 1000);
+        }, 5000);
       });
-      this.wsJusticeContract.on('AuctionBid', (tokenId, sender, value, extended) => {
-        console.log('Auction bid received: ', tokenId, ' Extended: ', extended); // uint256
-
-        if (extended) this.notificationService.info('Auction extended');
-        // wait for one second before loading the bids
-        setTimeout(() => {
-          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-          this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
-        }, 1000);
+      this.wsJusticeContract.on('AuctionBid', (tokenId, sender, value: any, extended) => {
+        console.log('Auction bid received: ', tokenId, ' Value: ', value._hex, ' Extended: ', extended); // uint256
+        this.store.dispatch(auctionsLoadByNFTBidValue({ nftId: tokenId, value: BigNumber.from(value).toString() }));
+        this.store.dispatch(bidsLoadByNFTBidValue({ nftId: tokenId, value: BigNumber.from(value).toString() }));
       });
       this.wsJusticeContract.on('AuctionExtended', (tokenId) => {
         console.log('Auction extended: ', tokenId); // uint256
         this.notificationService.info('Auction extended');
-        // wait for one second before loading the auction
-        setTimeout(() => {
-          this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-          this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
-        }, 1000);
       });
       this.wsJusticeContract.on('AuctionSettled', (tokenId) => {
         console.log('Auction settled: ', tokenId); // uint256
-        // wait for one second before loading the nft
+        // wait for five seconds before loading the nft
         setTimeout(() => {
           this.store.dispatch(nftLoad({ nftId: tokenId }));
           this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
           this.store.dispatch(bidsLoadByNFT({ nftId: tokenId }));
-        }, 1000);
+        }, 5000);
       });
       this.wsRestoreContract.on('ReadyForAuction', (to, tokenId) => {
         console.log('ReadyForAuction: ', tokenId); // uint256
-        // wait for one second before loading the nft
+        // wait for five seconds before loading the nft
         setTimeout(() => {
           this.store.dispatch(nftLoad({ nftId: tokenId }));
-        }, 1000);
+        }, 5000);
       });
       this.wsRestoreContract.on('ArtFrozen', (buyer, tokenId) => {
         console.log('ArtFrozen: ', tokenId); // uint256
-        // wait for one second before loading the nft
+        // wait for five seconds before loading the nft
         setTimeout(() => {
           this.store.dispatch(nftLoad({ nftId: tokenId }));
-        }, 1000);
+        }, 5000);
       });
       this.wsRestoreContract.on('ArtTransferred', (buyer, tokenId) => {
         console.log('ArtTransferred: ', tokenId); // uint256
-        // wait for one second before loading the nft
+        // wait for five seconds before loading the nft
         setTimeout(() => {
           this.store.dispatch(nftLoad({ nftId: tokenId }));
           this.store.dispatch(auctionsLoadByNFT({ nftId: tokenId }));
-        }, 1000);
+        }, 5000);
       });
     }
   }
