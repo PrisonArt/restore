@@ -87,7 +87,19 @@ h1, h2 {
 
     a {
       text-decoration: none;
+
+      &:active, &:hover {
+        font-weight: bold;
+        color: darkgreen;
+      }
     }
+}
+
+a.transaction {
+  &:active, &:hover {
+    font-weight: bold;
+    color: darkgreen;
+  }
 }
 
 .payment {
