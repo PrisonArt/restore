@@ -16,6 +16,7 @@ import { auctionsLoadByNFT, bidsLoadByNFT, nftLoad } from 'app/features/nfts/nft
 })
 export class WalletService {
   private wallet: any;
+  private wsProvider: providers.JsonRpcProvider;
   private provider: ethers.providers.Web3Provider;
   private web3Modal: Web3Modal;
 
@@ -39,16 +40,16 @@ export class WalletService {
     const networkMappingForChain =
     networkMapping[this.chainId as keyof typeof networkMapping];
     if (networkMappingForChain !== undefined) {
-      const wsProvider = this.getWsRpcProvider(this.wsRpcUri);
+      this.wsProvider = this.getWsRpcProvider(this.wsRpcUri);
 
       const justiceMapping = networkMappingForChain[0]['contracts']['Justice'];
-      this.wsJusticeContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi, wsProvider);
+      this.wsJusticeContract = new ethers.Contract(justiceMapping.address, justiceMapping.abi, this.wsProvider);
       console.log(`Justice Contract Address ${this.wsJusticeContract.address}`);
       this.getReservePrice().then(reservePrice => this.store.dispatch(setReservePrice({ reservePrice })))
       this.getMinBidIncrementPercentage().then(minBidIncrementPercentage => this.store.dispatch(setMinBidIncrementPercentage({ minBidIncrementPercentage })))
 
       const restoreMapping = networkMappingForChain[0]['contracts']['Restore'];
-      this.wsRestoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, wsProvider);
+      this.wsRestoreContract = new ethers.Contract(restoreMapping.address, restoreMapping.abi, this.wsProvider);
       console.log(`Restore Contract Address ${this.wsRestoreContract.address}`);
 
       this.wsJusticeContract.on('AuctionCreated', (tokenId) => {
@@ -164,7 +165,7 @@ export class WalletService {
               this.notificationService.error(`Error while placing bid: ${error.message}`);
             }
           } else {
-            this.notificationService.error(`Error while placing bid`);
+            this.notificationService.error('Error while placing bid');
           }
 
         }
@@ -177,11 +178,11 @@ export class WalletService {
   }
 
   getENS(address: string): Observable<string> {
-    if (!this.provider) {
+    if (!this.wsProvider) {
       return of(address);
     }
     try {
-      return from(this.provider.lookupAddress(address)) as Observable<string>;
+      return from(this.wsProvider.lookupAddress(address)) as Observable<string>;
     } catch (e) {
       console.log('getENS error:', e);
       return of(address);
