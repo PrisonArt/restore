@@ -124,6 +124,7 @@ nftsGql = `
     metadataURI
     data
     isFrozen
+    transferTx
     owner {
       id
     }
@@ -187,6 +188,7 @@ nftGql = (nftId: string) => `
     metadataURI
     data
     isFrozen
+    transferTx
     owner {
       id
     }
