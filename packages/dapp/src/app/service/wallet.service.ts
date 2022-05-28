@@ -146,7 +146,12 @@ export class WalletService {
             responseBid.wait().then(() => {
               this.notificationService.success('Successful Bid');
               console.log('Successful Bid');
-            });
+            }).catch(
+              (error: any) => {
+                this.notificationService.error('Bid Failed');
+                console.log('Bid Failed:', error);
+              }
+            );
           }
         ).catch(
           (error: any) => {
@@ -179,7 +184,11 @@ export class WalletService {
       if (error.message.startsWith(prefixStr)) {
         const errAsString = error.message.substring(prefixStr.length, error.message.length - 1);
         const obj = JSON.parse(errAsString);
-        return this.parseVMReason(obj.value.data.message);
+        if (obj.value.hasOwnProperty('data')) {
+          return this.parseVMReason(obj.value.data.message);
+        } else {
+          return obj.value.message;
+        }
       } else {
         return this.parseVMReason(error.message);
       }
