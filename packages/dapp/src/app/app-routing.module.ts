@@ -24,7 +24,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes, {
       scrollPositionRestoration: 'enabled',
       preloadingStrategy: PreloadAllModules,
-      relativeLinkResolution: 'legacy'
+      relativeLinkResolution: 'legacy',
+      useHash: true,
     })
   ],
   exports: [RouterModule]
