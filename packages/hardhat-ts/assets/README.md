@@ -2,6 +2,27 @@
 
 ## Upload Contract Metadata
 
+## Upload video and images
+
+```bash
+arkb deploy julius_painting.jpg
+```
+
+<https://arweave.net/r7-Gfc-sa3M8EqSP6ISlkMkMKXm4rVFYS_JsCDFS640>
+
+```bash
+arkb deploy sammie_poem.m4a
+```
+
+<https://arweave.net/PA3ycNhM5h0LABf1s59Q_aDG31JrE188aM4r-aHV6z8>
+
+```bash
+arkb deploy sammie_video.mp4
+```
+
+<https://arweave.net/PBawQ5kq5CGaoZbbZ2rygKxtu4OuvUodlOOMXSYlVhE>
+
+
 ## Upload NFT Metadata
 
 ```bash
@@ -9,8 +30,8 @@ arkb deploy prisonart-0.json
 ```
 
 result:
-<https://arweave.net/pQNhvc1FP4-1vQ1LVCuNi385sy_9G-HKaj-jGz1Or68>
-ar://pQNhvc1FP4-1vQ1LVCuNi385sy_9G-HKaj-jGz1Or68
+<https://arweave.net/BEKoHGTzv9avcRSboZkTqQl4lfYOuUKaKrGOt5TZIQw>
+ar://BEKoHGTzv9avcRSboZkTqQl4lfYOuUKaKrGOt5TZIQw
 
 ## Upload LFO receipt images and JSON
 
