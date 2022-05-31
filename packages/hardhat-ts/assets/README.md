@@ -29,9 +29,8 @@ arkb deploy sammie_video.mp4
 arkb deploy prisonart-0.json
 ```
 
-result:
-<https://arweave.net/BEKoHGTzv9avcRSboZkTqQl4lfYOuUKaKrGOt5TZIQw>
-ar://BEKoHGTzv9avcRSboZkTqQl4lfYOuUKaKrGOt5TZIQw
+<https://arweave.net/37BNWQaxMNKcAAXtZd4XTzSDiDzGOugqyp_arVmgXP4>
+ar://37BNWQaxMNKcAAXtZd4XTzSDiDzGOugqyp_arVmgXP4
 
 ## Upload LFO receipt images and JSON
 
