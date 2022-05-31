@@ -30,20 +30,19 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   console.log('payment address:', payment);
   console.log('fund address:', fund);
 
-  const TIME_BUFFER = 60 * 1;
+  const TIME_BUFFER = 60 * 10;
   const RESERVE_PRICE = '100000000000000000';
   const MIN_INCREMENT_BID_PERCENTAGE = 5;
-  const DURATION = 60 * 10;
+  const DURATION = 60 * 60 * 24 * 4;
 
   const restoreDeployment = await get('Restore');
-  const wethDeployment = await get('WETH');
   
   const deployResult = await deploy('Justice', {
     from: deployer.address,
     // gas: 4000000,
     args: [
       restoreDeployment.address,
-      wethDeployment.address,
+      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
       payment,
       fund,
       TIME_BUFFER,

@@ -7,7 +7,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
 
   const { deployer } = await getNamedAccounts();
 
-  const PROXY_REGISTRATION_ADDRESS = '0xf57b2c51ded3a29e6891aba85459d600256cf317';
+  const PROXY_REGISTRATION_ADDRESS = '0xa5409ec958c83c3f309868babaca7c86dcb077c1';
 
   // the following will only deploy 'GenericMetaTxProcessor' if the contract was never deployed or if the code changed since last deployment
   await deploy('Restore', {
