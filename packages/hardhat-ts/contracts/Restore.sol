@@ -31,7 +31,7 @@ contract Restore is ERC721Tradable, Ownable, IRestore {
      * @dev Link to contract metadata
     */
     function contractURI() external pure returns (string memory) {
-        return "https://arweave.net/narUwpyGF-ydUu49nO5iwnN4ZHrCO6FtZVbdnIs4k7U";
+        return "https://arweave.net/2IKze9wYKp_cgwVh19oazm08Zj4uMyRmGcUPv1aT7do";
     }
 
     /** @notice Set the royalties for the whole contract. Our intention is to set it to 10% in perpetuity.
