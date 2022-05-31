@@ -3,11 +3,11 @@ const packageJson = require('../../package.json');
 export const environment = {
   appName: 'Restore',
   envName: 'PROD',
-  chainId: '4',
-  network: 'rinkeby',
-  graphURL: 'https://api.studio.thegraph.com/query/24825/pr1s0nart-rinkeby/0.0.2', // FIXME
-  wsRpcUri: 'https://rinkeby.infura.io/v3/a02a728083ce4ac2bc2a6a30d8b730f4', // FIXME
-  etherscanURL: 'https://rinkeby.etherscan.io',
+  chainId: '1',
+  network: 'homestead',
+  graphURL: 'https://api.studio.thegraph.com/query/24825/pr1s0nart/0.0.1',
+  wsRpcUri: 'https://mainnet.infura.io/v3/a02a728083ce4ac2bc2a6a30d8b730f4', // FIXME
+  etherscanURL: 'https://etherscan.io',
   infuraProjectId: 'a02a728083ce4ac2bc2a6a30d8b730f4',
   production: true,
   test: false,
