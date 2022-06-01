@@ -2,7 +2,7 @@ import { task, types } from 'hardhat/config';
 import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers';
 import { Justice } from '../../typechain';
 import { TASK_CREATEAUCTION } from '../task-names';
-// hh createauction --network localhost|rinkeby|mainnet --token-id 0 --creator-addr 0x911753aB62fFd27B78C6db07685DBf0089634eb4 --split 70,20,10
+// hh createauction --network mainnet --token-id 0 --creator-addr <MOI_Addr> --split 50,10,40
 task(TASK_CREATEAUCTION, 'Creates an auction from a token')
   .addParam('tokenId', 'tokenId', null, types.int)
   .addParam('creatorAddr', 'The artist address if available or pr1son art payment address', null, types.string)
