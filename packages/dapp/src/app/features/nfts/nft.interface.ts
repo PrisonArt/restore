@@ -10,6 +10,7 @@ export interface NFT {
   animationURL: string;
   attributes?: Attribute[];
   lfos: LFO[];
+  directDonations: DirectDonation[];
   external_url?: string;
   owner: string;
   isFrozen: boolean;
@@ -29,6 +30,7 @@ export interface NFTMetadata {
 export interface LFOData {
   id: number;
   lfos: LFO[];
+  directDonations: DirectDonation[];
 }
 
 export interface Attribute {
@@ -41,6 +43,13 @@ export interface LFO {
   paidDate: string;
   amountPaid: number;
   imageHash: string;
+}
+
+export interface DirectDonation {
+  address: string;
+  amount: number;
+  token: string;
+  transactionHash: string;
 }
 
 export interface Bid {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map, retry, tap } from 'rxjs/operators';
-import { Attribute, Auction, Bid, LFO, LFOData, NFT, NFTMetadata } from '../features/nfts/nft.interface';
+import { Attribute, Auction, Bid, DirectDonation, LFO, LFOData, NFT, NFTMetadata } from '../features/nfts/nft.interface';
 import { ethers } from 'ethers';
 import { environment as env } from '../../environments/environment';
 
@@ -46,10 +46,21 @@ export const normalizeLFOData = (nftId: string, res: any): LFOData => {
       }
     )
   );
+  const directDonations: DirectDonation[] = res['directDonations'].map(
+    (donation: { [x: string]: any }) => (
+      {
+        address: donation['address'],
+        amount: donation['amount'],
+        token: donation['token'],
+        transactionHash: donation['transactionHash'],
+      }
+    )
+  );
 
   return {
     id: +nftId,
-    lfos: lfos
+    lfos: lfos,
+    directDonations: directDonations
   }
 };
 
@@ -74,6 +85,7 @@ export const normalizeNFT = (nft: any): NFT => {
     metadataHash: metadataHash,
     isFrozen: nft.isFrozen,
     lfos: [],
+    directDonations: [],
     transferTx: nft.transferTx
   }
 };
@@ -261,7 +273,7 @@ bidsByNFTGql = (nftId: string) => `
   }
 
   getLFOData(nftId: string, lfoDataHash: string): Observable<LFOData> {
-    if (!lfoDataHash) return of({id: +nftId, lfos: []});
+    if (!lfoDataHash) return of({id: +nftId, lfos: [], directDonations: []});
     return this.http.get(`https://arweave.net/${lfoDataHash}`)
     .pipe(
       map(res => normalizeLFOData(nftId, res)),

@@ -30,6 +30,7 @@ export class NFTComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['bidder', 'amount', 'blockTimestamp'];
   displayedLFOColumns: string[] = ['payee', 'paidDate', 'amountPaid', 'imageHash'];
+  displayedDonationColumns: string[] = ['address', 'amount', 'token', 'transactionHash'];
   id: number;
 
   idSub: Subscription;

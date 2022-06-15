@@ -116,6 +116,34 @@
               <tr mat-header-row *matHeaderRowDef="displayedLFOColumns"></tr>
               <tr mat-row *matRowDef="let myRowData; columns: displayedLFOColumns"></tr>
             </table>
+            <div><br/></div>
+            <h2>Direct Donations</h2>
+            <table class="donations col-md-12" mat-table [dataSource]="nft.directDonations">
+              <ng-container matColumnDef="address">
+                <th mat-header-cell *matHeaderCellDef> Donor  </th>
+                <td mat-cell *matCellDef="let donation" class="donor"> {{donation.address | fmtaddr}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef class="amount"> Amount </th>
+                <td mat-cell *matCellDef="let donation" class="amount"> {{donation.amount}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="token">
+                <th mat-header-cell *matHeaderCellDef>  </th>
+                <td mat-cell *matCellDef="let donation" class="token"> {{donation.token}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="transactionHash">
+                <th mat-header-cell *matHeaderCellDef>  </th>
+                <td mat-cell *matCellDef="let donation" class="tx">
+                  <a class="transaction" href="{{etherscanURL}}/tx/{{donation.transactionHash}}" target="_blank"><fa-icon icon="arrow-up-right-from-square"></fa-icon></a></td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedDonationColumns"></tr>
+              <tr mat-row *matRowDef="let myRowData; columns: displayedDonationColumns"></tr>
+            </table>
+
           </div>
         </div>
         <div *ngIf="!auction.settled" class="notSettled">
@@ -126,6 +154,7 @@
 
       <!-- Bid Table-->
       <div>
+        <h2>Bids</h2>
         <table mat-table [dataSource]="bidDataSource" matSort matSortActive="blockTimestamp" matSortDirection="desc" class="mat-elevation-z8 col-md-12">
           <!-- Bidder Column -->
           <ng-container matColumnDef="bidder">

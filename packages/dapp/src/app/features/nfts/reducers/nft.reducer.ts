@@ -29,7 +29,8 @@ export const reducer = createReducer(
   on(NFTActions.nftLoadLFODataSuccess, (state, { lfoData }) =>  adapter.updateOne({
     id: lfoData.id,
     changes: {
-      lfos: lfoData.lfos
+      lfos: lfoData.lfos,
+      directDonations: lfoData.directDonations
     }
   }, state)),
 );

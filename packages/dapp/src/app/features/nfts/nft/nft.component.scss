@@ -126,6 +126,36 @@ a.transaction {
     }
 }
 
+.donations {
+  td, th {
+     border-right: 1px solid #eee;
+     padding: 4px;
+  }
+
+  th {
+      color: #000;
+      font-weight: 600;
+      text-align: center;
+  }
+
+  .donor {
+    width: 50%;
+  }
+
+  .amount {
+    width: 25%;
+    text-align: end;
+  }
+
+  .token {
+    width: 15%;
+  }
+
+  .tx {
+    width: 10%;
+  }
+}
+
 @media (max-width: map-get($grid-breakpoints, sm)) {
     h1 {
         text-align: center;

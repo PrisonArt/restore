@@ -3,24 +3,75 @@
 		{
 			"id": 0,
 			"signer": "eip155:1:0x911753aB62fFd27B78C6db07685DBf0089634eb4",
-			"payee": "Support",
-			"paidDate": "2022-06-21T15:49:00.057Z",
+			"payee": "Mothers on the Inside",
+			"paidDate": "2022-06-13T15:56:00.000Z",
 			"defendentName": "Sammie Werkheiser",
-			"amountPaid": 7000,
-			"receiptImage": "ar://kV1gM0sxA83-a8rwL8tZKv1HFjD1-RlktJzEbm4qh3I",
+			"amountPaid": 667.43,
+			"receiptImage": "ar://u34Fde8QrQCtmZLePFq1YSOu7O4Mdy9B6EZLFrArH0I",
 			"SDG": "SDG-16",
 			"SDGDesc": "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels"
 		},
 		{
 			"id": 1,
 			"signer": "eip155:1:0x911753aB62fFd27B78C6db07685DBf0089634eb4",
-			"payee": "Superior Court of New York",
-			"paidDate": "2022-06-21T15:49:00.057Z",
+			"payee": "New York State",
+			"paidDate": "2022-06-13T16:53:00.007Z",
 			"defendentName": "Sammie Werkheiser",
-			"amountPaid": 1000,
-			"receiptImage": "ar://VK3KPqitG5_NaGwXCxQm--b1WsYjyWsPZ6hksg33xnA",
+			"amountPaid": 4658.95,
+			"receiptImage": "ar://y2oFPWMAB3O14yeCf3UD-RSWCNcrDbfnyxZmIHg_M5o",
 			"SDG": "SDG-16",
 			"SDGDesc": "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels"
+		}
+	],
+	"directDonations": [
+		{
+			"id": 0,
+			"address": "0xfbddb719cc7c795a1d9b7ea7ac11494a19b3231f",
+			"amount": 0.5,
+			"token": "ETH",
+			"transactionHash": "0xc715eae53ce297bf5a266a998f3d173555471704231e6ca1547d18702d5e25ab"
+		},
+		{
+			"id": 1,
+			"address": "0x9885a84930e3c8c865a1d3debdc204f990bab7c3",
+			"amount": 0.05,
+			"token": "ETH",
+			"transactionHash": "0x05f480f9e53a81291a17c6848b6b386c7d341b38984917bf47773953efe0a646"
+		},
+		{
+			"id": 2,
+			"address": "0xef5a52e1e6d83317a976a76c37b32a49ec7cf506",
+			"amount": 1614,
+			"token": "DAI",
+			"transactionHash": "0xe2ca4dbdf612cbe48c6611ca9f8e82866e3a7c129048fa87be6a534671187ca2"
+		},		
+		{
+			"id": 3,
+			"address": "0x9696f59e4d72e237be84ffd425dcad154bf96976",
+			"amount": 0.53774811,
+			"token": "ETH",
+			"transactionHash": "0x3ec68aac08b4dce306ec40dd7002fa12c88e78cfbea567799b1add539cb4b478"
+		},
+		{
+			"id": 4,
+			"address": "0x7c60b75b7af413667c14bd8fdc84267c03da9ba3",
+			"amount": 0.298938469494824,
+			"token": "ETH",
+			"transactionHash": "0x0169d3a893a1ce76ded5bccf8239089d9bcfe6307f36eec2a3ea1cf80a9bcfd6"
+		},
+		{
+			"id": 5,
+			"address": "0x40f9bf922c23c43acdad71ab4425280c0ffbd697",
+			"amount": 0.03,
+			"token": "ETH",
+			"transactionHash": "0x0411a992222b707a7beaedf1905a348e1a168edca9bb799bcca9f437cc6bf74b"
+		},
+		{
+			"id": 6,
+			"address": "0x60566cb8d8dfb84d0b25a7cd3dae7c1eadfbdb5f",
+			"amount": 0.1,
+			"token": "ETH",
+			"transactionHash": "0x9093237eb864c04d94e6b5eaec65f0f71108543164656d706270d22aa6c2f50c"
 		}
 	]
 }
