@@ -2,7 +2,7 @@ import { task, types } from 'hardhat/config';
 import { ContractReceipt, ContractTransaction } from 'ethers';
 import { Restore } from '../../typechain';
 import { TASK_TRANSFERBUYER } from '../task-names';
-// hh transferbuyer --network localhost|rinkeby|mainnet --token-id 0 --lfo-uri "ar://0_NEfUSGlnqvCZY_iPw3OeCFJZXqpNLBOWykqBo1OHM"
+// hh transferbuyer --network localhost|rinkeby|mainnet --token-id 0 --lfo-uri "ar://jPz5rTS8SMIWta96rAwDDXIcRhogbVJ0ATM-LZI6ZSA"
 task(TASK_TRANSFERBUYER, 'Transfers the token to the buyer')
   .addParam('tokenId', 'tokenId', null, types.int)
   .addParam('lfoUri', 'lfoUri', null, types.string)
